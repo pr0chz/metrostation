@@ -14,8 +14,45 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_marginLeft="28dp"
-        android:layout_marginTop="19dp"
+        android:layout_marginLeft="22dp"
+        android:layout_marginTop="20dp"
         android:text="Start service" />
+
+    <EditText
+        android:id="@+id/placeNameEdit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/startServiceButton"
+        android:layout_below="@+id/startServiceButton"
+        android:layout_marginTop="68dp"
+        android:ems="10" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/placeNameEdit"
+        android:layout_below="@+id/startServiceButton"
+        android:layout_marginTop="40dp"
+        android:text="New place name"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <Button
+        android:id="@+id/createPlaceButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/placeNameEdit"
+        android:layout_alignRight="@+id/placeNameEdit"
+        android:layout_centerVertical="true"
+        android:text="Create place" />
+
+    <Button
+        android:id="@+id/clearDb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/createPlaceButton"
+        android:layout_below="@+id/createPlaceButton"
+        android:layout_marginTop="66dp"
+        android:text="Clear DB" />
 
 </RelativeLayout>
