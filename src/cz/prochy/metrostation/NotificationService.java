@@ -1,7 +1,10 @@
 package cz.prochy.metrostation;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import android.app.Service;
 import android.content.Context;
@@ -23,54 +26,53 @@ public class NotificationService extends Service {
 	private final static String LOG_NAME = "MetroNotifier";
 	
 	private int currentCellId;
-	private int lastCellId;
-	private boolean notified;
-
-	private static final Map<Integer, String> cellMap = new HashMap<Integer, String>();
-	static {
-		cellMap.put(18812, ">A< Skalka");
-		cellMap.put(18809, ">A< Strasnicka");
-		cellMap.put(18811, ">A< Zelivskeho");
-		cellMap.put(18808, ">A< Flora");
-		cellMap.put(18810, ">A< Jiriho z Podebrad");
-		cellMap.put(18807, ">A< Namesti Miru");
-		cellMap.put(18806, ">A< Muzeum");
-		cellMap.put(18853, ">C< Muzeum");
-		cellMap.put(18839, ">C< Hlavni nadrazi");
-		cellMap.put(116348, ">X< Test");
-	}
+	private AtomicBoolean notified = new AtomicBoolean();
+	
+	private ScheduledExecutorService scheduledService = Executors.newSingleThreadScheduledExecutor();
+	private Future<?> scheduledTask;
 	
 	private static final int NOTIFICATION_ID = 0xbadbeef;
 	
-	private boolean isMetroStation(int cellId) {
-		return cellMap.containsKey(cellId);
+	private final Runnable cancelNotificationTask = new Runnable() {
+		public void run() {
+			NotificationManagerCompat.from(NotificationService.this).cancel(NOTIFICATION_ID);
+			notified.set(false);
+		};
+	};
+	
+	private void rescheduleCancelNotification() {
+		if (scheduledTask != null) {
+			scheduledTask.cancel(false);
+		}
+		scheduledTask = scheduledService.schedule(cancelNotificationTask, 180, TimeUnit.SECONDS);
 	}
 	
 	private void connected(int cellId) {
 		currentCellId = cellId;
-		if (isMetroStation(lastCellId) && isMetroStation(currentCellId)) {
-			if (!notified) {
-				notifyStation();
-				notified = true;
-			}
+		if (Stations.isStation(currentCellId) && notified.compareAndSet(false, true)) {
+			notifyStation(Stations.getName(currentCellId), true);
 		}
 	}
 	
 	private void disconnected() {
-		lastCellId = currentCellId;
-		notified = false;
+		if (notified.compareAndSet(true, false) && Stations.isStation(currentCellId)) {
+			notifyStation(Stations.getName(currentCellId), false);
+		}
 	}
 	
-	private void notifyStation() {
-		Log.v(LOG_NAME, "Matched! Notifying... " + cellMap.get(currentCellId));
+	private void notifyStation(String stationName, boolean connected) {
+		Log.v(LOG_NAME, "Matched! Notifying... " + Stations.getName(currentCellId));
+		rescheduleCancelNotification();
 		
-		Toast toast = Toast.makeText(this, cellMap.get(currentCellId), Toast.LENGTH_SHORT);
-		toast.show();
-		
+		if (connected) {
+			Toast toast = Toast.makeText(this, stationName, Toast.LENGTH_SHORT);
+			toast.show();
+		}
+
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
         	.setSmallIcon(R.drawable.ic_launcher)
         	.setContentTitle("Metro station")
-        	.setContentText(cellMap.get(currentCellId))
+        	.setContentText(stationName + (connected ? "" : " -> ?"))
         	.setAutoCancel(true);
  
         NotificationManagerCompat.from(this).notify(NOTIFICATION_ID, builder.build());
@@ -87,24 +89,29 @@ public class NotificationService extends Service {
 				break;
 			case ServiceState.STATE_IN_SERVICE:
 				TelephonyManager tm = getTelephonyManager();
-				CellLocation cl = tm.getCellLocation();
-			
-				int cellId = -1;
-				if (cl instanceof GsmCellLocation) {
-					GsmCellLocation gcl = (GsmCellLocation) cl;
-					cellId = gcl.getCid();
-				} else if (cl instanceof CdmaCellLocation) {
-					CdmaCellLocation ccl = (CdmaCellLocation) cl;
-					cellId = ccl.getBaseStationId();
-				}
+				if (tm != null) {
+					CellLocation cl = tm.getCellLocation();
 				
-				Log.v(LOG_NAME, "Connected to " + cellId);
-				if (cellId != -1) {
-					connected(cellId);
+					if (cl != null) {
+						int cellId = -1;
+						if (cl instanceof GsmCellLocation) {
+							GsmCellLocation gcl = (GsmCellLocation) cl;
+							cellId = gcl.getCid();
+						} else if (cl instanceof CdmaCellLocation) {
+							CdmaCellLocation ccl = (CdmaCellLocation) cl;
+							cellId = ccl.getBaseStationId();
+						}
+						
+						Log.v(LOG_NAME, "Connected to " + cellId);
+						if (cellId != -1) {
+							connected(cellId);
+						}
+					}
 				}
 				break;
 			default:
 				Log.v(LOG_NAME, "Other state");
+				disconnected();
 			}
 			super.onServiceStateChanged(serviceState);
 		}
@@ -117,15 +124,29 @@ public class NotificationService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
     	Log.v(LOG_NAME, "Starting service...");
-    	TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-		tm.listen(new StateListener(), PhoneStateListener.LISTEN_SERVICE_STATE);
-    	Log.v(LOG_NAME, "Listener registered");
+    	TelephonyManager tm = getTelephonyManager();
+    	if (tm != null) {
+    		tm.listen(new StateListener(), PhoneStateListener.LISTEN_SERVICE_STATE);
+    		Log.v(LOG_NAME, "Listener registered");
+    	} else {
+    		Log.e(LOG_NAME, "Failed to run service, unable to obtain telephony manager!");
+    	}
         return START_STICKY;
     }
     
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+    
+    @Override
+    public void onDestroy() {
+    	scheduledService.shutdown();
+    	try {
+			scheduledService.awaitTermination(1000, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+		}
     }
 
 }
