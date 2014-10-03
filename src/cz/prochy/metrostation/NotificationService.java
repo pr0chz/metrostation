@@ -48,31 +48,31 @@ public class NotificationService extends Service {
 	}
 	
 	private void connected(int cellId) {
-		currentCellId = cellId;
-		if (Stations.isStation(currentCellId) && notified.compareAndSet(false, true)) {
-			notifyStation(Stations.getName(currentCellId), true);
+		if (Stations.isStation(cellId) && notified.compareAndSet(false, true)) {
+			String name = Stations.getName(cellId);
+			Log.v(LOG_NAME, "Matched! Notifying... " + name);
+			notifyStation(name, !name.equals(Stations.getName(currentCellId)), true);
 		}
+		currentCellId = cellId;
 	}
 	
 	private void disconnected() {
 		if (notified.compareAndSet(true, false) && Stations.isStation(currentCellId)) {
-			notifyStation(Stations.getName(currentCellId), false);
+			notifyStation(Stations.getName(currentCellId), false, false);
 		}
 	}
 	
-	private void notifyStation(String stationName, boolean connected) {
-		Log.v(LOG_NAME, "Matched! Notifying... " + Stations.getName(currentCellId));
+	private void notifyStation(String stationName, boolean toast, boolean connected) {
 		rescheduleCancelNotification();
 		
-		if (connected) {
-			Toast toast = Toast.makeText(this, stationName, Toast.LENGTH_SHORT);
-			toast.show();
+		if (toast) {
+			Toast.makeText(this, stationName, Toast.LENGTH_SHORT).show();
 		}
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
         	.setSmallIcon(R.drawable.ic_launcher)
         	.setContentTitle("Metro station")
-        	.setContentText(stationName + (connected ? "" : " -> ?"))
+        	.setContentText(stationName + (connected ? "" : " -> ???"))
         	.setAutoCancel(true);
  
         NotificationManagerCompat.from(this).notify(NOTIFICATION_ID, builder.build());

@@ -195,16 +195,6 @@ public class Stations {
 				id(TMOBILE, 2436, 21780)
 				);
 		
-
-		
-		
-		
-		// vodafone
-		cellMap.put(18853, ">C< Muzeum");
-		cellMap.put(18839, ">C< Hlavni nadrazi");
-		cellMap.put(116348, ">X< Test 1");
-		cellMap.put(116351, ">X< Test 2");
-		cellMap.put(115789, ">X< Test 3");
 	}
 	
 	public static boolean isStation(int cellId) {
