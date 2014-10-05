@@ -195,6 +195,152 @@ public class Stations {
 				id(TMOBILE, 2436, 21780)
 				);
 		
+		// Metro B
+		// Vodafone - ok, possible problems between Stodulky and Radlicka
+		// Vodafone - multiple problems:
+		//   - mess between Stodulky and Smichovske nadrazi
+		//   - non-unique Narodni trida - Kolbenova
+		// O2 missing
+		
+		station("Zličín",
+				id(VODAFONE, 18814, 34300),
+				id(VODAFONE, 119268, 38100),
+				id(TMOBILE, 1938, 17250),
+				id(TMOBILE, 6735507, 17250),
+				id(TMOBILE, 6721430, 17250)
+				);
+		station("Stodůlky",
+				id(VODAFONE, 18816, 34300),
+				id(TMOBILE, 2430, 21780)
+				);
+		station("Luka",				
+				id(VODAFONE, 18818, 34300),
+				id(VODAFONE, 119079, 38100),
+				id(VODAFONE, 11141, 38100),
+				id(VODAFONE, 119077, 38100),
+				id(TMOBILE, 1241, 17230),
+				id(TMOBILE, 6734813, 17230),
+				id(TMOBILE, 6721393, 17230)
+				);
+		station("Lužiny",
+				id(VODAFONE, 18820, 34300),
+				id(VODAFONE, 118668, 38100),
+				id(VODAFONE, 16032, 38100),
+				id(TMOBILE, 6732124, 17230)
+				);
+		station("Hůrka",
+				id(VODAFONE, 16062, 38100),
+				id(VODAFONE, 118807, 38100),
+				id(VODAFONE, 13341, 38100),
+				id(VODAFONE, 18821, 34300),
+				id(TMOBILE, 1924, 17230),
+				id(TMOBILE, 453, 17230),
+				id(TMOBILE, 1244, 17230),
+				id(TMOBILE, 1245, 17230),
+				id(TMOBILE, 6736893, 17230),
+				id(TMOBILE, 6721459, 17230),
+				id(TMOBILE, 6736958, 17230),
+				id(TMOBILE, 6721479, 17230),
+				id(TMOBILE, 6721461, 17230),
+				id(TMOBILE, 2431, 21780)
+				);
+		station("Nové Butovice",
+				id(VODAFONE, 18823, 34300)
+				// missing t-mobile
+				);
+		station("Jinonice",
+				id(VODAFONE, 18822, 34300)
+				// missing tmobile
+				);
+		station("Radlická",
+				id(VODAFONE, 18824, 34300),
+				id(TMOBILE, 2431, 21780)
+				);
+		station("Smíchovské nádraží",
+				id(VODAFONE, 18819, 34300),
+				id(TMOBILE, 2805, 21780)
+				);
+		station("Anděl",
+				id(VODAFONE, 18817, 34300)
+				// missing tmobile
+				);
+		station("Karlovo náměstí",
+				id(VODAFONE, 18815, 34300),
+				id(TMOBILE, 2432, 21780)
+				);
+		station("Národní třída",
+				id(VODAFONE, 18813, 34300),
+				id(TMOBILE, 2433, 21780)
+				);
+		station("Můstek",
+				id(VODAFONE, 18825, 34300),
+				id(TMOBILE, 2434, 21780),
+				id(TMOBILE, 2209, 21780)
+				);
+		station("Náměstí Republiky",
+				id(VODAFONE, 18851, 34300),
+				id(TMOBILE, 2433, 21780) // same as narodni trida
+				);
+		
+		// block of non-unique t-mobile cells
+		station("Florenc",
+				id(VODAFONE, 18827, 34300),
+				id(TMOBILE, 2428, 21780)
+				);
+		station("Křižíkova",
+				id(VODAFONE, 18830, 34300),
+				id(TMOBILE, 2427, 21780)
+				);
+		station("Invalidovna",
+				id(VODAFONE, 18828, 34300),
+				id(TMOBILE, 2428, 21780)
+				);
+		station("Palmovka",
+				id(VODAFONE, 18831, 34300),
+				id(TMOBILE, 2427, 21780)
+				);
+		station("Českomoravská",
+				id(VODAFONE, 18829, 34300),
+				id(TMOBILE, 2428, 21780)
+				);
+		station("Vysočanská",
+				id(VODAFONE, 18832, 34300),
+				id(TMOBILE, 2427, 21780)
+				);
+		// end of block
+		
+		station("Kolbenova",
+				id(VODAFONE, 18833, 34300),
+				id(TMOBILE, 2429, 21780)
+				);
+		station("Hloubětín",
+				id(VODAFONE, 18834, 34300),
+				id(TMOBILE, 2429, 21780)
+				);
+		station("Rajská zahrada",
+				id(VODAFONE, 12764, 38400),
+				id(VODAFONE, 115952, 38400),
+				id(VODAFONE, 115949, 38400),
+				id(TMOBILE, 8258, 20500),
+				id(TMOBILE, 6670613, 20500),
+				id(TMOBILE, 6670614, 20500)
+				);
+		station("Černý most",
+				id(VODAFONE, 115948, 38400),
+				id(VODAFONE, 115957, 38400),
+				id(VODAFONE, 115958, 38400),
+				id(VODAFONE, 116009, 38400),
+				id(VODAFONE, 116012, 38400),
+				id(VODAFONE, 115947, 38400),
+				id(TMOBILE, 6669305, 20500),
+				id(TMOBILE, 6669303, 20500),
+				id(TMOBILE, 6670635, 20500),
+				id(TMOBILE, 6670969, 20500),
+				id(TMOBILE, 6670634, 20500),
+				id(TMOBILE, 6668679, 20500)
+				);
+		
+		
 	}
 	
 	public static boolean isStation(int cellId) {
