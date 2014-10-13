@@ -87,6 +87,7 @@ public class NotificationService extends Service {
 				Log.v(LOG_NAME, "Disconnected");
 				disconnected();
 				break;
+			case ServiceState.STATE_EMERGENCY_ONLY:
 			case ServiceState.STATE_IN_SERVICE:
 				TelephonyManager tm = getTelephonyManager();
 				if (tm != null) {
