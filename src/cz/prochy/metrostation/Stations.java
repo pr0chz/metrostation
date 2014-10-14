@@ -28,7 +28,7 @@ public class Stations {
 		 * Metro A
 		 * Vodafone - done OK
 		 * Tmobile - done OK
-		 * O2 - missing depo hostivar a range Mustek-Dejvicka
+		 * O2 - done OK
 		 */
 		station("Depo Hostivař", 
 				id(VODAFONE, 115607, 38300), 
@@ -36,7 +36,12 @@ public class Stations {
 				id(TMOBILE, 1988, 21820),
 				id(TMOBILE, 6671205, 21820),
 				id(TMOBILE, 6668949, 21820),
-				id(TMOBILE, 6666419, 21820)
+				id(TMOBILE, 6666419, 21820),
+				id(O2, 1097, 1146),
+				id(O2, 11015, 1146),
+				id(O2, 203781758, 1146),
+				id(O2, 203781755, 1146),
+				id(O2, 10307073, 1146)
 				);
 		station("Skalka", 
 				id(VODAFONE, 18812, 34300),
@@ -75,23 +80,29 @@ public class Stations {
 				);
 		station("Můstek",
 				id(VODAFONE, 18805, 34300),
-				id(TMOBILE, 2209, 21780)
+				id(TMOBILE, 2209, 21780),
+				id(O2, 21195, 1139),
+				id(O2, 21192, 1139)
 				);
 		station("Staroměstská",
 				id(VODAFONE, 18804, 34300),
-				id(TMOBILE, 2208, 21780)
+				id(TMOBILE, 2208, 21780),
+				id(O2, 21196, 1139)
 				);
 		station("Malostranská",
 				id(VODAFONE, 18802, 34300),
-				id(TMOBILE, 2207, 21780)
+				id(TMOBILE, 2207, 21780),
+				id(O2, 21197, 1139)
 				);
 		station("Hradčanská",
 				id(VODAFONE, 18803, 34300),
-				id(TMOBILE, 2206, 21780)
+				id(TMOBILE, 2206, 21780),
+				id(O2, 21198, 1139)
 				);
 		station("Dejvická",
 				id(VODAFONE, 18801, 34300),
-				id(TMOBILE, 2205, 21780)
+				id(TMOBILE, 2205, 21780),
+				id(O2, 21199, 1139)
 				);
 		
 		/*
@@ -231,18 +242,21 @@ public class Stations {
 		// T-mobile - multiple problems:
 		//   - mess between Stodulky and Smichovske nadrazi
 		//   - non-unique Narodni trida - Kolbenova
-		// O2 missing
+		//   - some stations missing completely
+		// O2 done - OK
 		
 		station("Zličín",
 				id(VODAFONE, 18814, 34300),
 				id(VODAFONE, 119268, 38100),
 				id(TMOBILE, 1938, 17250),
 				id(TMOBILE, 6735507, 17250),
-				id(TMOBILE, 6721430, 17250)
+				id(TMOBILE, 6721430, 17250),
+				id(O2, 21599, 1139)
 				);
 		station("Stodůlky",
 				id(VODAFONE, 18816, 34300),
-				id(TMOBILE, 2430, 21780)
+				id(TMOBILE, 2430, 21780),
+				id(O2, 21598, 1139)
 				);
 		station("Luka",				
 				id(VODAFONE, 18818, 34300),
@@ -251,13 +265,19 @@ public class Stations {
 				id(VODAFONE, 119077, 38100),
 				id(TMOBILE, 1241, 17230),
 				id(TMOBILE, 6734813, 17230),
-				id(TMOBILE, 6721393, 17230)
+				id(TMOBILE, 6721393, 17230),
+				id(O2, 21597, 1139),
+				id(O2, 203782717, 1153)
 				);
 		station("Lužiny",
 				id(VODAFONE, 18820, 34300),
 				id(VODAFONE, 118668, 38100),
 				id(VODAFONE, 16032, 38100),
-				id(TMOBILE, 6732124, 17230)
+				id(TMOBILE, 6732124, 17230),
+				id(O2, 21596, 1139),
+				id(O2, 203783280, 1153),
+				id(O2, 203782702, 1153),
+				id(O2, 1523, 1153)
 				);
 		station("Hůrka",
 				id(VODAFONE, 16062, 38100),
@@ -273,80 +293,98 @@ public class Stations {
 				id(TMOBILE, 6736958, 17230),
 				id(TMOBILE, 6721479, 17230),
 				id(TMOBILE, 6721461, 17230),
-				id(TMOBILE, 2431, 21780)
+				id(TMOBILE, 2431, 21780),
+				id(O2, 21595, 1139)
 				);
 		station("Nové Butovice",
-				id(VODAFONE, 18823, 34300)
+				id(VODAFONE, 18823, 34300),
+				id(O2, 21594, 1139)
 				// missing t-mobile
 				);
 		station("Jinonice",
-				id(VODAFONE, 18822, 34300)
+				id(VODAFONE, 18822, 34300),
+				id(O2, 21593, 1139)
 				// missing tmobile
 				);
 		station("Radlická",
 				id(VODAFONE, 18824, 34300),
-				id(TMOBILE, 2431, 21780)
+				id(TMOBILE, 2431, 21780),
+				id(O2, 21592, 1139)
 				);
 		station("Smíchovské nádraží",
 				id(VODAFONE, 18819, 34300),
-				id(TMOBILE, 2805, 21780)
+				id(TMOBILE, 2805, 21780),
+				id(O2, 21591, 1139)
 				);
 		station("Anděl",
-				id(VODAFONE, 18817, 34300)
+				id(VODAFONE, 18817, 34300),
+				id(O2, 21590, 1139)
 				// missing tmobile
 				);
 		station("Karlovo náměstí",
 				id(VODAFONE, 18815, 34300),
-				id(TMOBILE, 2432, 21780)
+				id(TMOBILE, 2432, 21780),
+				id(O2, 21297, 1139)
 				);
 		station("Národní třída",
 				id(VODAFONE, 18813, 34300),
-				id(TMOBILE, 2433, 21780)
+				id(TMOBILE, 2433, 21780),
+				id(O2, 21193, 1139)
 				);
 		station("Můstek",
 				id(VODAFONE, 18825, 34300),
 				id(TMOBILE, 2434, 21780),
-				id(TMOBILE, 2209, 21780)
+				id(TMOBILE, 2209, 21780),
+				id(O2, 21192, 1139)
 				);
 		station("Náměstí Republiky",
 				id(VODAFONE, 18851, 34300),
-				id(TMOBILE, 2433, 21780) // same as narodni trida
+				id(TMOBILE, 2433, 21780),
+				id(O2, 21191, 1139)
 				);
 		
 		// block of non-unique t-mobile cells
 		station("Florenc",
 				id(VODAFONE, 18827, 34300),
-				id(TMOBILE, 2428, 21780)
+				id(TMOBILE, 2428, 21780),
+				id(O2, 21898, 1139)
 				);
 		station("Křižíkova",
 				id(VODAFONE, 18830, 34300),
-				id(TMOBILE, 2427, 21780)
+				id(TMOBILE, 2427, 21780),
+				id(O2, 21897, 1139)
 				);
 		station("Invalidovna",
 				id(VODAFONE, 18828, 34300),
-				id(TMOBILE, 2428, 21780)
+				id(TMOBILE, 2428, 21780),
+				id(O2, 21896, 1139)
 				);
 		station("Palmovka",
 				id(VODAFONE, 18831, 34300),
-				id(TMOBILE, 2427, 21780)
+				id(TMOBILE, 2427, 21780),
+				id(O2, 21895, 1139)
 				);
 		station("Českomoravská",
 				id(VODAFONE, 18829, 34300),
-				id(TMOBILE, 2428, 21780)
+				id(TMOBILE, 2428, 21780),
+				id(O2, 21999, 1139)
 				);
 		station("Vysočanská",
 				id(VODAFONE, 18832, 34300),
-				id(TMOBILE, 2427, 21780)
+				id(TMOBILE, 2427, 21780),
+				id(O2, 21998, 1139)
 				);
 		// end of block
 		
 		station("Kolbenova",
 				id(VODAFONE, 18833, 34300),
-				id(TMOBILE, 2429, 21780)
+				id(TMOBILE, 2429, 21780),
+				id(O2, 21997, 1139)
 				);
 		station("Hloubětín",
 				id(VODAFONE, 18834, 34300),
-				id(TMOBILE, 2429, 21780)
+				id(TMOBILE, 2429, 21780),
+				id(O2, 21996, 1139)
 				);
 		station("Rajská zahrada",
 				id(VODAFONE, 12764, 38400),
@@ -354,7 +392,10 @@ public class Stations {
 				id(VODAFONE, 115949, 38400),
 				id(TMOBILE, 8258, 20500),
 				id(TMOBILE, 6670613, 20500),
-				id(TMOBILE, 6670614, 20500)
+				id(TMOBILE, 6670614, 20500),
+				id(O2, 21995, 1139),
+				id(O2, 1905, 1131),
+				id(O2, 203717688, 1131)
 				);
 		station("Černý most",
 				id(VODAFONE, 115948, 38400),
@@ -368,7 +409,10 @@ public class Stations {
 				id(TMOBILE, 6670635, 20500),
 				id(TMOBILE, 6670969, 20500),
 				id(TMOBILE, 6670634, 20500),
-				id(TMOBILE, 6668679, 20500)
+				id(TMOBILE, 6668679, 20500),
+				id(O2, 1954, 1131),
+				id(O2, 203717002, 1131),
+				id(O2, 203718138, 1131)
 				);
 		
 		
