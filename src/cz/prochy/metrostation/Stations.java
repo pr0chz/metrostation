@@ -10,19 +10,19 @@ public class Stations {
 	private final static String O2 = "o2";
 	private final static String UNKNOWN = "unknown";
 	
-	private static int id(String op, int cid, int lac) {
+	private int id(String op, int cid, int lac) {
 		return cid;
 	}
 	
-	private static void station(String name, int ... ids) {
+	private void station(String name, int ... ids) {
 		for (int id : ids) {
 			cellMap.put(id, name);
 		}
 	}
 	
-	private static final Map<Integer, String> cellMap = new HashMap<Integer, String>();
+	private final Map<Integer, String> cellMap = new HashMap<Integer, String>();
 
-	static {
+	{
 		
 		/*
 		 * Metro A
@@ -418,13 +418,21 @@ public class Stations {
 		
 	}
 	
-	public static boolean isStation(int cellId) {
+	public boolean isStation(int cellId) {
+		return cellMap.containsKey(cellId);
+	}
+
+	public boolean isStation(int cellId, int lac) {
 		return cellMap.containsKey(cellId);
 	}
 	
-	public static String getName(int cellId) {
+	public String getName(int cellId) {
 		return cellMap.get(cellId);
 	}
 	
+	public String getName(int cellId, int lac) {
+		return cellMap.get(cellId);
+	}
+
 	
 }

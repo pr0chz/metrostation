@@ -31,6 +31,8 @@ public class NotificationService extends Service {
 	private ScheduledExecutorService scheduledService = Executors.newSingleThreadScheduledExecutor();
 	private Future<?> scheduledTask;
 	
+	private static final Stations stations = new Stations();
+	
 	private static final int NOTIFICATION_ID = 0xbadbeef;
 	
 	private final Runnable cancelNotificationTask = new Runnable() {
@@ -48,17 +50,17 @@ public class NotificationService extends Service {
 	}
 	
 	private void connected(int cellId) {
-		if (Stations.isStation(cellId) && notified.compareAndSet(false, true)) {
-			String name = Stations.getName(cellId);
+		if (stations.isStation(cellId) && notified.compareAndSet(false, true)) {
+			String name = stations.getName(cellId);
 			Log.v(LOG_NAME, "Matched! Notifying... " + name);
-			notifyStation(name, !name.equals(Stations.getName(currentCellId)), true);
+			notifyStation(name, !name.equals(stations.getName(currentCellId)), true);
 		}
 		currentCellId = cellId;
 	}
 	
 	private void disconnected() {
-		if (notified.compareAndSet(true, false) && Stations.isStation(currentCellId)) {
-			notifyStation(Stations.getName(currentCellId), false, false);
+		if (notified.compareAndSet(true, false) && stations.isStation(currentCellId)) {
+			notifyStation(stations.getName(currentCellId), false, false);
 		}
 	}
 	
