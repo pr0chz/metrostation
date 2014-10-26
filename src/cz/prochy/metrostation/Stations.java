@@ -5,6 +5,8 @@ import java.util.Map;
 
 public class Stations {
 
+	// TODO change map to use also LAC
+	
 	private final static String VODAFONE = "vodafone";
 	private final static String TMOBILE = "t-mobile";
 	private final static String O2 = "o2";
@@ -415,19 +417,15 @@ public class Stations {
 				id(O2, 203718138, 1131)
 				);
 		
+		// TODO remove this
+		station("Test",
+				id(VODAFONE, 116348, 38300));
 		
-	}
-	
-	public boolean isStation(int cellId) {
-		return cellMap.containsKey(cellId);
+		
 	}
 
 	public boolean isStation(int cellId, int lac) {
 		return cellMap.containsKey(cellId);
-	}
-	
-	public String getName(int cellId) {
-		return cellMap.get(cellId);
 	}
 	
 	public String getName(int cellId, int lac) {

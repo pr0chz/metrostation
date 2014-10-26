@@ -1,6 +1,7 @@
 package cz.prochy.metrostation;
 
 import android.content.Context;
+import android.graphics.drawable.BitmapDrawable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.widget.Toast;
@@ -25,7 +26,7 @@ public class Notifications {
 	
 	private void showNotification(String message) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
-    		.setSmallIcon(R.drawable.ic_launcher)
+    		.setSmallIcon(R.drawable.ic_stat_notify)
     		.setContentTitle("Metro station")
     		.setContentText(Check.notNull(message))
     		.setAutoCancel(true);
