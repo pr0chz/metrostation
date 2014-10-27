@@ -1,0 +1,8 @@
+.settings
+bin
+gen
+gen-external-apklibs
+proguard
+target
+.classpath
+.project

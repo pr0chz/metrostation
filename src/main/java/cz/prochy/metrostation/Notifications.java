@@ -1,7 +1,6 @@
 package cz.prochy.metrostation;
 
 import android.content.Context;
-import android.graphics.drawable.BitmapDrawable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.widget.Toast;
