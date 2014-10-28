@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>cz.prochy.metrostation</groupId>
-    <artifactId>parent</artifactId>
+    <artifactId>metrostation-parent</artifactId>
     <packaging>pom</packaging>
     <version>1.0.0-SNAPSHOT</version>
     <name>MetroStation Parent Project</name>
