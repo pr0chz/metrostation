@@ -1,9 +1,11 @@
 package cz.prochy.metrostation;
 
+import cz.prochy.metrostation.tracking.Stations;
+
 import java.util.HashMap;
 import java.util.Map;
 
-public class Stations {
+public class PragueStations implements Stations {
 
 	// TODO change map to use also LAC
 	
@@ -424,10 +426,12 @@ public class Stations {
 		
 	}
 
+    @Override
 	public boolean isStation(int cellId, int lac) {
 		return cellMap.containsKey(cellId);
 	}
-	
+
+    @Override
 	public String getName(int cellId, int lac) {
 		return cellMap.get(cellId);
 	}

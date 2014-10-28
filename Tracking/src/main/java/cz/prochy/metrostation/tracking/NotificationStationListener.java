@@ -1,7 +1,4 @@
-package cz.prochy.metrostation;
-
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
+package cz.prochy.metrostation.tracking;
 
 public class NotificationStationListener implements StationListener {
 

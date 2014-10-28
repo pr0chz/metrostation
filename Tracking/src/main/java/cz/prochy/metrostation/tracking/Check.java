@@ -1,4 +1,4 @@
-package cz.prochy.metrostation;
+package cz.prochy.metrostation.tracking;
 
 public class Check {
 

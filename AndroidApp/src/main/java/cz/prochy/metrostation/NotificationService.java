@@ -1,17 +1,9 @@
 package cz.prochy.metrostation;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 import android.telephony.CellLocation;
 import android.telephony.PhoneStateListener;
 import android.telephony.ServiceState;
@@ -19,11 +11,15 @@ import android.telephony.TelephonyManager;
 import android.telephony.cdma.CdmaCellLocation;
 import android.telephony.gsm.GsmCellLocation;
 import android.util.Log;
-import android.widget.Toast;
+import cz.prochy.metrostation.tracking.*;
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class NotificationService extends Service {
 	
-	private static final Stations stations = new Stations();
+	private static final PragueStations stations = new PragueStations();
 
 	private final static String LOG_NAME = "MetroNotifier";
 	private final ScheduledExecutorService scheduledService = Executors.newSingleThreadScheduledExecutor();
@@ -70,11 +66,11 @@ public class NotificationService extends Service {
 		StationsCellListener stationsCellListener = new StationsCellListener(stations, compositeStationListener);
 		CellListener rootListener = new CellListenerFilter(stationsCellListener);
 		
-		Notifications notifications = new Notifications(this);
+		NotificationsImpl notificationsImpl = new NotificationsImpl(this);
 		Timeout timeout = new Timeout(scheduledService, 300, TimeUnit.SECONDS);
 		
-		compositeStationListener.addListener(new ToastStationListener(notifications));
-		compositeStationListener.addListener(new NotificationStationListener(notifications, timeout));
+		compositeStationListener.addListener(new ToastStationListener(notificationsImpl));
+		compositeStationListener.addListener(new NotificationStationListener(notificationsImpl, timeout));
 		
 		return rootListener;
 	}

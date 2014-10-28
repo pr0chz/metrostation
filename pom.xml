@@ -12,6 +12,7 @@
 
     <modules>
         <module>AndroidApp</module>
+        <module>Tracking</module>
     </modules>
 
 </project>
