@@ -1,8 +1,8 @@
 package cz.prochy.metrostation;
 
+import android.app.NotificationManager;
 import android.content.Context;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 import android.widget.Toast;
 import cz.prochy.metrostation.tracking.Check;
 import cz.prochy.metrostation.tracking.Notifications;
@@ -24,9 +24,13 @@ public class NotificationsImpl implements Notifications {
 
     @Override
 	public void toastLeavingStation(String station) {
-		Toast.makeText(context, Check.notNull(station) + " -> ???", Toast.LENGTH_SHORT).show();		
+		//Toast.makeText(context, Check.notNull(station) + " -> ???", Toast.LENGTH_SHORT).show();
 	}
-	
+
+    private NotificationManager getNotificationManager() {
+        return (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+    }
+
 	private void showNotification(String message) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
     		.setSmallIcon(R.drawable.ic_stat_notify)
@@ -34,7 +38,10 @@ public class NotificationsImpl implements Notifications {
     		.setContentText(Check.notNull(message))
     		.setAutoCancel(true);
 
-        NotificationManagerCompat.from(context).notify(NOTIFICATION_ID, builder.build());
+        NotificationManager notificationManager = getNotificationManager();
+        if (notificationManager != null) {
+            notificationManager.notify(NOTIFICATION_ID, builder.build());
+        }
 	}
 
     @Override
@@ -49,7 +56,10 @@ public class NotificationsImpl implements Notifications {
 
     @Override
 	public void hideNotification() {
-		NotificationManagerCompat.from(context).cancel(NOTIFICATION_ID);
+        NotificationManager notificationManager = getNotificationManager();
+        if (notificationManager != null) {
+            notificationManager.cancel(NOTIFICATION_ID);
+        }
 	}
 	
 }
