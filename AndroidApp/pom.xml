@@ -74,4 +74,26 @@
 			</plugin>
 		</plugins>
 	</build>
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+                        <artifactId>android-maven-plugin</artifactId>
+                        <configuration>
+                            <sdk>
+                                <platform>8</platform>
+                            </sdk>
+                            <proguard>
+                                <skip>false</skip>
+                                <config>proguard-project.txt</config>
+                            </proguard>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
