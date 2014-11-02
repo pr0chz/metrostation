@@ -2,41 +2,42 @@ package cz.prochy.metrostation.tracking;
 
 public class StationsCellListener implements CellListener {
 
-	private final static String UNKNOWN_STATION = "";
-	
-	private String stationName;
-	
+    private final static String INITIAL = "~~INITIAL~~";
+	private final static String UNKNOWN_STATION = "~~UNKNOWN~~";
+    private final static String DISCONNECTED = "~~DISCONNECTED~~";
+
 	private final Stations stations;
 	private final StationListener listener;
-	
-	public StationsCellListener(Stations stations, StationListener listener) {
+
+    private String state = INITIAL;
+
+    public StationsCellListener(Stations stations, StationListener listener) {
 		this.stations = Check.notNull(stations);
 		this.listener = Check.notNull(listener);
-		reset();
-	}
-	
-	private void reset() {
-		stationName = UNKNOWN_STATION;
 	}
 	
 	@Override
 	public void cellInfo(int cid, int lac) {
 		if (stations.isStation(cid, lac)) {
 			String name = stations.getName(cid, lac);
-			if (!stationName.equals(name)) {
-				stationName = name;
-				listener.onStation(stationName);
+			if (!state.equals(name)) {
+				state = name;
+				listener.onStation(state);
 			}
 		} else {
-			listener.onUnknownStation();
-			reset();
+            if (state != UNKNOWN_STATION) {
+                listener.onUnknownStation();
+                state = UNKNOWN_STATION;
+            }
 		}		
 	}
 	
 	@Override
 	public void disconnected() {
-		listener.onDisconnect();
-		reset();
+        if (state != DISCONNECTED) {
+            listener.onDisconnect();
+            state = DISCONNECTED;
+        }
 	}
 	
 	
