@@ -1,5 +1,8 @@
 package cz.prochy.metrostation.tracking;
 
+import net.jcip.annotations.NotThreadSafe;
+
+@NotThreadSafe
 public class CellListenerFilter implements CellListener {
 	
 	private int currentCid = -1;

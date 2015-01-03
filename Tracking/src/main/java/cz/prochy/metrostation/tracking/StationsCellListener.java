@@ -1,5 +1,8 @@
 package cz.prochy.metrostation.tracking;
 
+import net.jcip.annotations.NotThreadSafe;
+
+@NotThreadSafe
 public class StationsCellListener implements CellListener {
 
     private final static String INITIAL = "~~INITIAL~~";
