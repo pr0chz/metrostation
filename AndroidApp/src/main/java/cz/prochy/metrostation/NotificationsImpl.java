@@ -9,12 +9,13 @@ import cz.prochy.metrostation.tracking.Notifications;
 
 public class NotificationsImpl implements Notifications {
 
-	private static final int NOTIFICATION_ID = 0xba3dbeef;
+	private static final int NOTIFICATION_ID = 0x6a3ab12f;
 	
 	private final Context context;
 	
 	public NotificationsImpl(Context context) {
-		this.context = Check.notNull(context);
+        this.context = Check.notNull(context);
+        hideNotification(); // if service was killed there can be something hanging around
 	}
 
     @Override

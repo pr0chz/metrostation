@@ -29,7 +29,6 @@ public class NotificationService extends Service {
 	private class StateListener extends PhoneStateListener {
 		@Override
 		public void onServiceStateChanged(ServiceState serviceState) {
-	    	//Log.v(LOG_NAME, "Received state update " + serviceState);
 			switch (serviceState.getState()) {
 			case ServiceState.STATE_OUT_OF_SERVICE:
 				Log.v(LOG_NAME, "Disconnected");
@@ -42,7 +41,6 @@ public class NotificationService extends Service {
 					CellLocation cl = tm.getCellLocation();
 				
 					if (cl != null) {
-						int cellId = -1;
 						if (cl instanceof GsmCellLocation) {
 							GsmCellLocation gcl = (GsmCellLocation) cl;
 							rootListener.cellInfo(gcl.getCid(), gcl.getLac());
