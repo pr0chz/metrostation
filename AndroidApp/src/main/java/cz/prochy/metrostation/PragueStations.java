@@ -7,12 +7,12 @@ import java.util.Map;
 
 public class PragueStations implements Stations {
 
-	// TODO change map to use also LAC
-	
 	private final static String VODAFONE = "vodafone";
 	private final static String TMOBILE = "t-mobile";
 	private final static String O2 = "o2";
 	private final static String UNKNOWN = "unknown";
+
+    private final static String UNKNOWN_STATION = "???";
 	
 	private int id(String op, int cid, int lac) {
 		return cid;
@@ -20,19 +20,25 @@ public class PragueStations implements Stations {
 	
 	private void station(String name, int ... ids) {
 		for (int id : ids) {
-			cellMap.put(id, name);
+            if (!cellMap.containsKey(id)) {
+                cellMap.put(id, name);
+            } else {
+                // multiple mappings for single id
+                // do not confuse user and present it as unknown station
+                cellMap.put(id, UNKNOWN_STATION);
+            }
 		}
 	}
 	
 	private final Map<Integer, String> cellMap = new HashMap<Integer, String>();
 
-	{
+	public PragueStations() {
 		
 		/*
 		 * Metro A
-		 * Vodafone - done OK
-		 * Tmobile - done OK
-		 * O2 - done OK
+		 * Vodafone - OK
+		 * Tmobile - OK
+		 * O2 - OK
 		 */
 		station("Depo Hostivař", 
 				id(VODAFONE, 115607, 38300), 
@@ -111,9 +117,9 @@ public class PragueStations implements Stations {
 		
 		/*
 		 * Metro C
-		 * Vodafone - done OK
-		 * Tmobile - done with conflicts
-		 * O2 - done OK
+		 * Vodafone - OK
+		 * Tmobile - conflicts
+		 * O2 - OK
 		 */
 		
 		station("Háje",
@@ -418,11 +424,6 @@ public class PragueStations implements Stations {
 				id(O2, 203717002, 1131),
 				id(O2, 203718138, 1131)
 				);
-		
-		// TODO remove this
-		station("Test",
-				id(VODAFONE, 116348, 38300));
-		
 		
 	}
 
