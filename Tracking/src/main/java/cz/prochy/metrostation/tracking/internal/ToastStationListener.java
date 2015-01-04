@@ -9,7 +9,7 @@ import net.jcip.annotations.NotThreadSafe;
  * Logic is as follows:
  * <ul>
  *     <li>Notify arrival into known station - this is independent of previous state.</li>
- *     <li>Notify leaving the station - only if we know our immediate previous station
+ *     <li>Notify departure from the station - only if we know our immediate previous station
  *     (i.e. station was not unknown)</li>
  * </ul>
  */
@@ -27,7 +27,7 @@ public class ToastStationListener implements StationListener {
 	@Override
 	public void onStation(String station) {
 		currentStation = Check.notNull(station);
-		notifications.toastIncomingStation(station);
+		notifications.toastStationArrival(station);
 	}
 
 	@Override
@@ -38,7 +38,7 @@ public class ToastStationListener implements StationListener {
 	@Override
 	public void onDisconnect() {
 		if (currentStation != null) {
-			notifications.toastLeavingStation(currentStation);
+			notifications.toastStationDeparture(currentStation);
 			currentStation = null;
 		}
 	}

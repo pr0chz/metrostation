@@ -1,7 +1,6 @@
 package cz.prochy.metrostation.tracking.internal;
 
 import cz.prochy.metrostation.tracking.Notifications;
-import cz.prochy.metrostation.tracking.internal.ToastStationListener;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -32,19 +31,19 @@ public class ToastStationListenerTest {
     }
 
 
-    private void expectIncomingToast(String station) {
-        notifications.toastIncomingStation(eq(station));
+    private void expectArrivalToast(String station) {
+        notifications.toastStationArrival(eq(station));
         expectLastCall();
     }
 
-    private void expectLeavingToast(String station) {
-        notifications.toastLeavingStation(eq(station));
+    private void expectDepartureToast(String station) {
+        notifications.toastStationDeparture(eq(station));
         expectLastCall();
     }
 
     @Test
     public void testNotificationTriggeredOnFirstStation() throws Exception {
-        expectIncomingToast(STATION);
+        expectArrivalToast(STATION);
         replay(notifications);
         toast.onStation(STATION);
         verify(notifications);
@@ -52,8 +51,8 @@ public class ToastStationListenerTest {
 
     @Test
     public void testNotificationTriggeredOnSameStationAfterUnknown() throws Exception {
-        expectIncomingToast(STATION);
-        expectIncomingToast(STATION);
+        expectArrivalToast(STATION);
+        expectArrivalToast(STATION);
         replay(notifications);
         toast.onStation(STATION);
         toast.onUnknownStation();
@@ -63,9 +62,9 @@ public class ToastStationListenerTest {
 
     @Test
     public void testNotificationTriggeredOnSameStationAfterDisconnect() throws Exception {
-        expectIncomingToast(STATION);
-        expectLeavingToast(STATION);
-        expectIncomingToast(STATION);
+        expectArrivalToast(STATION);
+        expectDepartureToast(STATION);
+        expectArrivalToast(STATION);
         replay(notifications);
         toast.onStation(STATION);
         toast.onDisconnect();
@@ -76,8 +75,8 @@ public class ToastStationListenerTest {
 
     @Test
     public void testNotificationTriggeredOnDifferentStation() throws Exception {
-        expectIncomingToast(STATION);
-        expectIncomingToast(STATION2);
+        expectArrivalToast(STATION);
+        expectArrivalToast(STATION2);
         replay(notifications);
         toast.onStation(STATION);
         toast.onStation(STATION2);
@@ -86,9 +85,9 @@ public class ToastStationListenerTest {
 
     @Test
     public void testNotificationTriggeredOnDisconnectAfterSecondStation() throws Exception {
-        expectIncomingToast(STATION);
-        expectIncomingToast(STATION2);
-        expectLeavingToast(STATION2);
+        expectArrivalToast(STATION);
+        expectArrivalToast(STATION2);
+        expectDepartureToast(STATION2);
         replay(notifications);
         toast.onStation(STATION);
         toast.onStation(STATION2);

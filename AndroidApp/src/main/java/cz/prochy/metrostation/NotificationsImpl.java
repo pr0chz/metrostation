@@ -21,14 +21,14 @@ public class NotificationsImpl implements Notifications {
 	}
 
     @Override
-	public void toastIncomingStation(String station) {
+	public void toastStationArrival(String station) {
         if (settings.getToastOnArrival()) {
             Toast.makeText(context, Check.notNull(station), Toast.LENGTH_SHORT).show();
         }
 	}
 
     @Override
-	public void toastLeavingStation(String station) {
+	public void toastStationDeparture(String station) {
         if (settings.getToastOnDeparture()) {
             Toast.makeText(context, Check.notNull(station) + " -> ???", Toast.LENGTH_SHORT).show();
         }
@@ -54,12 +54,12 @@ public class NotificationsImpl implements Notifications {
 	}
 
     @Override
-	public void notificationIncomingStation(String station) {
+	public void notifyStationArrival(String station) {
         showNotification(Check.notNull(station));
 	}
 
     @Override
-	public void notificationLeavingStation(String station) {
+	public void notifyStationDeparture(String station) {
 		showNotification(Check.notNull(station) + " -> ???");		
 	}
 

@@ -43,16 +43,16 @@ public class NotificationStationListenerTest {
         return () -> listener.onDisconnect();
     }
 
-    private Runnable expectIncomingNotification(String station) {
+    private Runnable expectArrivalNotification(String station) {
         return () -> {
-            notifications.notificationIncomingStation(eq(station));
+            notifications.notifyStationArrival(eq(station));
             expectLastCall().once();
         };
     }
 
-    private Runnable expectLeavingNotification(String station) {
+    private Runnable expectDepartureNotification(String station) {
         return () -> {
-            notifications.notificationLeavingStation(eq(station));
+            notifications.notifyStationDeparture(eq(station));
             expectLastCall().once();
         };
     }
@@ -72,7 +72,7 @@ public class NotificationStationListenerTest {
     }
 
     private void stepStation(String station) {
-        step(station(station), expectCancelTimeout(), expectIncomingNotification(station));
+        step(station(station), expectCancelTimeout(), expectArrivalNotification(station));
     }
 
     @Test
@@ -101,13 +101,13 @@ public class NotificationStationListenerTest {
     @Test
     public void testDisconnectAfterStationCreatesNotification() throws Exception {
         stepStation(STATION);
-        step(disconnect(), expectResetTimeout(), expectLeavingNotification(STATION));
+        step(disconnect(), expectResetTimeout(), expectDepartureNotification(STATION));
     }
 
     @Test
     public void testSecondDisconnectIsIgnored() throws Exception {
         stepStation(STATION);
-        step(disconnect(), expectResetTimeout(), expectLeavingNotification(STATION));
+        step(disconnect(), expectResetTimeout(), expectDepartureNotification(STATION));
         step(disconnect());
     }
 
@@ -127,7 +127,7 @@ public class NotificationStationListenerTest {
     @Test
     public void testStationIsNotifiedAfterDisconnectsAndUnknown() throws Exception {
         stepStation(STATION);
-        step(disconnect(), expectResetTimeout(), expectLeavingNotification(STATION));
+        step(disconnect(), expectResetTimeout(), expectDepartureNotification(STATION));
         step(unknownStation());
         stepStation(STATION);
     }

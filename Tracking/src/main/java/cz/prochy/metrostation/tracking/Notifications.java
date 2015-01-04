@@ -1,9 +1,9 @@
 package cz.prochy.metrostation.tracking;
 
 public interface Notifications {
-        void toastIncomingStation(String station);
-        void toastLeavingStation(String station);
-        void notificationIncomingStation(String station);
-        void notificationLeavingStation(String station);
+        void toastStationArrival(String station);
+        void toastStationDeparture(String station);
+        void notifyStationArrival(String station);
+        void notifyStationDeparture(String station);
         void hideNotification();
 }

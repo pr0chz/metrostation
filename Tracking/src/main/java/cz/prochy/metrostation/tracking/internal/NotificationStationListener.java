@@ -39,7 +39,7 @@ public class NotificationStationListener implements StationListener {
 		Check.notNull(station);
 		timeout.cancel();
 		lastStation = station;
-		notifications.notificationIncomingStation(station);
+		notifications.notifyStationArrival(station);
 	}
 	
 	private void resetTimer() {
@@ -58,7 +58,7 @@ public class NotificationStationListener implements StationListener {
 	public void onDisconnect() {
 		if (lastStation != null) {
 			resetTimer();
-			notifications.notificationLeavingStation(lastStation);
+			notifications.notifyStationDeparture(lastStation);
 			lastStation = null;
 		}
 	}
