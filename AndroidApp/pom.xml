@@ -15,18 +15,12 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<platform.version> 4.1.1.4
-		</platform.version>
+		<platform.version> 4.1.1.4</platform.version>
 		<android.plugin.version>3.8.2</android.plugin.version>
         <android.sdk.path>/home/jirka/adt-bundle-linux-x86_64-20140702/sdk</android.sdk.path>
-	</properties>
-
-	<repositories>
-		<repository>
-			<id>android-support-v4</id>
-			<url>file://${android.sdk.path}/extras/android/m2repository</url>
-		</repository>
-	</repositories>
+        <key.store.path>/home/jirka/AndroidProjects/keystore</key.store.path>
+        <key.alias>metrostation-key</key.alias>
+    </properties>
 
 	<dependencies>
         <dependency>
@@ -43,7 +37,7 @@
 		</dependency>
     </dependencies>
 	<build>
-		<finalName>${project.artifactId}</finalName>
+		<finalName>metrostation</finalName>
 		<pluginManagement>
 			<plugins>
 				<plugin>
@@ -78,11 +72,39 @@
                             <sdk>
                                 <platform>15</platform>
                             </sdk>
-                            <proguard>
-                                <skip>false</skip>
-                                <config>proguard-project.txt</config>
-                            </proguard>
+                            <sign>
+                                <debug>false</debug>
+                            </sign>
                         </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jarsigner-plugin</artifactId>
+                        <version>1.2</version>
+                        <executions>
+                            <execution>
+                                <id>signing</id>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                                <phase>package</phase>
+                                <inherited>true</inherited>
+                                <configuration>
+                                    <archiveDirectory></archiveDirectory>
+                                    <includes>
+                                        <include>target/*.apk</include>
+                                    </includes>
+                                    <keystore>${key.store.path}</keystore>
+                                    <storepass>${key.store.pass}</storepass>
+                                    <keypass>${key.pass}</keypass>
+                                    <alias>${key.alias}</alias>
+                                    <arguments>
+                                        <argument>-sigalg</argument><argument>MD5withRSA</argument>
+                                        <argument>-digestalg</argument><argument>SHA1</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>

@@ -8,16 +8,14 @@ about connected cells / disconnects and works completely offline.
 
 ## Building
 
- * Install *Android Support Repository* from *Android SDK Manager* - maven repo should be created in
-  `${sdk}/extras/android/m2repository`
  * Either change path to android sdk in pom file or supply it with cmdline param `-Dandroid.sdk.path=...path...`
+ * You should have API SDK 15 installed via Android SDK Manager
  * `mvn clean install`
  
 ## Release build
 
- * Use `release` profile
- * If you have problems with proguard complaining about Java 8, download new proguard (>5) and put it into 
- the android dir `sdk/tools/proguard`
+You have to activate profile release and specify some key-store related parameters (which are for obvious reasons
+not included in pom).
+
+`mvn clean install -Prelease -Dkey.store.pass=xxx -Dkey.pass=xxx -Dkey.store.path=/path/to/keystore -Dkey.alias=metrostation-key`
  
-
-
