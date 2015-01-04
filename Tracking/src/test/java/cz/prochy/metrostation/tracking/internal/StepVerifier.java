@@ -1,20 +1,20 @@
 package cz.prochy.metrostation.tracking.internal;
 
+import java.util.stream.Stream;
+
 import static org.easymock.EasyMock.*;
 
-public class StateVerifier {
+public class StepVerifier {
 
     private final Object [] mocks;
 
-    public StateVerifier(Object... mocks) {
+    public StepVerifier(Object... mocks) {
         this.mocks = mocks;
     }
 
     public void step(Runnable action, Runnable ... expects) {
         reset(mocks);
-        for (Runnable expect : expects) {
-            expect.run();
-        }
+        Stream.of(expects).forEach(Runnable::run);
         replay(mocks);
         action.run();
         verify(mocks);

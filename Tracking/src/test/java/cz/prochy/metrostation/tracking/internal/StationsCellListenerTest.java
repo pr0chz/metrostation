@@ -19,7 +19,7 @@ public class StationsCellListenerTest {
     private Stations stations;
     private StationListener target;
     private StationsCellListener listener;
-    private StateVerifier verifier;
+    private StepVerifier verifier;
 
     private Stations mockStations() {
         Stations stations = createNiceMock(Stations.class);
@@ -40,7 +40,7 @@ public class StationsCellListenerTest {
         stations = mockStations();
         target = createStrictMock(StationListener.class);
         listener = new StationsCellListener(stations, target);
-        verifier = new StateVerifier(target);
+        verifier = new StepVerifier(target);
     }
 
     public void step(Runnable action, Runnable expect) {

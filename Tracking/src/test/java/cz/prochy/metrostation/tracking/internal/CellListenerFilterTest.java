@@ -13,13 +13,13 @@ public class CellListenerFilterTest {
 
     private CellListenerFilter filter;
     private CellListener target;
-    private StateVerifier verifier;
+    private StepVerifier verifier;
 
     @Before
     public void setUp() throws Exception {
         target = createStrictMock(CellListener.class);
         filter = new CellListenerFilter(target);
-        verifier = new StateVerifier(target);
+        verifier = new StepVerifier(target);
     }
 
     public void step(Runnable action, Runnable expect) {

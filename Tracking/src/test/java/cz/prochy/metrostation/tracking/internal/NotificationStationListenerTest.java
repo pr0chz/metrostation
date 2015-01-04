@@ -17,14 +17,14 @@ public class NotificationStationListenerTest {
     private Notifications notifications;
     private Timeout timeout;
     private NotificationStationListener listener;
-    private StateVerifier verifier;
+    private StepVerifier verifier;
 
     @Before
     public void setUp() throws Exception {
         notifications = createStrictMock(Notifications.class);
         timeout = createStrictMock(Timeout.class);
         listener = new NotificationStationListener(notifications,timeout);
-        verifier = new StateVerifier(notifications, timeout);
+        verifier = new StepVerifier(notifications, timeout);
     }
 
     public void step(Runnable action, Runnable ... expects) {
