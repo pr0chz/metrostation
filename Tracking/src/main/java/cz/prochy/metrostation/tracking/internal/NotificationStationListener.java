@@ -4,6 +4,17 @@ import cz.prochy.metrostation.tracking.Check;
 import cz.prochy.metrostation.tracking.Notifications;
 import net.jcip.annotations.NotThreadSafe;
 
+/**
+ * This class statefully translates station events into notifications suitable to be presented in notification
+ * area. It implements following logic:
+ * <ul>
+ *     <li>On known station - notification appears for given station, notification will be visible as long as we are
+ *     on same known station</li>
+ *     <li>On unknown station - disappear timer is started and notification is left in place if any currently exist</li>
+ *     <li>On disconnect - if last location was known station, disappear timer is started and notification is
+ *     changed to "leaving station". Otherwise it does nothing.</li>
+ * </ul>
+ */
 @NotThreadSafe
 public class NotificationStationListener implements StationListener {
 
@@ -37,8 +48,10 @@ public class NotificationStationListener implements StationListener {
 	
 	@Override
 	public void onUnknownStation() {
-		resetTimer();
-		lastStation = null;
+        if (lastStation != null) {
+            resetTimer();
+            lastStation = null;
+        }
 	}
 	
 	@Override

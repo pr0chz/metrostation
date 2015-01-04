@@ -1,8 +1,6 @@
 package cz.prochy.metrostation.tracking.internal;
 
 import cz.prochy.metrostation.tracking.Stations;
-import cz.prochy.metrostation.tracking.internal.StationListener;
-import cz.prochy.metrostation.tracking.internal.StationsCellListener;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -21,6 +19,7 @@ public class StationsCellListenerTest {
     private Stations stations;
     private StationListener target;
     private StationsCellListener listener;
+    private StateVerifier verifier;
 
     private Stations mockStations() {
         Stations stations = createNiceMock(Stations.class);
@@ -41,14 +40,11 @@ public class StationsCellListenerTest {
         stations = mockStations();
         target = createStrictMock(StationListener.class);
         listener = new StationsCellListener(stations, target);
+        verifier = new StateVerifier(target);
     }
 
     public void step(Runnable action, Runnable expect) {
-        reset(target);
-        expect.run();
-        replay(target);
-        action.run();
-        verify(target);
+        verifier.step(action, expect);
     }
 
     public Runnable cellInfo(int cid, int lac) {

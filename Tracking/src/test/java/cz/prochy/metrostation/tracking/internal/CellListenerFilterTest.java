@@ -1,7 +1,6 @@
 package cz.prochy.metrostation.tracking.internal;
 
 import cz.prochy.metrostation.tracking.CellListener;
-import cz.prochy.metrostation.tracking.internal.CellListenerFilter;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -14,19 +13,17 @@ public class CellListenerFilterTest {
 
     private CellListenerFilter filter;
     private CellListener target;
+    private StateVerifier verifier;
 
     @Before
     public void setUp() throws Exception {
         target = createStrictMock(CellListener.class);
         filter = new CellListenerFilter(target);
+        verifier = new StateVerifier(target);
     }
 
     public void step(Runnable action, Runnable expect) {
-        reset(target);
-        expect.run();
-        replay(target);
-        action.run();
-        verify(target);
+        verifier.step(action, expect);
     }
 
     public Runnable cellInfo(int cid, int lac) {
