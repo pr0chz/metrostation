@@ -5,6 +5,10 @@ import net.jcip.annotations.NotThreadSafe;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * This class enables multiple StationListener instances to listen to single event source.
+ * Events are propagated to all listeners added to this object.
+ */
 @NotThreadSafe
 public class CompositeStationListener implements StationListener {
 	

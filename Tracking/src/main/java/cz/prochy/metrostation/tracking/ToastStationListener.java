@@ -2,6 +2,15 @@ package cz.prochy.metrostation.tracking;
 
 import net.jcip.annotations.NotThreadSafe;
 
+/**
+ * This class statefully translates StationListener events to toast Notification API calls.
+ * Logic is as follows:
+ * <ul>
+ *     <li>Notify arrival into known station - this is independent of previous state.</li>
+ *     <li>Notify leaving the station - only if we know our immediate previous station
+ *     (i.e. station was not unknown)</li>
+ * </ul>
+ */
 @NotThreadSafe
 public class ToastStationListener implements StationListener {
 
@@ -15,7 +24,7 @@ public class ToastStationListener implements StationListener {
 	
 	@Override
 	public void onStation(String station) {
-		currentStation = station;
+		currentStation = Check.notNull(station);
 		notifications.toastIncomingStation(station);
 	}
 
