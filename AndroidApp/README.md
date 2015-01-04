@@ -19,3 +19,8 @@ not included in pom).
 
 `mvn clean install -Prelease -Dkey.store.pass=xxx -Dkey.pass=xxx -Dkey.store.path=/path/to/keystore -Dkey.alias=metrostation-key`
  
+If you do not have a key already, you can generate it:
+
+`keytool -genkey -v -keystore keystore -alias metrostation-key -keyalg RSA -keysize 2048 -validity 10000`
+
+
