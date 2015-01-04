@@ -61,7 +61,8 @@ public class NotificationService extends Service {
 	}
 
 	private CellListener buildListeners() {
-        return Builder.createListener(scheduledService, 300, stations, new NotificationsImpl(this));
+        return Builder.createListener(scheduledService, TimeUnit.SECONDS.toSeconds(300), stations,
+                new NotificationsImpl(this));
 	}
 	
 	private TelephonyManager getTelephonyManager() {
@@ -70,7 +71,7 @@ public class NotificationService extends Service {
 	
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-    	Log.v(LOG_NAME, "Starting service...");
+    	Log.i(LOG_NAME, "Starting service...");
     	TelephonyManager tm = getTelephonyManager();
     	if (tm != null) {
     		rootListener = buildListeners();
@@ -89,9 +90,12 @@ public class NotificationService extends Service {
     
     @Override
     public void onDestroy() {
+        Log.i(LOG_NAME, "Shutting down service...");
     	scheduledService.shutdown();
     	try {
-			scheduledService.awaitTermination(1000, TimeUnit.MILLISECONDS);
+			if (!scheduledService.awaitTermination(1000, TimeUnit.MILLISECONDS)) {
+                Log.e(LOG_NAME, "Failed to stop scheduled service executor!");
+            }
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 		}

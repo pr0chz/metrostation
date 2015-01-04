@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Builder {
 
-    public static CellListener createListener(ScheduledExecutorService service, int timeoutS, Stations stations,
+    public static CellListener createListener(ScheduledExecutorService service, long timeoutS, Stations stations,
                                               Notifications notifications) {
 
         CompositeStationListener compositeStationListener = new CompositeStationListener();
