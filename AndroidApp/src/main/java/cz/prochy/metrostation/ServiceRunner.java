@@ -6,12 +6,15 @@ import android.content.Intent;
 import android.util.Log;
 
 public class ServiceRunner extends BroadcastReceiver {
-	
+
+    private Intent getIntent(Context context) {
+        return new Intent(context, NotificationService.class);
+    }
+
 	void runService(Context context) {
-        Intent serviceLauncher = new Intent(context, NotificationService.class);
-        context.startService(serviceLauncher);
+        context.startService(getIntent(context));
 	}
-	
+
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		if ("android.intent.action.BOOT_COMPLETED".equals(intent.getAction())) {

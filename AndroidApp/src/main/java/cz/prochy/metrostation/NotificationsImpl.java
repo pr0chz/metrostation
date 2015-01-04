@@ -1,8 +1,8 @@
 package cz.prochy.metrostation;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
-import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 import cz.prochy.metrostation.tracking.Check;
 import cz.prochy.metrostation.tracking.Notifications;
@@ -12,20 +12,26 @@ public class NotificationsImpl implements Notifications {
 	private static final int NOTIFICATION_ID = 0x6a3ab12f;
 	
 	private final Context context;
+    private final NotificationSettings settings;
 	
-	public NotificationsImpl(Context context) {
+	public NotificationsImpl(Context context, NotificationSettings settings) {
         this.context = Check.notNull(context);
+        this.settings = Check.notNull(settings);
         hideNotification(); // if service was killed there can be something hanging around
 	}
 
     @Override
 	public void toastIncomingStation(String station) {
-		Toast.makeText(context, Check.notNull(station), Toast.LENGTH_SHORT).show();
+        if (settings.getToastOnArrival()) {
+            Toast.makeText(context, Check.notNull(station), Toast.LENGTH_SHORT).show();
+        }
 	}
 
     @Override
 	public void toastLeavingStation(String station) {
-		//Toast.makeText(context, Check.notNull(station) + " -> ???", Toast.LENGTH_SHORT).show();
+        if (settings.getToastOnDeparture()) {
+            Toast.makeText(context, Check.notNull(station) + " -> ???", Toast.LENGTH_SHORT).show();
+        }
 	}
 
     private NotificationManager getNotificationManager() {
@@ -33,21 +39,23 @@ public class NotificationsImpl implements Notifications {
     }
 
 	private void showNotification(String message) {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
-    		.setSmallIcon(R.drawable.ic_stat_notify)
-    		.setContentTitle("Metro station")
-    		.setContentText(Check.notNull(message))
-    		.setAutoCancel(true);
+        if (settings.getTrayNotification()) {
+            Notification.Builder builder = new Notification.Builder(context)
+                    .setSmallIcon(R.drawable.ic_stat_notify)
+                    .setContentTitle("Metro station")
+                    .setContentText(Check.notNull(message))
+                    .setAutoCancel(true);
 
-        NotificationManager notificationManager = getNotificationManager();
-        if (notificationManager != null) {
-            notificationManager.notify(NOTIFICATION_ID, builder.build());
+            NotificationManager notificationManager = getNotificationManager();
+            if (notificationManager != null) {
+                notificationManager.notify(NOTIFICATION_ID, builder.getNotification());
+            }
         }
 	}
 
     @Override
 	public void notificationIncomingStation(String station) {
-		showNotification(Check.notNull(station));
+        showNotification(Check.notNull(station));
 	}
 
     @Override

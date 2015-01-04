@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+        android:title="MetroStation">
+
+    <CheckBoxPreference
+            android:key="toast_on_arrival"
+            android:title="@string/pref_toast_on_arrival_title"
+            android:summary="@string/pref_toast_on_arrival_desc"
+            android:defaultValue="true" />
+
+    <CheckBoxPreference
+            android:key="toast_on_leave"
+            android:title="@string/pref_toast_on_departure_title"
+            android:summary="@string/pref_toast_on_departure_desc"
+            android:defaultValue="false" />
+
+    <CheckBoxPreference
+            android:key="tray_notification"
+            android:title="@string/pref_notification_tray_title"
+            android:summary="@string/pref_notification_tray_desc"
+            android:defaultValue="true" />
+
+</PreferenceScreen>

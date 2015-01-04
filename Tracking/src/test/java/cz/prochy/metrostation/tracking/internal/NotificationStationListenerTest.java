@@ -127,7 +127,7 @@ public class NotificationStationListenerTest {
     @Test
     public void testStationIsNotifiedAfterDisconnectsAndUnknown() throws Exception {
         stepStation(STATION);
-        step(disconnect());
+        step(disconnect(), expectResetTimeout(), expectLeavingNotification(STATION));
         step(unknownStation());
         stepStation(STATION);
     }

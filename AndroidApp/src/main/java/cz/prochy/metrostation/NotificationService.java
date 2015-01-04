@@ -13,27 +13,36 @@ import android.telephony.gsm.GsmCellLocation;
 import android.util.Log;
 import cz.prochy.metrostation.tracking.Builder;
 import cz.prochy.metrostation.tracking.CellListener;
+import net.jcip.annotations.ThreadSafe;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+@ThreadSafe
 public class NotificationService extends Service {
 	
-	private static final PragueStations stations = new PragueStations();
-
+	private final static PragueStations stations = new PragueStations();
 	private final static String LOG_NAME = "MetroStation";
+
 	private final ScheduledExecutorService scheduledService = Executors.newSingleThreadScheduledExecutor();
 	
-	private CellListener rootListener;
+    private StateListener stateListener;
 
 	private class StateListener extends PhoneStateListener {
-		@Override
+
+        private final CellListener listener;
+
+        private StateListener(CellListener listener) {
+            this.listener = listener;
+        }
+
+        @Override
 		public void onServiceStateChanged(ServiceState serviceState) {
 			switch (serviceState.getState()) {
 			case ServiceState.STATE_OUT_OF_SERVICE:
 				Log.v(LOG_NAME, "Disconnected");
-				rootListener.disconnected();
+				listener.disconnected();
 				break;
 			case ServiceState.STATE_EMERGENCY_ONLY:
 			case ServiceState.STATE_IN_SERVICE:
@@ -44,17 +53,17 @@ public class NotificationService extends Service {
 					if (cl != null) {
 						if (cl instanceof GsmCellLocation) {
 							GsmCellLocation gcl = (GsmCellLocation) cl;
-							rootListener.cellInfo(gcl.getCid(), gcl.getLac());
+							listener.cellInfo(gcl.getCid(), gcl.getLac());
 						} else if (cl instanceof CdmaCellLocation) {
 							CdmaCellLocation ccl = (CdmaCellLocation) cl;
-							rootListener.cellInfo(ccl.getBaseStationId(), -1);
+							listener.cellInfo(ccl.getBaseStationId(), -1);
 						}
 					}
 				}
 				break;
 			default:
 				Log.v(LOG_NAME, "Other state");
-				rootListener.disconnected();
+				listener.disconnected();
 			}
 			super.onServiceStateChanged(serviceState);
 		}
@@ -62,24 +71,34 @@ public class NotificationService extends Service {
 
 	private CellListener buildListeners() {
         return Builder.createListener(scheduledService, TimeUnit.SECONDS.toSeconds(300), stations,
-                new NotificationsImpl(this));
+                new NotificationsImpl(this, new NotificationSettings(this)));
 	}
 	
 	private TelephonyManager getTelephonyManager() {
 		return (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 	}
-	
+
+    private void setListenerStatus(int mask) {
+        if (stateListener != null) {
+            TelephonyManager tm = getTelephonyManager();
+            if (tm != null) {
+                tm.listen(stateListener, mask);
+                Log.v(LOG_NAME, "Listener registered");
+            } else {
+                Log.e(LOG_NAME, "Failed to set listener state, unable to obtain telephony manager!");
+            }
+        } else {
+            Log.e(LOG_NAME, "Failed to set listener state, listener is not initialized!");
+        }
+    }
+
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-    	Log.i(LOG_NAME, "Starting service...");
-    	TelephonyManager tm = getTelephonyManager();
-    	if (tm != null) {
-    		rootListener = buildListeners();
-    		tm.listen(new StateListener(), PhoneStateListener.LISTEN_SERVICE_STATE);
-    		Log.v(LOG_NAME, "Listener registered");
-    	} else {
-    		Log.e(LOG_NAME, "Failed to run service, unable to obtain telephony manager!");
-    	}
+    public synchronized int onStartCommand(Intent intent, int flags, int startId) {
+        Log.i(LOG_NAME, "Starting service...");
+        if (stateListener == null) {
+            stateListener = new StateListener(buildListeners());
+        }
+        setListenerStatus(PhoneStateListener.LISTEN_SERVICE_STATE);
         return START_STICKY;
     }
     
@@ -89,8 +108,10 @@ public class NotificationService extends Service {
     }
     
     @Override
-    public void onDestroy() {
+    public synchronized void onDestroy() {
         Log.i(LOG_NAME, "Shutting down service...");
+        setListenerStatus(PhoneStateListener.LISTEN_NONE);
+        stateListener = null;
     	scheduledService.shutdown();
     	try {
 			if (!scheduledService.awaitTermination(1000, TimeUnit.MILLISECONDS)) {

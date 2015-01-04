@@ -41,14 +41,6 @@
 			<version>${platform.version}</version>
 			<scope>provided</scope>
 		</dependency>
-		<dependency>
-			<groupId>com.android.support</groupId>
-			<artifactId>support-v4</artifactId>
-			<version>19.1.0</version>
-			<type>jar</type>
-            <scope>compile</scope>
-		</dependency>
-
     </dependencies>
 	<build>
 		<finalName>${project.artifactId}</finalName>
@@ -68,7 +60,7 @@
 				<artifactId>android-maven-plugin</artifactId>
 				<configuration>
 					<sdk>
-						<platform>8</platform>
+						<platform>15</platform>
 					</sdk>
 				</configuration>
 			</plugin>
@@ -84,7 +76,7 @@
                         <artifactId>android-maven-plugin</artifactId>
                         <configuration>
                             <sdk>
-                                <platform>8</platform>
+                                <platform>15</platform>
                             </sdk>
                             <proguard>
                                 <skip>false</skip>

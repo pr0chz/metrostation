@@ -2,35 +2,31 @@ package cz.prochy.metrostation;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
+import android.preference.PreferenceFragment;
+import android.preference.PreferenceManager;
 
 public class SettingsActivity extends Activity {
 
+    public static class SettingsFragment extends PreferenceFragment {
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            addPreferencesFromResource(R.xml.notification_settings);
+        }
+    }
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_settings);
+        super.onCreate(savedInstanceState);
 
-		final Button button = (Button) findViewById(R.id.startServiceButton);
-        button.setOnClickListener(new View.OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				Log.v("activity", "Running service...");
-				new ServiceRunner().runService(SettingsActivity.this);
-				toast("Service started...");
-            }
-        });
+        PreferenceManager.setDefaultValues(this, R.xml.notification_settings, false);
 
+        getFragmentManager()
+                .beginTransaction()
+                .replace(android.R.id.content, new SettingsFragment())
+                .commit();
+
+        new ServiceRunner().runService(SettingsActivity.this);
 	}
 
-	private void toast(String message) {
-		Toast toast = Toast.makeText(SettingsActivity.this, message, Toast.LENGTH_LONG);
-		toast.show();
-	}
-	
 }
