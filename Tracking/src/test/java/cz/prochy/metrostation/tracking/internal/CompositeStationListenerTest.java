@@ -1,5 +1,7 @@
-package cz.prochy.metrostation.tracking;
+package cz.prochy.metrostation.tracking.internal;
 
+import cz.prochy.metrostation.tracking.internal.CompositeStationListener;
+import cz.prochy.metrostation.tracking.internal.StationListener;
 import org.junit.Before;
 import org.junit.Test;
 

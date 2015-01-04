@@ -1,4 +1,4 @@
-package cz.prochy.metrostation.tracking;
+package cz.prochy.metrostation.tracking.internal;
 
 /**
  * General interface for listener observing station events. All events act as a state transition

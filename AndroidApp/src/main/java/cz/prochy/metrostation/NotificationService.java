@@ -11,7 +11,8 @@ import android.telephony.TelephonyManager;
 import android.telephony.cdma.CdmaCellLocation;
 import android.telephony.gsm.GsmCellLocation;
 import android.util.Log;
-import cz.prochy.metrostation.tracking.*;
+import cz.prochy.metrostation.tracking.Builder;
+import cz.prochy.metrostation.tracking.CellListener;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -21,7 +22,7 @@ public class NotificationService extends Service {
 	
 	private static final PragueStations stations = new PragueStations();
 
-	private final static String LOG_NAME = "MetroNotifier";
+	private final static String LOG_NAME = "MetroStation";
 	private final ScheduledExecutorService scheduledService = Executors.newSingleThreadScheduledExecutor();
 	
 	private CellListener rootListener;
@@ -60,17 +61,7 @@ public class NotificationService extends Service {
 	}
 
 	private CellListener buildListeners() {
-		CompositeStationListener compositeStationListener = new CompositeStationListener();
-		StationsCellListener stationsCellListener = new StationsCellListener(stations, compositeStationListener);
-		CellListener rootListener = new CellListenerFilter(stationsCellListener);
-		
-		NotificationsImpl notificationsImpl = new NotificationsImpl(this);
-		Timeout timeout = new Timeout(scheduledService, 300, TimeUnit.SECONDS);
-		
-		compositeStationListener.addListener(new ToastStationListener(notificationsImpl));
-		compositeStationListener.addListener(new NotificationStationListener(notificationsImpl, timeout));
-		
-		return rootListener;
+        return Builder.createListener(scheduledService, 300, stations, new NotificationsImpl(this));
 	}
 	
 	private TelephonyManager getTelephonyManager() {

@@ -1,5 +1,8 @@
-package cz.prochy.metrostation.tracking;
+package cz.prochy.metrostation.tracking.internal;
 
+import cz.prochy.metrostation.tracking.CellListener;
+import cz.prochy.metrostation.tracking.Check;
+import cz.prochy.metrostation.tracking.Stations;
 import net.jcip.annotations.NotThreadSafe;
 
 @NotThreadSafe

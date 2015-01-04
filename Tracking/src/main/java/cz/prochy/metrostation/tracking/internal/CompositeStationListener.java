@@ -1,5 +1,6 @@
-package cz.prochy.metrostation.tracking;
+package cz.prochy.metrostation.tracking.internal;
 
+import cz.prochy.metrostation.tracking.Check;
 import net.jcip.annotations.NotThreadSafe;
 
 import java.util.HashSet;

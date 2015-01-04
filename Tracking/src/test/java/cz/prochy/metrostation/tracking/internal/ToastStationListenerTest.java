@@ -1,5 +1,7 @@
-package cz.prochy.metrostation.tracking;
+package cz.prochy.metrostation.tracking.internal;
 
+import cz.prochy.metrostation.tracking.Notifications;
+import cz.prochy.metrostation.tracking.internal.ToastStationListener;
 import org.junit.Before;
 import org.junit.Test;
 
