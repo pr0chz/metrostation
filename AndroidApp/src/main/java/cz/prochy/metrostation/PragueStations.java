@@ -34,7 +34,7 @@ public class PragueStations implements Stations {
 		}
 	}
 	
-	private final Map<Long, String> cellMap = new HashMap<>();
+	private final Map<Long, String> cellMap = new HashMap<Long,String>();
 
 	public PragueStations() {
 		
