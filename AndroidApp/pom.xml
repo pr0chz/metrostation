@@ -37,7 +37,7 @@
 		</dependency>
     </dependencies>
 	<build>
-		<finalName>metrostation</finalName>
+		<finalName>metrostation-prg</finalName>
 		<pluginManagement>
 			<plugins>
 				<plugin>

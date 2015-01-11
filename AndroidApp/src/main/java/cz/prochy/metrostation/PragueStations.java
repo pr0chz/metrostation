@@ -14,12 +14,16 @@ public class PragueStations implements Stations {
 
     private final static String UNKNOWN_STATION = "???";
 	
-	private int id(String op, int cid, int lac) {
-		return cid;
+	private long id(String op, int cid, int lac) {
+        return id(cid, lac);
 	}
+
+    private long id(int cid, int lac) {
+        return ((long)cid << 32) | (lac & 0xffffffffL);
+    }
 	
-	private void station(String name, int ... ids) {
-		for (int id : ids) {
+	private void station(String name, long ... ids) {
+		for (long id : ids) {
             if (!cellMap.containsKey(id)) {
                 cellMap.put(id, name);
             } else {
@@ -30,7 +34,7 @@ public class PragueStations implements Stations {
 		}
 	}
 	
-	private final Map<Integer, String> cellMap = new HashMap<Integer, String>();
+	private final Map<Long, String> cellMap = new HashMap<>();
 
 	public PragueStations() {
 		
@@ -424,17 +428,16 @@ public class PragueStations implements Stations {
 				id(O2, 203717002, 1131),
 				id(O2, 203718138, 1131)
 				);
-		
 	}
 
     @Override
 	public boolean isStation(int cellId, int lac) {
-		return cellMap.containsKey(cellId);
+		return cellMap.containsKey(id(cellId, lac));
 	}
 
     @Override
 	public String getName(int cellId, int lac) {
-		return cellMap.get(cellId);
+		return cellMap.get(id(cellId, lac));
 	}
 
 	
