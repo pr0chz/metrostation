@@ -6,6 +6,13 @@
 MetroStation is an simple app for notifying you on which subway station you are located. It utilizes information
 about connected cells / disconnects and works completely offline.
 
+## Versioning
+
+Maven versioning is not utilized as it currently makes not sense. Versioning is done just in AndroidManifest.xml and 
+should be done according to semver. All releases should be tagged with annotated tag:
+
+git tag -a v1.0.0
+
 ## Building
 
  * Either change path to android sdk in pom file or supply it with cmdline param `-Dandroid.sdk.path=...path...`
