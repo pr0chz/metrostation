@@ -75,6 +75,7 @@
                             <sign>
                                 <debug>false</debug>
                             </sign>
+                            <release>true</release>
                         </configuration>
                     </plugin>
                     <plugin>
