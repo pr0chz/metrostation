@@ -1,6 +1,7 @@
 package cz.prochy.metrostation.tracking.internal;
 
 import cz.prochy.metrostation.tracking.Notifications;
+import cz.prochy.metrostation.tracking.Station;
 import org.easymock.Capture;
 import org.easymock.CaptureType;
 import org.junit.Before;
@@ -11,8 +12,8 @@ import static org.junit.Assert.assertTrue;
 
 public class NotificationStationListenerTest {
 
-    private final static String STATION = "12station232";
-    private final static String STATION2 = "12station233";
+    private final static Station STATION = new Station("12station232");
+    private final static Station STATION2 = new Station("12station233");
 
     private Notifications notifications;
     private Timeout timeout;
@@ -31,7 +32,7 @@ public class NotificationStationListenerTest {
         verifier.step(action, expects);
     }
 
-    private Runnable station(String station) {
+    private Runnable station(Station station) {
         return () -> listener.onStation(station);
     }
 
@@ -43,16 +44,16 @@ public class NotificationStationListenerTest {
         return () -> listener.onDisconnect();
     }
 
-    private Runnable expectArrivalNotification(String station) {
+    private Runnable expectArrivalNotification(Station station) {
         return () -> {
-            notifications.notifyStationArrival(eq(station));
+            notifications.notifyStationArrival(eq(station.getName()));
             expectLastCall().once();
         };
     }
 
-    private Runnable expectDepartureNotification(String station) {
+    private Runnable expectDepartureNotification(Station station) {
         return () -> {
-            notifications.notifyStationDeparture(eq(station));
+            notifications.notifyStationDeparture(eq(station.getName()));
             expectLastCall().once();
         };
     }
@@ -71,7 +72,7 @@ public class NotificationStationListenerTest {
         };
     }
 
-    private void stepStation(String station) {
+    private void stepStation(Station station) {
         step(station(station), expectCancelTimeout(), expectArrivalNotification(station));
     }
 

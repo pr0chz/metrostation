@@ -11,7 +11,9 @@ public class Builder {
                                               Notifications notifications) {
 
         CompositeStationListener compositeStationListener = new CompositeStationListener();
-        StationsCellListener stationsCellListener = new StationsCellListener(stations, compositeStationListener);
+        PredictiveStationListener predictiveStationListener =
+                new PredictiveStationListener(compositeStationListener, new Timeout(service, 1, TimeUnit.MINUTES));
+        StationsCellListener stationsCellListener = new StationsCellListener(stations, predictiveStationListener);
         CellListener rootListener = new CellListenerFilter(stationsCellListener);
 
         Timeout timeout = new Timeout(service, timeoutS, TimeUnit.SECONDS);

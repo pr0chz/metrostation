@@ -1,6 +1,7 @@
 package cz.prochy.metrostation.tracking.internal;
 
 import cz.prochy.metrostation.tracking.Notifications;
+import cz.prochy.metrostation.tracking.Station;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -8,8 +9,8 @@ import static org.easymock.EasyMock.*;
 
 public class ToastStationListenerTest {
 
-    private final static String STATION = "12station12";
-    private final static String STATION2 = "12station12_2";
+    private final static Station STATION = new Station("12station12");
+    private final static Station STATION2 = new Station("12station12_2");
 
     private Notifications notifications;
     private ToastStationListener toast;
@@ -31,13 +32,13 @@ public class ToastStationListenerTest {
     }
 
 
-    private void expectArrivalToast(String station) {
-        notifications.toastStationArrival(eq(station));
+    private void expectArrivalToast(Station station) {
+        notifications.toastStationArrival(eq(station.getName()));
         expectLastCall();
     }
 
-    private void expectDepartureToast(String station) {
-        notifications.toastStationDeparture(eq(station));
+    private void expectDepartureToast(Station station) {
+        notifications.toastStationDeparture(eq(station.getName()));
         expectLastCall();
     }
 

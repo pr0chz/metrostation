@@ -1,5 +1,7 @@
 package cz.prochy.metrostation;
 
+import cz.prochy.metrostation.tracking.LineBuilder;
+import cz.prochy.metrostation.tracking.Station;
 import cz.prochy.metrostation.tracking.Stations;
 
 import java.util.HashMap;
@@ -12,9 +14,15 @@ public class PragueStations implements Stations {
 	private final static String O2 = "o2";
 	private final static String UNKNOWN = "unknown";
 
-    private final static String UNKNOWN_STATION = "???";
-	
-	private long id(String op, int cid, int lac) {
+    private final static Station UNKNOWN_STATION = new Station("???");
+
+    private final LineBuilder lineA = new LineBuilder();
+    private final LineBuilder lineB = new LineBuilder();
+    private final LineBuilder lineC = new LineBuilder();
+
+    private final Map<Long, Station> cellMap = new HashMap<>();
+
+    private long id(String op, int cid, int lac) {
         return id(cid, lac);
 	}
 
@@ -22,10 +30,12 @@ public class PragueStations implements Stations {
         return ((long)cid << 32) | (lac & 0xffffffffL);
     }
 	
-	private void station(String name, long ... ids) {
+	private void station(LineBuilder lineBuilder, String name, long ... ids) {
+        Station station = new Station(name);
+        lineBuilder.addStation(station);
 		for (long id : ids) {
             if (!cellMap.containsKey(id)) {
-                cellMap.put(id, name);
+                cellMap.put(id, station);
             } else {
                 // multiple mappings for single id
                 // do not confuse user and present it as unknown station
@@ -34,7 +44,6 @@ public class PragueStations implements Stations {
 		}
 	}
 	
-	private final Map<Long, String> cellMap = new HashMap<Long,String>();
 
 	public PragueStations() {
 		
@@ -44,7 +53,7 @@ public class PragueStations implements Stations {
 		 * Tmobile - OK
 		 * O2 - OK
 		 */
-		station("Depo Hostivař", 
+		station(lineA, "Depo Hostivař",
 				id(VODAFONE, 115607, 38300), 
 				id(VODAFONE, 14853, 38400),
 				id(TMOBILE, 1988, 21820),
@@ -57,63 +66,63 @@ public class PragueStations implements Stations {
 				id(O2, 203781755, 1146),
 				id(O2, 10307073, 1146)
 				);
-		station("Skalka", 
+		station(lineA, "Skalka",
 				id(VODAFONE, 18812, 34300),
 				id(TMOBILE, 2216, 21780),
 				id(O2, 21098, 1139)
 				);
-		station("Strašnická",
+		station(lineA, "Strašnická",
 				id(VODAFONE, 18809, 34300),
 				id(TMOBILE, 2215, 21780),
 				id(O2, 21099, 1139)
 				);
-		station("Želivského",
+		station(lineA, "Želivského",
 				id(VODAFONE, 18811, 34300),
 				id(TMOBILE, 2214, 21780),
 				id(O2, 21397, 1139)
 				);
-		station("Flora",
+		station(lineA, "Flora",
 				id(VODAFONE, 18808, 34300),
 				id(TMOBILE, 2213, 21780),
 				id(O2, 21398, 1139)
 				);
-		station("Jiřího z Poděbrad",
+		station(lineA, "Jiřího z Poděbrad",
 				id(VODAFONE, 18810, 34300),
 				id(TMOBILE, 2212, 21780),
 				id(O2, 21399, 1139)
 				);
-		station("Náměstí Míru",
+		station(lineA, "Náměstí Míru",
 				id(VODAFONE, 18807, 34300),
 				id(TMOBILE, 2211, 21780),
 				id(O2, 21298, 1139)
 				);
-		station("Muzeum",
+		station(lineA, "Muzeum <A>",
 				id(VODAFONE, 18806, 34300),
 				id(TMOBILE, 2210, 21780),
 				id(O2, 21194, 1139)
 				);
-		station("Můstek",
+		station(lineA, "Můstek <A>",
 				id(VODAFONE, 18805, 34300),
 				id(TMOBILE, 2209, 21780),
 				id(O2, 21195, 1139),
 				id(O2, 21192, 1139)
 				);
-		station("Staroměstská",
+		station(lineA, "Staroměstská",
 				id(VODAFONE, 18804, 34300),
 				id(TMOBILE, 2208, 21780),
 				id(O2, 21196, 1139)
 				);
-		station("Malostranská",
+		station(lineA, "Malostranská",
 				id(VODAFONE, 18802, 34300),
 				id(TMOBILE, 2207, 21780),
 				id(O2, 21197, 1139)
 				);
-		station("Hradčanská",
+		station(lineA, "Hradčanská",
 				id(VODAFONE, 18803, 34300),
 				id(TMOBILE, 2206, 21780),
 				id(O2, 21198, 1139)
 				);
-		station("Dejvická",
+		station(lineA, "Dejvická",
 				id(VODAFONE, 18801, 34300),
 				id(TMOBILE, 2205, 21780),
 				id(O2, 21199, 1139)
@@ -126,33 +135,33 @@ public class PragueStations implements Stations {
 		 * O2 - OK
 		 */
 		
-		station("Háje",
+		station(lineC, "Háje",
 				id(VODAFONE, 18842, 34300),
 				id(TMOBILE, 2806, 21780),
 				id(O2, 21491, 1139)
 				);
-		station("Opatov",
+		station(lineC, "Opatov",
 				id(VODAFONE, 18856, 34300),
 				id(TMOBILE, 2800, 21780),
 				id(O2, 21492, 1139) 
 				);
-		station("Chodov",
+		station(lineC, "Chodov",
 				id(VODAFONE, 18847, 34300),
 				id(TMOBILE, 2802, 21780),
 				id(O2, 21493, 1139) 
 				);
-		station("Roztyly",
+		station(lineC, "Roztyly",
 				id(VODAFONE, 18845, 34300),
 				id(TMOBILE, 2801, 21780),
 				id(O2, 21494, 1139) 
 				);
-		station("Kačerov",
+		station(lineC, "Kačerov",
 				id(VODAFONE, 18855, 34300),
 				id(TMOBILE, 2800, 21780),
 				id(O2, 21495, 1139),
 				id(O2, 1425, 1145)  
 				);
-		station("Budějovická",
+		station(lineC, "Budějovická",
 				id(VODAFONE, 18844, 34300),
 				id(UNKNOWN, 6668472, 21820),
 				id(UNKNOWN, 6668475, 21820),
@@ -160,17 +169,17 @@ public class PragueStations implements Stations {
 				id(TMOBILE, 2928, 21820),
 				id(O2, 21496, 1139) 
 				);
-		station("Pankrác",
+		station(lineC, "Pankrác",
 				id(VODAFONE, 18846, 34300),
 				id(TMOBILE, 2802, 21780),
 				id(O2, 21497, 1139)  
 				);
-		station("Pražského povstání",
+		station(lineC, "Pražského povstání",
 				id(VODAFONE, 18843, 34300),
 				id(TMOBILE, 2801, 21780),
 				id(O2, 21498, 1139)  
 				);
-		station("Vyšehrad",
+		station(lineC, "Vyšehrad",
 				id(VODAFONE, 18854, 34300),
 				id(VODAFONE, 380273, 34300),
 				id(TMOBILE, 2804, 21780),
@@ -180,18 +189,18 @@ public class PragueStations implements Stations {
 				id(O2, 10405, 1138),
 				id(O2, 1263, 1137)
 				);
-		station("I.P.Pavlova",
+		station(lineC, "I.P.Pavlova",
 				id(VODAFONE, 18841, 34300),
 				id(TMOBILE, 2803, 21780),
 				id(O2, 21299, 1139)  
 				);
-		station("Muzeum",
+		station(lineC, "Muzeum <C>",
 				id(VODAFONE, 18853, 34300),
 				id(TMOBILE, 2804, 21780),
 				id(O2, 21194, 1139),
 				id(O2, 21198, 1139)   // maybe Hlavak
 				);
-		station("Hlavní nádraží",
+		station(lineC, "Hlavní nádraží",
 				id(VODAFONE, 526594, 34300),
 				id(VODAFONE, 379012, 34300),
 				id(VODAFONE, 18839, 34300),
@@ -199,18 +208,18 @@ public class PragueStations implements Stations {
 				id(TMOBILE, 2691, 21780),
 				id(O2, 21199, 1139)    
 				);		
-		station("Florenc",
+		station(lineC, "Florenc <C>",
 				id(VODAFONE, 18836, 34300),
 				id(TMOBILE, 2258, 21780),
 				id(O2, 21899, 1139),
 				id(O2, 10301440, 1138)
 				);
-		station("Vltavská",
+		station(lineC, "Vltavská",
 				id(VODAFONE, 18838, 34300),
 				id(TMOBILE, 2425, 21780),
 				id(O2, 21798, 1139) 
 				);
-		station("Nádraží Holešovice",
+		station(lineC, "Nádraží Holešovice",
 				id(VODAFONE, 18835, 34300),
 				id(VODAFONE, 19121, 34700),
 				id(TMOBILE, 2256, 21780),
@@ -218,17 +227,17 @@ public class PragueStations implements Stations {
 				id(O2, 21799, 1139),
 				id(O2, 1701, 1182)
 				);
-		station("Kobylisy",
+		station(lineC, "Kobylisy",
 				id(VODAFONE, 18837, 34300),
 				id(TMOBILE, 2255, 21780),
 				id(O2, 21894, 1139)
 				);
-		station("Ládví",
+		station(lineC, "Ládví",
 				id(VODAFONE, 18840, 34300),
 				id(TMOBILE, 2425, 21780),
 				id(O2, 21893, 1139) 
 				);
-		station("Střížkov",
+		station(lineC, "Střížkov",
 				id(VODAFONE, 12002, 34700),
 				id(VODAFONE, 186674, 34700),
 				id(UNKNOWN, 203717516, 1182),
@@ -239,13 +248,13 @@ public class PragueStations implements Stations {
 				id(O2, 203717516, 1182),
 				id(O2, 10342401, 1182)
 				);
-		station("Prosek",
+		station(lineC, "Prosek",
 				id(VODAFONE, 18849, 34300),
 				id(TMOBILE, 2435, 21780),
 				id(O2, 21992, 1139),
 				id(O2, 203717116, 1182)
 				);
-		station("Letňany",
+		station(lineC, "Letňany",
 				id(VODAFONE, 18850, 34300),
 				id(TMOBILE, 2436, 21780),
 				id(O2, 21991, 1139)
@@ -259,7 +268,7 @@ public class PragueStations implements Stations {
 		//   - some stations missing completely
 		// O2 done - OK
 		
-		station("Zličín",
+		station(lineB, "Zličín",
 				id(VODAFONE, 18814, 34300),
 				id(VODAFONE, 119268, 38100),
 				id(TMOBILE, 1938, 17250),
@@ -267,12 +276,12 @@ public class PragueStations implements Stations {
 				id(TMOBILE, 6721430, 17250),
 				id(O2, 21599, 1139)
 				);
-		station("Stodůlky",
+		station(lineB, "Stodůlky",
 				id(VODAFONE, 18816, 34300),
 				id(TMOBILE, 2430, 21780),
 				id(O2, 21598, 1139)
 				);
-		station("Luka",				
+		station(lineB, "Luka",
 				id(VODAFONE, 18818, 34300),
 				id(VODAFONE, 119079, 38100),
 				id(VODAFONE, 11141, 38100),
@@ -283,7 +292,7 @@ public class PragueStations implements Stations {
 				id(O2, 21597, 1139),
 				id(O2, 203782717, 1153)
 				);
-		station("Lužiny",
+		station(lineB, "Lužiny",
 				id(VODAFONE, 18820, 34300),
 				id(VODAFONE, 118668, 38100),
 				id(VODAFONE, 16032, 38100),
@@ -293,7 +302,7 @@ public class PragueStations implements Stations {
 				id(O2, 203782702, 1153),
 				id(O2, 1523, 1153)
 				);
-		station("Hůrka",
+		station(lineB, "Hůrka",
 				id(VODAFONE, 16062, 38100),
 				id(VODAFONE, 118807, 38100),
 				id(VODAFONE, 13341, 38100),
@@ -310,97 +319,97 @@ public class PragueStations implements Stations {
 				id(TMOBILE, 2431, 21780),
 				id(O2, 21595, 1139)
 				);
-		station("Nové Butovice",
+		station(lineB, "Nové Butovice",
 				id(VODAFONE, 18823, 34300),
 				id(O2, 21594, 1139)
 				// missing t-mobile
 				);
-		station("Jinonice",
+		station(lineB, "Jinonice",
 				id(VODAFONE, 18822, 34300),
 				id(O2, 21593, 1139)
 				// missing tmobile
 				);
-		station("Radlická",
+		station(lineB, "Radlická",
 				id(VODAFONE, 18824, 34300),
 				id(TMOBILE, 2431, 21780),
 				id(O2, 21592, 1139)
 				);
-		station("Smíchovské nádraží",
+		station(lineB, "Smíchovské nádraží",
 				id(VODAFONE, 18819, 34300),
 				id(TMOBILE, 2805, 21780),
 				id(O2, 21591, 1139)
 				);
-		station("Anděl",
+		station(lineB, "Anděl",
 				id(VODAFONE, 18817, 34300),
 				id(O2, 21590, 1139)
 				// missing tmobile
 				);
-		station("Karlovo náměstí",
+		station(lineB, "Karlovo náměstí",
 				id(VODAFONE, 18815, 34300),
 				id(TMOBILE, 2432, 21780),
 				id(O2, 21297, 1139)
 				);
-		station("Národní třída",
+		station(lineB, "Národní třída",
 				id(VODAFONE, 18813, 34300),
 				id(TMOBILE, 2433, 21780),
 				id(O2, 21193, 1139)
 				);
-		station("Můstek",
+		station(lineB, "Můstek <B>",
 				id(VODAFONE, 18825, 34300),
 				id(TMOBILE, 2434, 21780),
 				id(TMOBILE, 2209, 21780),
 				id(O2, 21192, 1139)
 				);
-		station("Náměstí Republiky",
+		station(lineB, "Náměstí Republiky",
 				id(VODAFONE, 18851, 34300),
 				id(TMOBILE, 2433, 21780),
 				id(O2, 21191, 1139)
 				);
 		
 		// block of non-unique t-mobile cells
-		station("Florenc",
+		station(lineB, "Florenc <B>",
 				id(VODAFONE, 18827, 34300),
 				id(TMOBILE, 2428, 21780),
 				id(O2, 21898, 1139)
 				);
-		station("Křižíkova",
+		station(lineB, "Křižíkova",
 				id(VODAFONE, 18830, 34300),
 				id(TMOBILE, 2427, 21780),
 				id(O2, 21897, 1139)
 				);
-		station("Invalidovna",
+		station(lineB, "Invalidovna",
 				id(VODAFONE, 18828, 34300),
 				id(TMOBILE, 2428, 21780),
 				id(O2, 21896, 1139)
 				);
-		station("Palmovka",
+		station(lineB, "Palmovka",
 				id(VODAFONE, 18831, 34300),
 				id(TMOBILE, 2427, 21780),
 				id(O2, 21895, 1139)
 				);
-		station("Českomoravská",
+		station(lineB, "Českomoravská",
 				id(VODAFONE, 18829, 34300),
 				id(TMOBILE, 2428, 21780),
 				id(O2, 21999, 1139)
 				);
-		station("Vysočanská",
+		station(lineB, "Vysočanská",
 				id(VODAFONE, 18832, 34300),
 				id(TMOBILE, 2427, 21780),
 				id(O2, 21998, 1139)
 				);
 		// end of block
 		
-		station("Kolbenova",
+		station(lineB, "Kolbenova",
 				id(VODAFONE, 18833, 34300),
 				id(TMOBILE, 2429, 21780),
 				id(O2, 21997, 1139)
 				);
-		station("Hloubětín",
+		station(lineB, "Hloubětín",
 				id(VODAFONE, 18834, 34300),
 				id(TMOBILE, 2429, 21780),
 				id(O2, 21996, 1139)
 				);
-		station("Rajská zahrada",
+		station(lineB, "Rajská zahrada",
 				id(VODAFONE, 12764, 38400),
 				id(VODAFONE, 115952, 38400),
 				id(VODAFONE, 115949, 38400),
@@ -411,7 +420,7 @@ public class PragueStations implements Stations {
 				id(O2, 1905, 1131),
 				id(O2, 203717688, 1131)
 				);
-		station("Černý most",
+		station(lineB, "Černý most",
 				id(VODAFONE, 115948, 38400),
 				id(VODAFONE, 115957, 38400),
 				id(VODAFONE, 115958, 38400),
@@ -436,9 +445,8 @@ public class PragueStations implements Stations {
 	}
 
     @Override
-	public String getName(int cellId, int lac) {
+	public Station getStation(int cellId, int lac) {
 		return cellMap.get(id(cellId, lac));
 	}
 
-	
 }

@@ -1,5 +1,6 @@
 package cz.prochy.metrostation.tracking.internal;
 
+import cz.prochy.metrostation.tracking.Station;
 import cz.prochy.metrostation.tracking.Stations;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,11 +11,11 @@ public class StationsCellListenerTest {
 
     private final static int CID1 = 1000;
     private final static int LAC1 = 2000;
-    private final static String STATION1 = "station1";
+    private final static Station STATION1 = new Station("station1");
 
     private final static int CID2 = 4000;
     private final static int LAC2 = 4000;
-    private final static String STATION2 = "station2";
+    private final static Station STATION2 = new Station("station2");
 
     private Stations stations;
     private StationListener target;
@@ -24,13 +25,13 @@ public class StationsCellListenerTest {
     private Stations mockStations() {
         Stations stations = createNiceMock(Stations.class);
         expect(stations.isStation(eq(CID1), eq(LAC1))).andReturn(true).anyTimes();
-        expect(stations.getName(eq(CID1), eq(LAC1))).andReturn(STATION1).anyTimes();
+        expect(stations.getStation(eq(CID1), eq(LAC1))).andReturn(STATION1).anyTimes();
 
         expect(stations.isStation(eq(CID2), eq(LAC2))).andReturn(true).anyTimes();
-        expect(stations.getName(eq(CID2), eq(LAC2))).andReturn(STATION2).anyTimes();
+        expect(stations.getStation(eq(CID2), eq(LAC2))).andReturn(STATION2).anyTimes();
 
         expect(stations.isStation(anyInt(), anyInt())).andReturn(false).anyTimes();
-        expect(stations.getName(anyInt(), anyInt())).andReturn(null).anyTimes();
+        expect(stations.getStation(anyInt(), anyInt())).andReturn(null).anyTimes();
         replay(stations);
         return stations;
     }
@@ -55,7 +56,7 @@ public class StationsCellListenerTest {
         return () -> listener.disconnected();
     }
 
-    public Runnable expectStation(String station) {
+    public Runnable expectStation(Station station) {
         return () -> {
             target.onStation(eq(station));
             expectLastCall().once();

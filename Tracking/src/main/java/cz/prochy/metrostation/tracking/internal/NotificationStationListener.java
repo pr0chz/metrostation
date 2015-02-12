@@ -2,6 +2,7 @@ package cz.prochy.metrostation.tracking.internal;
 
 import cz.prochy.metrostation.tracking.Check;
 import cz.prochy.metrostation.tracking.Notifications;
+import cz.prochy.metrostation.tracking.Station;
 import net.jcip.annotations.NotThreadSafe;
 
 /**
@@ -21,7 +22,7 @@ public class NotificationStationListener implements StationListener {
 	private final Notifications notifications;
 	private final Timeout timeout;
 		
-	private String lastStation;
+	private Station lastStation;
 	
 	private final Runnable cancelNotificationTask = new Runnable() {
 		public void run() {
@@ -35,11 +36,11 @@ public class NotificationStationListener implements StationListener {
 	}
 	
 	@Override
-	public void onStation(String station) {
+	public void onStation(Station station) {
 		Check.notNull(station);
 		timeout.cancel();
 		lastStation = station;
-		notifications.notifyStationArrival(station);
+		notifications.notifyStationArrival(station.getName());
 	}
 	
 	private void resetTimer() {
@@ -58,7 +59,7 @@ public class NotificationStationListener implements StationListener {
 	public void onDisconnect() {
 		if (lastStation != null) {
 			resetTimer();
-			notifications.notifyStationDeparture(lastStation);
+			notifications.notifyStationDeparture(lastStation.getName());
 			lastStation = null;
 		}
 	}

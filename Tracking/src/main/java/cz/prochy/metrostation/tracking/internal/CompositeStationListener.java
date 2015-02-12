@@ -1,6 +1,7 @@
 package cz.prochy.metrostation.tracking.internal;
 
 import cz.prochy.metrostation.tracking.Check;
+import cz.prochy.metrostation.tracking.Station;
 import net.jcip.annotations.NotThreadSafe;
 
 import java.util.HashSet;
@@ -20,7 +21,7 @@ public class CompositeStationListener implements StationListener {
 	}
 	
 	@Override
-	public void onStation(String station) {
+	public void onStation(Station station) {
         Check.notNull(station);
 		for (StationListener listener : listeners) {
 			listener.onStation(station);

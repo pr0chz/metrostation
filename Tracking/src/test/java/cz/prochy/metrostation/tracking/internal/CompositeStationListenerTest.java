@@ -1,7 +1,6 @@
 package cz.prochy.metrostation.tracking.internal;
 
-import cz.prochy.metrostation.tracking.internal.CompositeStationListener;
-import cz.prochy.metrostation.tracking.internal.StationListener;
+import cz.prochy.metrostation.tracking.Station;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -9,7 +8,7 @@ import static org.easymock.EasyMock.*;
 
 public class CompositeStationListenerTest {
 
-    private final static String STATION = "21station21";
+    private final static Station STATION = new Station("21station21");
 
     private CompositeStationListener composite;
     private StationListener listener1;

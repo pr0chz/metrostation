@@ -2,20 +2,21 @@ package cz.prochy.metrostation.tracking.internal;
 
 import cz.prochy.metrostation.tracking.CellListener;
 import cz.prochy.metrostation.tracking.Check;
+import cz.prochy.metrostation.tracking.Station;
 import cz.prochy.metrostation.tracking.Stations;
 import net.jcip.annotations.NotThreadSafe;
 
 @NotThreadSafe
 public class StationsCellListener implements CellListener {
 
-    private final static String INITIAL = "~~INITIAL~~";
-	private final static String UNKNOWN_STATION = "~~UNKNOWN~~";
-    private final static String DISCONNECTED = "~~DISCONNECTED~~";
+    private final static Station INITIAL = new Station("~~INITIAL~~");
+	private final static Station UNKNOWN_STATION = new Station("~~UNKNOWN~~");
+    private final static Station DISCONNECTED = new Station("~~DISCONNECTED~~");
 
 	private final Stations stations;
 	private final StationListener listener;
 
-    private String state = INITIAL;
+    private Station state = INITIAL;
 
     public StationsCellListener(Stations stations, StationListener listener) {
 		this.stations = Check.notNull(stations);
@@ -25,7 +26,7 @@ public class StationsCellListener implements CellListener {
 	@Override
 	public void cellInfo(int cid, int lac) {
 		if (stations.isStation(cid, lac)) {
-			String name = stations.getName(cid, lac);
+			Station name = stations.getStation(cid, lac);
 			if (!state.equals(name)) {
 				state = name;
 				listener.onStation(state);
