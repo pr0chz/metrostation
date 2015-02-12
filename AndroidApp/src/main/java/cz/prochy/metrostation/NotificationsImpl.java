@@ -44,6 +44,7 @@ public class NotificationsImpl implements Notifications {
                     .setSmallIcon(R.drawable.ic_stat_notify)
                     .setContentTitle("Metro station")
                     .setContentText(Check.notNull(message))
+                    .setPriority(Notification.PRIORITY_HIGH)
                     .setAutoCancel(true);
 
             NotificationManager notificationManager = getNotificationManager();
