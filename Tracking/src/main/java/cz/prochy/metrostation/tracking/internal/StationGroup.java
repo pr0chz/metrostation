@@ -70,9 +70,9 @@ public class StationGroup {
     }
 
     public StationGroup intersect(StationGroup other) {
-       StationGroup s = new StationGroup(this);
-       s.set.retainAll(other.set);
-       return s;
+        StationGroup s = new StationGroup(this);
+        s.set.retainAll(other.set);
+        return s;
     }
 
     public StationGroup left() {

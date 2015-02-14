@@ -10,30 +10,30 @@ import java.util.concurrent.TimeUnit;
 @ThreadSafe
 public class Timeout {
 
-	private final long timeout;
-	private final TimeUnit timeUnit;
-	
-	private final ScheduledExecutorService executor;
-	
-	private Future<?> taskFuture;
-	
-	public Timeout(ScheduledExecutorService executor, long timeout, TimeUnit timeUnit) {
-		this.executor = Check.notNull(executor);
-		this.timeout = timeout;
-		this.timeUnit = Check.notNull(timeUnit);
-	}
-	
-	public synchronized void reset(Runnable task) {
-		Check.notNull(task);
-		cancel();
-		taskFuture = executor.schedule(task, timeout, timeUnit);
-	}
-	
-	public synchronized void cancel() {
-		if (taskFuture != null) {
-			taskFuture.cancel(false);
+    private final long timeout;
+    private final TimeUnit timeUnit;
+
+    private final ScheduledExecutorService executor;
+
+    private Future<?> taskFuture;
+
+    public Timeout(ScheduledExecutorService executor, long timeout, TimeUnit timeUnit) {
+        this.executor = Check.notNull(executor);
+        this.timeout = timeout;
+        this.timeUnit = Check.notNull(timeUnit);
+    }
+
+    public synchronized void reset(Runnable task) {
+        Check.notNull(task);
+        cancel();
+        taskFuture = executor.schedule(task, timeout, timeUnit);
+    }
+
+    public synchronized void cancel() {
+        if (taskFuture != null) {
+            taskFuture.cancel(false);
             taskFuture = null;
-		}		
-	}
-	
+        }
+    }
+
 }

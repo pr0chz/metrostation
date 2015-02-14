@@ -16,33 +16,33 @@ import net.jcip.annotations.NotThreadSafe;
 @NotThreadSafe
 public class ToastStationListener implements StationListener {
 
-	private StationGroup currentStations;
+    private StationGroup currentStations;
     private StationGroup currentPredictions;
-	
-	private final Notifications notifications;
-	
-	public ToastStationListener(Notifications notifications) {
-		this.notifications = Check.notNull(notifications);
-	}
-	
-	@Override
-	public void onStation(StationGroup stations, StationGroup predictions) {
+
+    private final Notifications notifications;
+
+    public ToastStationListener(Notifications notifications) {
+        this.notifications = Check.notNull(notifications);
+    }
+
+    @Override
+    public void onStation(StationGroup stations, StationGroup predictions) {
         currentStations = Check.notNull(stations);
         currentPredictions = Check.notNull(predictions);
         if (currentStations.hasSingleValue()) {
             notifications.toastStationArrival(currentStations.getStation().getName());
         }
-	}
+    }
 
-	@Override
-	public void onDisconnect() {
-		if (currentStations.hasSingleValue()) {
+    @Override
+    public void onDisconnect() {
+        if (currentStations.hasSingleValue()) {
             if (currentPredictions.hasSingleValue()) {
                 notifications.toastStationDeparture(currentStations.getStation().getName(), currentPredictions.getStation().getName());
             } else {
                 notifications.toastStationDeparture(currentStations.getStation().getName());
             }
-		}
-	}
-	
+        }
+    }
+
 }

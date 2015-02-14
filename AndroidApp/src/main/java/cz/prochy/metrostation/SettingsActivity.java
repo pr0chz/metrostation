@@ -15,8 +15,8 @@ public class SettingsActivity extends Activity {
         }
     }
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         PreferenceManager.setDefaultValues(this, R.xml.notification_settings, false);
@@ -27,6 +27,6 @@ public class SettingsActivity extends Activity {
                 .commit();
 
         new ServiceRunner().runService(SettingsActivity.this);
-	}
+    }
 
 }

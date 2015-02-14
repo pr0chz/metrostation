@@ -22,15 +22,15 @@ import java.util.concurrent.TimeUnit;
 
 @ThreadSafe
 public class NotificationService extends Service {
-	
-	private final static PragueStations stations = new PragueStations();
-	private final static String LOG_NAME = "MetroStation";
 
-	private final ScheduledExecutorService scheduledService = Executors.newSingleThreadScheduledExecutor();
-	
+    private final static PragueStations stations = new PragueStations();
+    private final static String LOG_NAME = "MetroStation";
+
+    private final ScheduledExecutorService scheduledService = Executors.newSingleThreadScheduledExecutor();
+
     private StateListener stateListener;
 
-	private class StateListener extends PhoneStateListener {
+    private class StateListener extends PhoneStateListener {
 
         private final CellListener listener;
 
@@ -39,45 +39,45 @@ public class NotificationService extends Service {
         }
 
         @Override
-		public void onServiceStateChanged(ServiceState serviceState) {
-			switch (serviceState.getState()) {
-			case ServiceState.STATE_OUT_OF_SERVICE:
-				Log.v(LOG_NAME, "Disconnected");
-				listener.disconnected();
-				break;
-			case ServiceState.STATE_EMERGENCY_ONLY:
-			case ServiceState.STATE_IN_SERVICE:
-				TelephonyManager tm = getTelephonyManager();
-				if (tm != null) {
-					CellLocation cl = tm.getCellLocation();
-				
-					if (cl != null) {
-						if (cl instanceof GsmCellLocation) {
-							GsmCellLocation gcl = (GsmCellLocation) cl;
-							listener.cellInfo(gcl.getCid(), gcl.getLac());
-						} else if (cl instanceof CdmaCellLocation) {
-							CdmaCellLocation ccl = (CdmaCellLocation) cl;
-							listener.cellInfo(ccl.getBaseStationId(), -1);
-						}
-					}
-				}
-				break;
-			default:
-				Log.v(LOG_NAME, "Other state");
-				listener.disconnected();
-			}
-			super.onServiceStateChanged(serviceState);
-		}
-	}
+        public void onServiceStateChanged(ServiceState serviceState) {
+            switch (serviceState.getState()) {
+                case ServiceState.STATE_OUT_OF_SERVICE:
+                    Log.v(LOG_NAME, "Disconnected");
+                    listener.disconnected();
+                    break;
+                case ServiceState.STATE_EMERGENCY_ONLY:
+                case ServiceState.STATE_IN_SERVICE:
+                    TelephonyManager tm = getTelephonyManager();
+                    if (tm != null) {
+                        CellLocation cl = tm.getCellLocation();
 
-	private CellListener buildListeners() {
+                        if (cl != null) {
+                            if (cl instanceof GsmCellLocation) {
+                                GsmCellLocation gcl = (GsmCellLocation) cl;
+                                listener.cellInfo(gcl.getCid(), gcl.getLac());
+                            } else if (cl instanceof CdmaCellLocation) {
+                                CdmaCellLocation ccl = (CdmaCellLocation) cl;
+                                listener.cellInfo(ccl.getBaseStationId(), -1);
+                            }
+                        }
+                    }
+                    break;
+                default:
+                    Log.v(LOG_NAME, "Other state");
+                    listener.disconnected();
+            }
+            super.onServiceStateChanged(serviceState);
+        }
+    }
+
+    private CellListener buildListeners() {
         return Builder.createListener(scheduledService, TimeUnit.SECONDS.toSeconds(300), stations,
                 new NotificationsImpl(this, new NotificationSettings(this)));
-	}
-	
-	private TelephonyManager getTelephonyManager() {
-		return (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-	}
+    }
+
+    private TelephonyManager getTelephonyManager() {
+        return (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+    }
 
     private void setListenerStatus(int mask) {
         if (stateListener != null) {
@@ -102,25 +102,25 @@ public class NotificationService extends Service {
         setListenerStatus(PhoneStateListener.LISTEN_SERVICE_STATE);
         return START_STICKY;
     }
-    
+
     @Override
     public IBinder onBind(Intent intent) {
         return null;
     }
-    
+
     @Override
     public synchronized void onDestroy() {
         Log.i(LOG_NAME, "Shutting down service...");
         setListenerStatus(PhoneStateListener.LISTEN_NONE);
         stateListener = null;
-    	scheduledService.shutdown();
-    	try {
-			if (!scheduledService.awaitTermination(1000, TimeUnit.MILLISECONDS)) {
+        scheduledService.shutdown();
+        try {
+            if (!scheduledService.awaitTermination(1000, TimeUnit.MILLISECONDS)) {
                 Log.e(LOG_NAME, "Failed to stop scheduled service executor!");
             }
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-		}
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 
 }

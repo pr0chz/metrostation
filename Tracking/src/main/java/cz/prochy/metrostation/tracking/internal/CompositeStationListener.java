@@ -12,28 +12,28 @@ import java.util.Set;
  */
 @NotThreadSafe
 public class CompositeStationListener implements StationListener {
-	
-	private final Set<StationListener> listeners = new HashSet<StationListener>();
 
-	public void addListener(StationListener listener) {
-		listeners.add(Check.notNull(listener));
-	}
-	
-	@Override
-	public void onStation(StationGroup stations, StationGroup predictions) {
+    private final Set<StationListener> listeners = new HashSet<StationListener>();
+
+    public void addListener(StationListener listener) {
+        listeners.add(Check.notNull(listener));
+    }
+
+    @Override
+    public void onStation(StationGroup stations, StationGroup predictions) {
         Check.notNull(stations);
         Check.notNull(predictions);
-		for (StationListener listener : listeners) {
-			listener.onStation(stations, predictions);
-		}
-	}
+        for (StationListener listener : listeners) {
+            listener.onStation(stations, predictions);
+        }
+    }
 
-	@Override
-	public void onDisconnect() {
-		for (StationListener listener : listeners) {
-			listener.onDisconnect();
-		}
-	}
-	
+    @Override
+    public void onDisconnect() {
+        for (StationListener listener : listeners) {
+            listener.onDisconnect();
+        }
+    }
+
 
 }

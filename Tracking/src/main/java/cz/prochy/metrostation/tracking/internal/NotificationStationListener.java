@@ -18,14 +18,14 @@ import net.jcip.annotations.NotThreadSafe;
 @NotThreadSafe
 public class NotificationStationListener implements StationListener {
 
-	private final Notifications notifications;
+    private final Notifications notifications;
 
-	private StationGroup lastStations = new StationGroup();
+    private StationGroup lastStations = new StationGroup();
     private StationGroup lastPredictions = new StationGroup();
 
-	public NotificationStationListener(Notifications notifications) {
-		this.notifications = Check.notNull(notifications);
-	}
+    public NotificationStationListener(Notifications notifications) {
+        this.notifications = Check.notNull(notifications);
+    }
 
     @Override
     public void onStation(StationGroup stations, StationGroup predictions) {
@@ -38,11 +38,11 @@ public class NotificationStationListener implements StationListener {
         }
     }
 
-	@Override
-	public void onDisconnect() {
+    @Override
+    public void onDisconnect() {
         if (lastStations.hasSingleValue()) {
             notifications.notifyStationDeparture(lastStations.getStation().getName());
         }
-	}
-	
+    }
+
 }
