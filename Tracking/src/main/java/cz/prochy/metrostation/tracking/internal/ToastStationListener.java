@@ -2,7 +2,6 @@ package cz.prochy.metrostation.tracking.internal;
 
 import cz.prochy.metrostation.tracking.Check;
 import cz.prochy.metrostation.tracking.Notifications;
-import cz.prochy.metrostation.tracking.Station;
 import net.jcip.annotations.NotThreadSafe;
 
 /**
@@ -17,7 +16,8 @@ import net.jcip.annotations.NotThreadSafe;
 @NotThreadSafe
 public class ToastStationListener implements StationListener {
 
-	private Station currentStation;
+	private StationGroup currentStations;
+    private StationGroup currentPredictions;
 	
 	private final Notifications notifications;
 	
@@ -26,21 +26,22 @@ public class ToastStationListener implements StationListener {
 	}
 	
 	@Override
-	public void onStation(Station station) {
-		currentStation = Check.notNull(station);
-		notifications.toastStationArrival(station.getName());
+	public void onStation(StationGroup stations, StationGroup predictions) {
+        currentStations = Check.notNull(stations);
+        currentPredictions = Check.notNull(predictions);
+        if (currentStations.hasSingleValue()) {
+            notifications.toastStationArrival(currentStations.getStation().getName());
+        }
 	}
 
 	@Override
-	public void onUnknownStation() {
-		currentStation = null;
-	}
-	
-	@Override
 	public void onDisconnect() {
-		if (currentStation != null) {
-			notifications.toastStationDeparture(currentStation.getName());
-			currentStation = null;
+		if (currentStations.hasSingleValue()) {
+            if (currentPredictions.hasSingleValue()) {
+                notifications.toastStationDeparture(currentStations.getStation().getName(), currentPredictions.getStation().getName());
+            } else {
+                notifications.toastStationDeparture(currentStations.getStation().getName());
+            }
 		}
 	}
 	

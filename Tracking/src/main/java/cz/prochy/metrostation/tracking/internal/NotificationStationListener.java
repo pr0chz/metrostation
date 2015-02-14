@@ -2,7 +2,6 @@ package cz.prochy.metrostation.tracking.internal;
 
 import cz.prochy.metrostation.tracking.Check;
 import cz.prochy.metrostation.tracking.Notifications;
-import cz.prochy.metrostation.tracking.Station;
 import net.jcip.annotations.NotThreadSafe;
 
 /**
@@ -20,48 +19,30 @@ import net.jcip.annotations.NotThreadSafe;
 public class NotificationStationListener implements StationListener {
 
 	private final Notifications notifications;
-	private final Timeout timeout;
-		
-	private Station lastStation;
-	
-	private final Runnable cancelNotificationTask = new Runnable() {
-		public void run() {
-			notifications.hideNotification();
-		};
-	};
-	
-	public NotificationStationListener(Notifications notifications, Timeout timeout) {
+
+	private StationGroup lastStations = new StationGroup();
+    private StationGroup lastPredictions = new StationGroup();
+
+	public NotificationStationListener(Notifications notifications) {
 		this.notifications = Check.notNull(notifications);
-		this.timeout = Check.notNull(timeout);
 	}
-	
-	@Override
-	public void onStation(Station station) {
-		Check.notNull(station);
-		timeout.cancel();
-		lastStation = station;
-		notifications.notifyStationArrival(station.getName());
-	}
-	
-	private void resetTimer() {
-		timeout.reset(cancelNotificationTask);
-	}
-	
-	@Override
-	public void onUnknownStation() {
-        if (lastStation != null) {
-            resetTimer();
-            lastStation = null;
+
+    @Override
+    public void onStation(StationGroup stations, StationGroup predictions) {
+        Check.notNull(stations);
+        Check.notNull(predictions);
+        lastStations = stations;
+        lastPredictions = predictions;
+        if (stations.hasSingleValue()) {
+            notifications.notifyStationArrival(stations.getStation().getName());
         }
-	}
-	
+    }
+
 	@Override
 	public void onDisconnect() {
-		if (lastStation != null) {
-			resetTimer();
-			notifications.notifyStationDeparture(lastStation.getName());
-			lastStation = null;
-		}
+        if (lastStations.hasSingleValue()) {
+            notifications.notifyStationDeparture(lastStations.getStation().getName());
+        }
 	}
 	
 }

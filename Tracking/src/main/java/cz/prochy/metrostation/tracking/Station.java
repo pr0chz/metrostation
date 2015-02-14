@@ -1,32 +1,36 @@
 package cz.prochy.metrostation.tracking;
 
+import java.util.Collections;
+import java.util.Set;
+
 public class Station {
 
     private final String name;
-    private Station prev;
-    private Station next;
+    private Set<Station> prev = Collections.emptySet();
+    private Set<Station> next = Collections.emptySet();
 
     public Station(String name) {
         this.name = name;
     }
 
-    public Station getPrev() {
+    public Set<Station> getPrev() {
         return prev;
     }
 
     public void setPrev(Station prev) {
-        this.prev = prev;
+        this.prev = Collections.singleton(prev);
     }
 
-    public Station getNext() {
+    public Set<Station> getNext() {
         return next;
     }
 
     public void setNext(Station next) {
-        this.next = next;
+        this.next = Collections.singleton(next);
     }
 
     public String getName() {
         return name;
     }
+
 }

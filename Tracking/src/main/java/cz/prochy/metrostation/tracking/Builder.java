@@ -11,15 +11,12 @@ public class Builder {
                                               Notifications notifications) {
 
         CompositeStationListener compositeStationListener = new CompositeStationListener();
-        PredictiveStationListener predictiveStationListener =
-                new PredictiveStationListener(compositeStationListener, new Timeout(service, 25, TimeUnit.SECONDS));
-        StationsCellListener stationsCellListener = new StationsCellListener(stations, predictiveStationListener);
-        CellListener rootListener = new CellListenerFilter(stationsCellListener);
-
-        Timeout timeout = new Timeout(service, timeoutS, TimeUnit.SECONDS);
-
         compositeStationListener.addListener(new ToastStationListener(notifications));
-        compositeStationListener.addListener(new NotificationStationListener(notifications, timeout));
+        compositeStationListener.addListener(new NotificationStationListener(notifications));
+
+        Tracker tracker = new Tracker(compositeStationListener, TimeUnit.MINUTES.toMillis(3));
+        StationsCellListener stationsCellListener = new StationsCellListener(stations, tracker);
+        CellListener rootListener = new CellListenerFilter(stationsCellListener);
 
         return rootListener;
     }

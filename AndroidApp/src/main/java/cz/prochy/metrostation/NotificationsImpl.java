@@ -71,5 +71,9 @@ public class NotificationsImpl implements Notifications {
             notificationManager.cancel(NOTIFICATION_ID);
         }
 	}
-	
+
+    @Override
+    public void toastStationDeparture(String station, String prediction) {
+        // TODO
+    }
 }

@@ -1,7 +1,6 @@
 package cz.prochy.metrostation.tracking.internal;
 
 import cz.prochy.metrostation.tracking.Check;
-import cz.prochy.metrostation.tracking.Station;
 import net.jcip.annotations.NotThreadSafe;
 
 import java.util.HashSet;
@@ -21,20 +20,14 @@ public class CompositeStationListener implements StationListener {
 	}
 	
 	@Override
-	public void onStation(Station station) {
-        Check.notNull(station);
+	public void onStation(StationGroup stations, StationGroup predictions) {
+        Check.notNull(stations);
+        Check.notNull(predictions);
 		for (StationListener listener : listeners) {
-			listener.onStation(station);
+			listener.onStation(stations, predictions);
 		}
 	}
 
-	@Override
-	public void onUnknownStation() {
-		for (StationListener listener : listeners) {
-			listener.onUnknownStation();
-		}
-	}
-	
 	@Override
 	public void onDisconnect() {
 		for (StationListener listener : listeners) {

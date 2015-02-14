@@ -1,7 +1,6 @@
 package cz.prochy.metrostation.tracking.internal;
 
 import cz.prochy.metrostation.tracking.Station;
-import cz.prochy.metrostation.tracking.Stations;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -25,13 +24,13 @@ public class StationsCellListenerTest {
     private Stations mockStations() {
         Stations stations = createNiceMock(Stations.class);
         expect(stations.isStation(eq(CID1), eq(LAC1))).andReturn(true).anyTimes();
-        expect(stations.getStation(eq(CID1), eq(LAC1))).andReturn(STATION1).anyTimes();
+        expect(stations.getStations(eq(CID1), eq(LAC1))).andReturn(STATION1).anyTimes();
 
         expect(stations.isStation(eq(CID2), eq(LAC2))).andReturn(true).anyTimes();
-        expect(stations.getStation(eq(CID2), eq(LAC2))).andReturn(STATION2).anyTimes();
+        expect(stations.getStations(eq(CID2), eq(LAC2))).andReturn(STATION2).anyTimes();
 
         expect(stations.isStation(anyInt(), anyInt())).andReturn(false).anyTimes();
-        expect(stations.getStation(anyInt(), anyInt())).andReturn(null).anyTimes();
+        expect(stations.getStations(anyInt(), anyInt())).andReturn(null).anyTimes();
         replay(stations);
         return stations;
     }
