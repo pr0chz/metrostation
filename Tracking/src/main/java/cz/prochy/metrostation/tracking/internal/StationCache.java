@@ -1,5 +1,6 @@
 package cz.prochy.metrostation.tracking.internal;
 
+import cz.prochy.metrostation.tracking.Check;
 import cz.prochy.metrostation.tracking.Station;
 
 import java.util.*;
@@ -18,7 +19,7 @@ public class StationCache {
 
         public Entry(long timestamp, Station station) {
             this.timestamp = timestamp;
-            this.station = Objects.requireNonNull(station);
+            this.station = Check.notNull(station);
         }
     }
 

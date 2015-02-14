@@ -1,13 +1,11 @@
 package cz.prochy.metrostation.tracking;
 
-import java.util.Objects;
-
 public class LineBuilder {
 
     private Station last;
 
     public void addStation(Station station) {
-        Objects.requireNonNull(station);
+        Check.notNull(station);
         if (last == null) {
             last = station;
         } else {

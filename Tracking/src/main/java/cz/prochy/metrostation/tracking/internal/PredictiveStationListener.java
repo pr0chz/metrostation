@@ -1,9 +1,9 @@
 package cz.prochy.metrostation.tracking.internal;
 
+import cz.prochy.metrostation.tracking.Check;
 import cz.prochy.metrostation.tracking.Station;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class PredictiveStationListener implements StationListener {
@@ -14,8 +14,8 @@ public class PredictiveStationListener implements StationListener {
     private final StationCache stationCache = new StationCache(TimeUnit.MINUTES.toMillis(5));
 
     public PredictiveStationListener(StationListener listener, Timeout timeout) {
-        this.listener = Objects.requireNonNull(listener);
-        this.timeout = Objects.requireNonNull(timeout);
+        this.listener = Check.notNull(listener);
+        this.timeout = Check.notNull(timeout);
     }
 
     @Override

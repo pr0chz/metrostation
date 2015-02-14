@@ -96,12 +96,12 @@ public class PragueStations implements Stations {
 				id(TMOBILE, 2211, 21780),
 				id(O2, 21298, 1139)
 				);
-		station(lineA, "Muzeum <A>",
+		station(lineA, "Muzeum",
 				id(VODAFONE, 18806, 34300),
 				id(TMOBILE, 2210, 21780),
 				id(O2, 21194, 1139)
 				);
-		station(lineA, "Můstek <A>",
+		station(lineA, "Můstek",
 				id(VODAFONE, 18805, 34300),
 				id(TMOBILE, 2209, 21780),
 				id(O2, 21195, 1139),
@@ -194,7 +194,7 @@ public class PragueStations implements Stations {
 				id(TMOBILE, 2803, 21780),
 				id(O2, 21299, 1139)  
 				);
-		station(lineC, "Muzeum <C>",
+		station(lineC, "Muzeum",
 				id(VODAFONE, 18853, 34300),
 				id(TMOBILE, 2804, 21780),
 				id(O2, 21194, 1139),
@@ -208,7 +208,7 @@ public class PragueStations implements Stations {
 				id(TMOBILE, 2691, 21780),
 				id(O2, 21199, 1139)    
 				);		
-		station(lineC, "Florenc <C>",
+		station(lineC, "Florenc",
 				id(VODAFONE, 18836, 34300),
 				id(TMOBILE, 2258, 21780),
 				id(O2, 21899, 1139),
@@ -354,7 +354,7 @@ public class PragueStations implements Stations {
 				id(TMOBILE, 2433, 21780),
 				id(O2, 21193, 1139)
 				);
-		station(lineB, "Můstek <B>",
+		station(lineB, "Můstek",
 				id(VODAFONE, 18825, 34300),
 				id(TMOBILE, 2434, 21780),
 				id(TMOBILE, 2209, 21780),
@@ -367,7 +367,7 @@ public class PragueStations implements Stations {
 				);
 		
 		// block of non-unique t-mobile cells
-		station(lineB, "Florenc <B>",
+		station(lineB, "Florenc",
 				id(VODAFONE, 18827, 34300),
 				id(TMOBILE, 2428, 21780),
 				id(O2, 21898, 1139)

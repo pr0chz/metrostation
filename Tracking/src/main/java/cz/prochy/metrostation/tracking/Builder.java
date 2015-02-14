@@ -12,7 +12,7 @@ public class Builder {
 
         CompositeStationListener compositeStationListener = new CompositeStationListener();
         PredictiveStationListener predictiveStationListener =
-                new PredictiveStationListener(compositeStationListener, new Timeout(service, 1, TimeUnit.MINUTES));
+                new PredictiveStationListener(compositeStationListener, new Timeout(service, 25, TimeUnit.SECONDS));
         StationsCellListener stationsCellListener = new StationsCellListener(stations, predictiveStationListener);
         CellListener rootListener = new CellListenerFilter(stationsCellListener);
 
