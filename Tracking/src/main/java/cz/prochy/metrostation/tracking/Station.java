@@ -1,8 +1,11 @@
 package cz.prochy.metrostation.tracking;
 
+import net.jcip.annotations.NotThreadSafe;
+
 import java.util.Collections;
 import java.util.Set;
 
+@NotThreadSafe
 public class Station {
 
     private final String name;

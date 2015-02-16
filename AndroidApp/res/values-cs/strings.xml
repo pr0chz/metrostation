@@ -5,10 +5,15 @@
     <string name="pref_toast_on_arrival_title">Příjezd do stanice</string>
     <string name="pref_toast_on_departure_title">Odjezd ze stanice</string>
     <string name="pref_notification_tray_title">Zobrazení aktuální stanice</string>
+    <string name="pref_station_predictions_title">Predikce příští stanice</string>
+
 
     <string name="pref_toast_on_arrival_desc">Notifikace se zobrazí po příjezdu do stanice.</string>
     <string name="pref_toast_on_departure_desc">Notifikace se zobrazí po výjezdu ze stanice.</string>
     <string name="pref_notification_tray_desc">Zobrazí aktuální nebo poslední stanici v notifikační liště.
         Zmizí krátce poté, co opustíte oblast metra.</string>
+    <string name="pref_station_predictions_desc">Pokud to bude možné, budete notifikováni o stanici s předstihem
+        ještě než do ní přijedete. Směr jízdy bude detekován během cca 2 stanic. Predikce fungují se všemi typy
+        notifikací.</string>
 
 </resources>

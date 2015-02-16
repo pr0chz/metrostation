@@ -1,7 +1,9 @@
 package cz.prochy.metrostation.tracking.internal;
 
+import cz.prochy.metrostation.tracking.Check;
 import cz.prochy.metrostation.tracking.Station;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -12,6 +14,17 @@ public class StationGroup {
 
     private final Set<Station> set;
 
+    private class Immutable extends StationGroup {
+        public Immutable(StationGroup group) {
+            super(group);
+        }
+
+        @Override
+        public void add(Station station) {
+            throw new UnsupportedOperationException("Object is immutable!");
+        }
+    }
+
     public StationGroup() {
         this.set = new HashSet<>();
     }
@@ -21,23 +34,14 @@ public class StationGroup {
     }
 
     public void add(Station station) {
-        set.add(station);
+        set.add(Check.notNull(station));
     }
 
     public boolean isEmpty() {
         return set.isEmpty();
     }
 
-    private class Immutable extends StationGroup {
-        public Immutable(StationGroup group) {
-            super(group);
-        }
 
-        @Override
-        public void add(Station station) {
-            throw new IllegalStateException("Object is immutable!");
-        }
-    }
 
     public StationGroup immutable() {
         if (this instanceof Immutable) {
@@ -50,16 +54,20 @@ public class StationGroup {
         return EMPTY_GROUP;
     }
 
+    public static StationGroup from(Station ... stations) {
+        StationGroup group = new StationGroup();
+        for (Station station : stations) {
+            group.add(station);
+        }
+        return group;
+    }
+
     public boolean hasSingleValue() {
         return set.size() == 1;
     }
 
-    public StationGroup toSingleValue() {
-        if (hasSingleValue()) {
-            return this;
-        } else {
-            return EMPTY_GROUP;
-        }
+    public boolean hasMultipleValues() {
+        return set.size() > 1;
     }
 
     public Station getStation() {
@@ -91,5 +99,24 @@ public class StationGroup {
         return s;
     }
 
+    public Set<Station> asSet() {
+        return Collections.unmodifiableSet(set);
+    }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof StationGroup)) return false;
+
+        StationGroup that = (StationGroup) o;
+
+        if (!set.equals(that.set)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return set.hashCode();
+    }
 }

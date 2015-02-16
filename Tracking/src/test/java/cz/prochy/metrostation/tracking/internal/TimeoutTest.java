@@ -1,9 +1,10 @@
 package cz.prochy.metrostation.tracking.internal;
 
-import cz.prochy.metrostation.tracking.internal.Timeout;
+import cz.prochy.metrostation.tracking.Timeout;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -43,8 +44,9 @@ public class TimeoutTest {
         expect(executorService.schedule(same(task), eq(TIMEOUT), eq(TIMEUNIT))).andReturn(future);
     }
 
-    private void expectCancel() {
+    private void expectCancel() throws ExecutionException, InterruptedException {
         expect(future.cancel(eq(false))).andReturn(true);
+        expect(future.get()).andReturn(new Object());
     }
 
     @Test

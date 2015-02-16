@@ -1,51 +1,21 @@
 package cz.prochy.metrostation.tracking.internal;
 
 import cz.prochy.metrostation.tracking.LineBuilder;
-import cz.prochy.metrostation.tracking.Station;
 
-import java.util.HashMap;
-import java.util.Map;
-
-public class PragueStations implements Stations {
+public class PragueStations extends Stations {
 
     private final static String VODAFONE = "vodafone";
     private final static String TMOBILE = "t-mobile";
     private final static String O2 = "o2";
     private final static String UNKNOWN = "unknown";
 
-    private final LineBuilder lineA = new LineBuilder();
-    private final LineBuilder lineB = new LineBuilder();
-    private final LineBuilder lineC = new LineBuilder();
+    @Override
+    void buildStations() {
 
-    private final Map<Long, StationGroup> cellMap = new HashMap<>();
+        final LineBuilder lineA = new LineBuilder();
+        final LineBuilder lineB = new LineBuilder();
+        final LineBuilder lineC = new LineBuilder();
 
-    private long id(String op, int cid, int lac) {
-        return id(cid, lac);
-    }
-
-    private long id(int cid, int lac) {
-        return ((long)cid << 32) | (lac & 0xffffffffL);
-    }
-
-    private void station(LineBuilder lineBuilder, String name, long ... ids) {
-        Station station = new Station(name);
-        lineBuilder.addStation(station);
-        for (long id : ids) {
-            if (!cellMap.containsKey(id)) {
-                cellMap.put(id, new StationGroup());
-            }
-            cellMap.get(id).add(station);
-        }
-    }
-
-    private void sealLists() {
-        for (Long id : cellMap.keySet()) {
-            cellMap.put(id, cellMap.get(id).immutable());
-        }
-    }
-
-    public PragueStations() {
-		
 		/*
 		 * Metro A
 		 * Vodafone - OK
@@ -437,17 +407,6 @@ public class PragueStations implements Stations {
                 id(O2, 203718138, 1131)
         );
 
-        sealLists();
-
-    }
-
-    @Override
-    public StationGroup getStations(int cellId, int lac) {
-        if (cellMap.containsKey(id(cellId, lac))) {
-            return cellMap.get(id(cellId, lac));
-        } else {
-            return StationGroup.empty();
-        }
     }
 
 }

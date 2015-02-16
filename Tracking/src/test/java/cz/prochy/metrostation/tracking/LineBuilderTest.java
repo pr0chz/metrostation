@@ -51,8 +51,8 @@ public class LineBuilderTest {
             builder.addStation(new Station(Integer.toString(i)));
         }
         int counter = 0;
-        while (station.getNext() != null || counter > testSize * 10) {
-            station = station.getNext();
+        while (!station.getNext().isEmpty() || counter > testSize * 10) {
+            station = station.getNext().iterator().next();
             ++counter;
         }
         assertEquals(testSize, counter);

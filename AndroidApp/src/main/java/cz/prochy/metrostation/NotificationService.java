@@ -13,6 +13,8 @@ import android.telephony.gsm.GsmCellLocation;
 import android.util.Log;
 import cz.prochy.metrostation.tracking.Builder;
 import cz.prochy.metrostation.tracking.CellListener;
+import cz.prochy.metrostation.tracking.Notifier;
+import cz.prochy.metrostation.tracking.Timeout;
 import cz.prochy.metrostation.tracking.internal.PragueStations;
 import net.jcip.annotations.ThreadSafe;
 
@@ -71,8 +73,10 @@ public class NotificationService extends Service {
     }
 
     private CellListener buildListeners() {
-        return Builder.createListener(scheduledService, TimeUnit.SECONDS.toSeconds(300), stations,
-                new NotificationsImpl(this, new NotificationSettings(this)));
+        Timeout predictionTrigger = new Timeout(scheduledService, 25, TimeUnit.SECONDS);
+        Notifier notifier = new NotifierImpl(this, new NotificationSettings(this), predictionTrigger);
+        long stationTimeout = TimeUnit.SECONDS.toMillis(300);
+        return Builder.createListener(stations, notifier, stationTimeout);
     }
 
     private TelephonyManager getTelephonyManager() {

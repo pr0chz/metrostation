@@ -21,4 +21,10 @@
             android:summary="@string/pref_notification_tray_desc"
             android:defaultValue="true" />
 
+    <CheckBoxPreference
+            android:key="station_predictions"
+            android:title="@string/pref_station_predictions_title"
+            android:summary="@string/pref_station_predictions_desc"
+            android:defaultValue="true" />
+
 </PreferenceScreen>
