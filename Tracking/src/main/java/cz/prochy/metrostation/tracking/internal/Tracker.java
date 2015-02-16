@@ -7,7 +7,7 @@ public class Tracker implements StationListener {
 
     private StationGroup current;
     private StationGroup prediction;
-    private Direction direction;
+    private Direction directionHint;
     private long lastTs;
 
     private enum Direction {
@@ -23,7 +23,7 @@ public class Tracker implements StationListener {
     private void setState(StationGroup stations, StationGroup predictions, Direction direction) {
         this.current = stations.immutable();
         this.prediction = predictions.immutable();
-        this.direction = direction;
+        this.directionHint = direction;
         this.lastTs = System.currentTimeMillis();
     }
 
@@ -71,10 +71,10 @@ public class Tracker implements StationListener {
         boolean goesLeft = hasIntersection(left, stations);
         boolean goesRight = hasIntersection(right, stations);
 
-        if (goesLeft && goesRight) { // use direction hint
-            if (direction == Direction.LEFT) {
+        if (goesLeft && goesRight) { // use directionHint hint
+            if (directionHint == Direction.LEFT) {
                 goesRight = false;
-            } else if (direction == Direction.RIGHT) {
+            } else if (directionHint == Direction.RIGHT) {
                 goesLeft = false;
             }
         }
@@ -85,7 +85,7 @@ public class Tracker implements StationListener {
             } else if (goesRight) {
                 setState(right.intersect(stations), right.right(), Direction.RIGHT);
             } else if (narrowsCurrent) {
-                setState(current.intersect(stations), NO_STATIONS, direction);
+                setState(current.intersect(stations), NO_STATIONS, directionHint);
             }
         } else {
             // we are not sure what happened or we are completely somewhere else
