@@ -27,6 +27,10 @@ public class NotifierImpl implements Notifier {
     @Override
     public void onStation(String approachingStation) {
         cancelPrediction();
+        notifyArrival(approachingStation);
+    }
+
+    private void notifyArrival(String approachingStation) {
         toastArrival(approachingStation);
         showNotification(approachingStation);
     }
@@ -63,7 +67,7 @@ public class NotifierImpl implements Notifier {
         predictionTrigger.reset(new Runnable() {
             @Override
             public void run() {
-                onStation(nextStation);
+                notifyArrival(nextStation);
             }
         });
     }

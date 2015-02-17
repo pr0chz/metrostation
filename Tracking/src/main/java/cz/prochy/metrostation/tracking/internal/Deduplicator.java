@@ -8,7 +8,6 @@ public class Deduplicator implements StationListener {
     private final static StationGroup DISCONNECT = new StationGroup();
 
     private StationGroup lastStations = INITIAL;
-    private StationGroup lastPredictions = INITIAL;
 
     private final StationListener listener;
 
@@ -18,9 +17,8 @@ public class Deduplicator implements StationListener {
 
     @Override
     public void onStation(StationGroup stations, StationGroup predictions) {
-        if (!lastStations.equals(stations) || !lastPredictions.equals(predictions)) {
+        if (!lastStations.equals(stations)) {
             lastStations = stations;
-            lastPredictions = predictions;
             listener.onStation(stations, predictions);
         }
     }

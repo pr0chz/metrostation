@@ -95,7 +95,7 @@ public class DeduplicatorTest {
         step(onDisconnect(), expectDisconnect());
         step(onDisconnect(), expectNothing());
         step(onStation(sg1, sg3), expectOnStation(sg1, sg3));
-        step(onStation(sg1, sg1), expectOnStation(sg1, sg1));
+        step(onStation(sg1, sg1), expectNothing());
         step(onStation(sg2, sg2), expectNothing());
         step(onDisconnect(), expectDisconnect());
     }

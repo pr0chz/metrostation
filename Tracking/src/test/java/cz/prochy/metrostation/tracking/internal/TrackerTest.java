@@ -40,12 +40,20 @@ public class TrackerTest {
         }
     };
 
+    private StationGroup getStations(int cid, int lac) {
+        return stations.getStations(cid, lac);
+    }
+
     private StationGroup getStations(int id) {
         return stations.getStations(id, id);
     }
 
     private Runnable stations(int id) {
         return () -> tracker.onStation(getStations(id), StationListener.NO_STATIONS);
+    }
+
+    private Runnable stations(int cid, int lac) {
+        return () -> tracker.onStation(getStations(cid, lac), StationListener.NO_STATIONS);
     }
 
     private Runnable emptyStations() {
@@ -72,6 +80,16 @@ public class TrackerTest {
         step(stations(3), expect(getStations(3), getStations(4)));
         step(stations(4), expect(getStations(4), getStations(5)));
         step(stations(5), expect(getStations(5), StationGroup.empty()));
+    }
+
+    @Test
+    public void testTraversingSingleStationsWithUnknowns() throws Exception {
+        stations = detStations;
+        step(emptyStations(), expectNothing());
+        step(stations(2), expect(getStations(2), StationGroup.empty()));
+        step(emptyStations(), expectNothing());
+        step(stations(3), expect(getStations(3), getStations(4)));
+        step(emptyStations(), expectNothing());
     }
 
     @Test
@@ -160,6 +178,18 @@ public class TrackerTest {
         // change direction
         step(stations(3), expect(findSingle(3, S31), findSingle(1, S12)));
         step(stations(1), expect(findSingle(1, S12), findSingle(2, S22)));
+    }
+
+    @Test
+    public void testNonDeterministicWithUnknowns() throws Exception {
+        stations = nonDetStations;
+        step(stations(2), expect(getStations(2), StationGroup.empty()));
+        step(emptyStations(), expectNothing());
+        step(emptyStations(), expectNothing());
+        step(stations(1), expect(findSingle(1, S12), findSingle(3, S31)));
+        step(emptyStations(), expectNothing());
+        step(stations(3), expect(findSingle(3, S31), findSingle(1, S11)));
+        step(emptyStations(), expectNothing());
     }
 
     @Test
