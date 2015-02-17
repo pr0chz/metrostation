@@ -101,7 +101,7 @@ public class NotifierImpl implements Notifier {
                     .setSmallIcon(R.drawable.ic_stat_notify)
                     .setContentTitle("Metro station")
                     .setContentText(Check.notNull(message))
-                    .setPriority(Notification.PRIORITY_HIGH)
+                    .setPriority(Notification.PRIORITY_MAX)
                     .setAutoCancel(true);
 
             NotificationManager notificationManager = getNotificationManager();
