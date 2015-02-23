@@ -1,5 +1,6 @@
 package cz.prochy.metrostation.tracking.internal;
 
+import cz.prochy.metrostation.tracking.Analyzer;
 import cz.prochy.metrostation.tracking.Builder;
 import cz.prochy.metrostation.tracking.CellListener;
 import cz.prochy.metrostation.tracking.Notifier;
@@ -34,30 +35,12 @@ public class ITTest {
                 TimeUnit.SECONDS.toMillis(90));
     }
 
-    private static class TestRecord {
-        public final int cid;
-        public final int lac;
-        public final long ts;
 
-        public TestRecord(long ts, int cid, int lac) {
-            this.ts = ts;
-            this.cid = cid;
-            this.lac = lac;
-        }
 
-        private TestRecord() {
-            this.cid = -2;
-            this.lac = -2;
-            this.ts = 0;
-        }
-
-        public static int DISCONNECT_CID = -2;
-    }
-
-    private List<TestRecord> readLegacyLines(String name) throws ParseException {
+    private List<Analyzer.TestRecord> readLegacyLines(String name) throws ParseException {
         InputStream stream = ITTest.class.getClassLoader().getResourceAsStream(name);
         String str = new Scanner(stream, "UTF-8").useDelimiter("\\A").next();
-        List<TestRecord> result = new ArrayList<>();
+        List<Analyzer.TestRecord> result = new ArrayList<>();
         JSONArray array = (JSONArray)JSONValue.parse(str);
         for (Object item : array) {
             long ts = (Long)((JSONObject)item).get("dumpTS");
@@ -66,32 +49,13 @@ public class ITTest {
                 obj = (JSONObject)obj.get("gsm");
                 long cid = (Long)obj.get("cid");
                 long lac = (Long)obj.get("lac");
-                result.add(new TestRecord(ts, (int)cid,(int)lac));
+                result.add(new Analyzer.TestRecord(ts, (int)cid,(int)lac));
             } else {
-                result.add(new TestRecord(ts, TestRecord.DISCONNECT_CID, 0));
+                result.add(new Analyzer.TestRecord(ts, Analyzer.TestRecord.DISCONNECT_CID, 0));
             }
         }
         return result;
     }
-
-    private List<TestRecord> readMsLogsLines(String name) throws ParseException {
-        List<TestRecord> result = new ArrayList<>();
-        InputStream stream = ITTest.class.getClassLoader().getResourceAsStream(name);
-        String str = new Scanner(stream, "UTF-8").useDelimiter("\\A").next();
-        for (String line : str.split("\n")) {
-            JSONObject item = (JSONObject)JSONValue.parse(line);
-            long ts = (Long)item.get("ts");
-            if (item.containsKey("cid")) {
-                long cid = (Long)item.get("cid");
-                long lac = (Long)item.get("lac");
-                result.add(new TestRecord(ts, (int)cid, (int)lac));
-            } else {
-                result.add(new TestRecord(ts, TestRecord.DISCONNECT_CID, 0));
-            }
-        }
-        return result;
-    }
-
 
     private void expectUnknownStation() {
         notifier.onUnknownStation();
@@ -195,9 +159,9 @@ public class ITTest {
     @Test
     public void testVodafoneLineA() throws Exception {
 
-        List<TestRecord> testRecords = readLegacyLines("legacy/vodafone_A.log");
-        for (TestRecord record : testRecords) {
-            if (record.cid != TestRecord.DISCONNECT_CID) {
+        List<Analyzer.TestRecord> testRecords = readLegacyLines("legacy/vodafone_A.log");
+        for (Analyzer.TestRecord record : testRecords) {
+            if (record.cid != Analyzer.TestRecord.DISCONNECT_CID) {
                 cellListener.cellInfo(record.ts, record.cid, record.lac);
             } else {
                 cellListener.disconnected(record.ts);
@@ -227,12 +191,54 @@ public class ITTest {
         assertTrue(notifier.verify());
     }
 
-    @Test
-    public void testSkalkaToFlorencAndBack() throws Exception {
+    private List<Analyzer.TestRecord> readMsLogsLines(String filename) throws java.text.ParseException {
+        InputStream stream = ITTest.class.getClassLoader().getResourceAsStream(filename);
+        return Analyzer.readMsLogsLines(stream);
+    }
 
-        List<TestRecord> testRecords = readMsLogsLines("mslogs/ms.log");
-        for (TestRecord record : testRecords) {
-            if (record.cid != TestRecord.DISCONNECT_CID) {
+    @Test
+    public void testSkalkaToFlorencAndBack2() throws Exception {
+
+        List<Analyzer.TestRecord> testRecords = readMsLogsLines("mslogs/skalka_florenc_and_back_2.log");
+        for (Analyzer.TestRecord record : testRecords) {
+            if (record.cid != Analyzer.TestRecord.DISCONNECT_CID) {
+                cellListener.cellInfo(record.ts, record.cid, record.lac);
+            } else {
+                cellListener.disconnected(record.ts);
+            }
+        }
+
+        notifier.startExpect();
+        notifier.expectChunk(SKALKA);
+        notifier.expectChunk(STRASNICKA, ZELIVSKEHO);
+        notifier.expectChunk(ZELIVSKEHO, FLORA);
+        notifier.expectChunk(FLORA, JIRIHO_Z_PODEBRAD);
+        notifier.expectChunk(JIRIHO_Z_PODEBRAD, NAMESTI_MIRU);
+        notifier.expectChunk(NAMESTI_MIRU, MUZEUM);
+        notifier.expectChunk(MUZEUM);
+        notifier.expectChunk(HLAVNI_NADRAZI, FLORENC);
+        notifier.onStation(FLORENC);
+        //notifier.onUnknownStation();
+        notifier.onDisconnect(FLORENC);
+        notifier.expectChunk(HLAVNI_NADRAZI, MUZEUM);
+        notifier.expectChunk(MUZEUM);
+        notifier.expectChunk(NAMESTI_MIRU, JIRIHO_Z_PODEBRAD);
+        notifier.expectChunk(JIRIHO_Z_PODEBRAD, FLORA);
+        notifier.expectChunk(FLORA, ZELIVSKEHO);
+        notifier.expectChunk(ZELIVSKEHO, STRASNICKA);
+        notifier.expectChunk(STRASNICKA, SKALKA);
+        notifier.onStation(SKALKA);
+        notifier.onUnknownStation();
+
+        assertTrue(notifier.verify());
+    }
+
+    @Test
+    public void testSkalkaToFlorencAndBack1() throws Exception {
+
+        List<Analyzer.TestRecord> testRecords = readMsLogsLines("mslogs/skalka_florenc_and_back_1.log");
+        for (Analyzer.TestRecord record : testRecords) {
+            if (record.cid != Analyzer.TestRecord.DISCONNECT_CID) {
                 cellListener.cellInfo(record.ts, record.cid, record.lac);
             } else {
                 cellListener.disconnected(record.ts);
@@ -263,6 +269,7 @@ public class ITTest {
 
         assertTrue(notifier.verify());
     }
+
 
 
 }

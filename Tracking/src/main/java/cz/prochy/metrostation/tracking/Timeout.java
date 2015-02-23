@@ -15,7 +15,6 @@ public class Timeout {
     private final ScheduledExecutorService executor;
     private final Object lock = new Object();
 
-
     private Future<?> taskFuture;
 
     public Timeout(ScheduledExecutorService executor, long timeout, TimeUnit timeUnit) {

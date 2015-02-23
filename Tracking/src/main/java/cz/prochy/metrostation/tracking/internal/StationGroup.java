@@ -153,4 +153,16 @@ public class StationGroup {
     public int hashCode() {
         return set.hashCode();
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("[");
+        for (Station station : set) {
+            builder.append(station.getName()).append(",");
+        }
+        builder.setLength(builder.length() - 1);
+        builder.append("]");
+        return builder.toString();
+    }
 }

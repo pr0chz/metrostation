@@ -13,6 +13,8 @@ public class NotifierImpl implements Notifier {
     private static final int NOTIFICATION_ID = 0x6a3ab12f;
     private static final String UNKNOWN_STATION = "???";
 
+    private static final Logger logger = new Logger();
+
     private final Context context;
     private final NotificationSettings settings;
     private final Timeout predictionTrigger;
@@ -67,7 +69,11 @@ public class NotifierImpl implements Notifier {
         predictionTrigger.reset(new Runnable() {
             @Override
             public void run() {
-                notifyArrival(nextStation);
+                try {
+                    notifyArrival(nextStation);
+                } catch (Exception e) {
+                    logger.log(e);
+                }
             }
         });
     }

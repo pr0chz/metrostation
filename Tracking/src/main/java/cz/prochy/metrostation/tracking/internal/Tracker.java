@@ -87,6 +87,10 @@ public class Tracker implements StationListener {
             return;
         }
 
+        if (stations.equals(current)) {
+            return;
+        }
+
         StationGroup left = current.left().immutable();
         StationGroup right = current.right().immutable();
 

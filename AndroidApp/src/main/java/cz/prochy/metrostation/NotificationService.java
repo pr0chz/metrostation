@@ -3,7 +3,6 @@ package cz.prochy.metrostation;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Environment;
 import android.os.IBinder;
 import android.telephony.CellLocation;
 import android.telephony.PhoneStateListener;
@@ -19,7 +18,6 @@ import cz.prochy.metrostation.tracking.Timeout;
 import cz.prochy.metrostation.tracking.internal.PragueStations;
 import net.jcip.annotations.ThreadSafe;
 
-import java.io.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -29,10 +27,10 @@ public class NotificationService extends Service {
 
     private final static PragueStations stations = new PragueStations();
     private final static String LOG_NAME = "MetroStation";
-    private final File logFile = new File(Environment.getExternalStorageDirectory(), "ms.log");
 
-    private final ScheduledExecutorService scheduledService = Executors.newSingleThreadScheduledExecutor();
+    private final static Logger logger = new Logger();
 
+    private ScheduledExecutorService scheduledService;
     private StateListener stateListener;
 
     private class StateListener extends PhoneStateListener {
@@ -50,7 +48,7 @@ public class NotificationService extends Service {
                 switch (serviceState.getState()) {
                     case ServiceState.STATE_OUT_OF_SERVICE:
                         Log.v(LOG_NAME, "Disconnected");
-                        log(disconnectMessage());
+                        logger.log(disconnectMessage());
                         listener.disconnected(ts);
                         break;
                     case ServiceState.STATE_EMERGENCY_ONLY:
@@ -62,11 +60,11 @@ public class NotificationService extends Service {
                             if (cl != null) {
                                 if (cl instanceof GsmCellLocation) {
                                     GsmCellLocation gcl = (GsmCellLocation) cl;
-                                    log(cellMessage(gcl.getCid(), gcl.getLac()));
+                                    logger.log(cellMessage(gcl.getCid(), gcl.getLac()));
                                     listener.cellInfo(ts, gcl.getCid(), gcl.getLac());
                                 } else if (cl instanceof CdmaCellLocation) {
                                     CdmaCellLocation ccl = (CdmaCellLocation) cl;
-                                    log(cellMessage(ccl.getBaseStationId(), -1));
+                                    logger.log(cellMessage(ccl.getBaseStationId(), -1));
                                     listener.cellInfo(ts, ccl.getBaseStationId(), -1);
                                 }
                             }
@@ -74,12 +72,12 @@ public class NotificationService extends Service {
                         break;
                     default:
                         Log.v(LOG_NAME, "Other state");
-                        log(disconnectMessage());
+                        logger.log(disconnectMessage());
                         listener.disconnected(ts);
                 }
                 super.onServiceStateChanged(serviceState);
             } catch (Throwable e) {
-                log(getStackTrace(e));
+                logger.log(e);
             }
         }
     }
@@ -90,30 +88,6 @@ public class NotificationService extends Service {
 
     private String cellMessage(int cid, int lac) {
         return "{\"ts\": " + System.currentTimeMillis() + ", \"cid\": " + cid + ", \"lac\": " + lac + "}\n";
-    }
-
-    public void log(String message) {
-        try {
-            OutputStream str = null;
-            try {
-                str = new FileOutputStream(logFile, true);
-                OutputStreamWriter writer = new OutputStreamWriter(str);
-                writer.write(message);
-                writer.close();
-            } finally {
-                str.close();
-            }
-        } catch (IOException e) {
-            Log.e(LOG_NAME, e + getStackTrace(e));
-        }
-    }
-
-    public static String getStackTrace(Throwable aThrowable) {
-        Writer result = new StringWriter();
-        PrintWriter printWriter = new PrintWriter(result);
-        printWriter.write(aThrowable.toString() + ":\n");
-        aThrowable.printStackTrace(printWriter);
-        return result.toString();
     }
 
     private CellListener buildListeners() {
@@ -145,11 +119,12 @@ public class NotificationService extends Service {
     @Override
     public synchronized int onStartCommand(Intent intent, int flags, int startId) {
         Log.i(LOG_NAME, "Starting service...");
-        log("Starting...\n");
+        logger.log("Starting...\n");
         if (stateListener == null) {
+            scheduledService = Executors.newSingleThreadScheduledExecutor();
             stateListener = new StateListener(buildListeners());
+            setListenerStatus(PhoneStateListener.LISTEN_SERVICE_STATE);
         }
-        setListenerStatus(PhoneStateListener.LISTEN_SERVICE_STATE);
         return START_STICKY;
     }
 
@@ -161,9 +136,8 @@ public class NotificationService extends Service {
     @Override
     public synchronized void onDestroy() {
         Log.i(LOG_NAME, "Shutting down service...");
-        log("Shutting down...\n");
+        logger.log("Shutting down...\n");
         setListenerStatus(PhoneStateListener.LISTEN_NONE);
-        stateListener = null;
         scheduledService.shutdown();
         try {
             if (!scheduledService.awaitTermination(1000, TimeUnit.MILLISECONDS)) {
@@ -172,6 +146,7 @@ public class NotificationService extends Service {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
+        stateListener = null;
     }
 
 }
