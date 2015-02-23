@@ -30,17 +30,19 @@ public class StationsCellListenerTest {
 
     @Test
     public void testDisconnect() throws Exception {
-        output.onDisconnect();
+        final long ts = 13;
+        output.onDisconnect(eq(ts));
         expectLastCall().once();
         replay(output);
-        listener.disconnected();
+        listener.disconnected(ts);
         verify(output);
     }
 
     @Test
     public void testOnStation() throws Exception {
+        final long ts = 10;
         StationGroup stationGroup = new StationGroup();
-        output.onStation(same(stationGroup), same(StationListener.NO_STATIONS));
+        output.onStation(eq(ts), same(stationGroup), same(StationListener.NO_STATIONS));
         expectLastCall().once();
 
         final int cid = 123;
@@ -48,7 +50,7 @@ public class StationsCellListenerTest {
         expect(stations.getStations(eq(cid), eq(lac))).andReturn(stationGroup).once();
         replay(output, stations);
 
-        listener.cellInfo(cid, lac);
+        listener.cellInfo(ts, cid, lac);
 
         verify(output, stations);
     }

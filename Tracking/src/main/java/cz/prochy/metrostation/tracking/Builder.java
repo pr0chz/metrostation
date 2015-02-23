@@ -4,15 +4,17 @@ import cz.prochy.metrostation.tracking.internal.*;
 
 public class Builder {
 
-    public static CellListener createListener(Stations stations, Notifier notifier, long trackLostTimeoutMs) {
+    public static CellListener createListener(Stations stations, Notifier notifier, long trackLostTimeoutMs,
+                                              long transferTimeoutMs) {
 
-        NotifyListener notifyListener = new NotifyListener(notifier);
-        Deduplicator deduplicator = new Deduplicator(notifyListener);
+        return new StationsCellListener(
+                stations,
+                new Tracker(
+                        new NotifyListener(new Deduplicator(notifier)),
+                        trackLostTimeoutMs,
+                        transferTimeoutMs)
+                );
 
-        Tracker tracker = new Tracker(deduplicator, trackLostTimeoutMs);
-        CellListener rootListener = new StationsCellListener(stations, tracker);
-
-        return rootListener;
     }
 
 }

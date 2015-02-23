@@ -9,8 +9,8 @@ public class LineBuilder {
         if (last == null) {
             last = station;
         } else {
-            last.setNext(station);
-            station.setPrev(last);
+            last.addNext(this, station);
+            station.addPrev(this, last);
             last = station;
         }
     }

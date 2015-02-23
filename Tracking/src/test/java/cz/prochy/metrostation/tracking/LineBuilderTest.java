@@ -32,9 +32,9 @@ public class LineBuilderTest {
     public void testSecondStationIsConnected() throws Exception {
         Station station1 = createStrictMock(Station.class);
         Station station2 = createStrictMock(Station.class);
-        station1.setNext(eq(station2));
+        station1.addNext(same(builder), eq(station2));
         expectLastCall().once();
-        station2.setPrev(eq(station1));
+        station2.addPrev(same(builder), eq(station1));
         expectLastCall().once();
         replay(station1, station2);
         builder.addStation(station1);

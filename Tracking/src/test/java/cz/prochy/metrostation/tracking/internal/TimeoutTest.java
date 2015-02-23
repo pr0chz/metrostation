@@ -4,12 +4,15 @@ import cz.prochy.metrostation.tracking.Timeout;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 import static org.easymock.EasyMock.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.lessThan;
+import static org.hamcrest.core.CombinableMatcher.both;
+import static org.junit.Assert.fail;
 
 public class TimeoutTest {
 
@@ -46,7 +49,6 @@ public class TimeoutTest {
 
     private void expectCancel() throws ExecutionException, InterruptedException {
         expect(future.cancel(eq(false))).andReturn(true);
-        expect(future.get()).andReturn(new Object());
     }
 
     @Test
@@ -105,5 +107,39 @@ public class TimeoutTest {
         timeout.cancel();
 
         verify(task, executorService, future);
+    }
+
+    private static class TSCatcher implements Runnable {
+        private long ts;
+        private final CountDownLatch latch;
+
+        public TSCatcher(CountDownLatch latch) {
+            this.latch = latch;
+        }
+
+        @Override
+        public void run() {
+            ts = System.currentTimeMillis();
+            latch.countDown();
+        }
+
+        public long getTs() {
+            return ts;
+        }
+    }
+
+    @Test
+    public void testRealTest() throws Exception {
+        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+        Timeout timeout = new Timeout(executor, 1, TimeUnit.SECONDS);
+        CountDownLatch latch = new CountDownLatch(1);
+        TSCatcher catcher = new TSCatcher(latch);
+
+        long start = System.currentTimeMillis();
+        timeout.reset(catcher);
+        if (!latch.await(5, TimeUnit.SECONDS)) {
+            fail("Timeout while waiting for latch");
+        }
+        assertThat(catcher.getTs() - start, is(both(greaterThan(500L)).and(lessThan(1500L))));
     }
 }

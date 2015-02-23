@@ -14,12 +14,12 @@ public interface StationListener {
      * cell ids do not map to any known station.
      * @param stations Station.
      */
-    void onStation(StationGroup stations, StationGroup predictions);
+    void onStation(long ts, StationGroup stations, StationGroup predictions);
 
     /**
      * We have been disconnected from network. If last cell was a station this probably
      * means we are in a tunnel travelling to next station.
      */
-    void onDisconnect();
+    void onDisconnect(long ts);
 
 }

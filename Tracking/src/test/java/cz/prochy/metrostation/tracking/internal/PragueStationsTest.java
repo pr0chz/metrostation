@@ -28,4 +28,10 @@ public class PragueStationsTest {
     public void testMultipleMatchingStations() throws Exception {
         assertTrue(stations.getStations(21198, 1139).hasMultipleValues());
     }
+
+    @Test
+    public void testTransferStationHasFlag() throws Exception {
+        assertTrue(stations.getStations(18836, 34300).getStation().isTransfer());
+    }
+
 }

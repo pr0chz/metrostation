@@ -1,6 +1,7 @@
 package cz.prochy.metrostation.tracking.internal;
 
 import cz.prochy.metrostation.tracking.Check;
+import cz.prochy.metrostation.tracking.LineBuilder;
 import cz.prochy.metrostation.tracking.Station;
 
 import java.util.Collections;
@@ -83,6 +84,15 @@ public class StationGroup {
         return s;
     }
 
+    public boolean intersects(StationGroup other) {
+        for (Station station : set) {
+            if (other.set.contains(station)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public StationGroup left() {
         StationGroup s = new StationGroup();
         for (Station station : set) {
@@ -95,6 +105,30 @@ public class StationGroup {
         StationGroup s = new StationGroup();
         for (Station station : set) {
             s.set.addAll(station.getNext());
+        }
+        return s;
+    }
+
+    public StationGroup left(LineBuilder line) {
+        StationGroup s = new StationGroup();
+        for (Station station : set) {
+            for (Station prevStation : station.getPrev()) {
+                if (prevStation.getLines().contains(line)) {
+                    s.set.add(prevStation);
+                }
+            }
+        }
+        return s;
+    }
+
+    public StationGroup right(LineBuilder line) {
+        StationGroup s = new StationGroup();
+        for (Station station : set) {
+            for (Station nextStation : station.getNext()) {
+                if (nextStation.getLines().contains(line)) {
+                    s.set.add(nextStation);
+                }
+            }
         }
         return s;
     }

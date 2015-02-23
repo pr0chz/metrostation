@@ -18,12 +18,14 @@ public class TrackerTest {
 
     private Stations stations;
 
-    private final static long TIMEOUT = TimeUnit.DAYS.toMillis(1);
+    private final static long TRACK_LOST_TIMEOUT = TimeUnit.DAYS.toMillis(1);
+    private final static long TRANSFER_TIMEOUT = TimeUnit.DAYS.toMillis(1);
+    private final static long TS = 15;
 
     @Before
     public void setUp() throws Exception {
         listener = createStrictMock(StationListener.class);
-        tracker = new Tracker(listener, TIMEOUT);
+        tracker = new Tracker(listener, TRACK_LOST_TIMEOUT, TRANSFER_TIMEOUT);
         verifier = new StepVerifier(listener);
     }
 
@@ -49,19 +51,27 @@ public class TrackerTest {
     }
 
     private Runnable stations(int id) {
-        return () -> tracker.onStation(getStations(id), StationListener.NO_STATIONS);
+        return stations(id, TS);
     }
 
-    private Runnable stations(int cid, int lac) {
-        return () -> tracker.onStation(getStations(cid, lac), StationListener.NO_STATIONS);
+    private Runnable stations(int id, long ts) {
+        return () -> tracker.onStation(ts, getStations(id, id), StationListener.NO_STATIONS);
     }
 
     private Runnable emptyStations() {
-        return () -> tracker.onStation(StationGroup.empty(), StationGroup.empty());
+        return emptyStations(TS);
+    }
+
+    private Runnable emptyStations(long ts) {
+        return () -> tracker.onStation(ts, StationGroup.empty(), StationGroup.empty());
     }
 
     private Runnable expect(StationGroup stations, StationGroup predictions) {
-        return () -> listener.onStation(eq(stations), eq(predictions));
+        return expect(stations, predictions, TS);
+    }
+
+    private Runnable expect(StationGroup stations, StationGroup predictions, long ts) {
+        return () -> listener.onStation(eq(ts), eq(stations), eq(predictions));
     }
 
     private Runnable expectNothing() {
@@ -119,13 +129,14 @@ public class TrackerTest {
     @Test
     public void testStateGetsResetAfterTimeout() throws Exception {
         stations = detStations;
-        tracker = new Tracker(listener, 0);
-        step(stations(2), expect(getStations(2), StationGroup.empty()));
-        try { Thread.sleep(10); } catch (InterruptedException e) {}
-        step(emptyStations(), expect(StationGroup.empty(), StationGroup.empty()));
-        step(stations(3), expect(getStations(3), StationGroup.empty()));
+        tracker = new Tracker(listener, 10, TRANSFER_TIMEOUT);
+        step(stations(2, 10), expect(getStations(2), StationGroup.empty(), 10));
+        step(emptyStations(19), expectNothing());
+        step(emptyStations(21), expect(StationGroup.empty(), StationGroup.empty(), 21));
+        step(stations(3, 22), expect(getStations(3), StationGroup.empty(), 22));
     }
 
+    // TODO add tests for transfer timeout
 
     private final NonDetStations nonDetStations = new NonDetStations();
 
@@ -194,10 +205,10 @@ public class TrackerTest {
 
     @Test
     public void testDisconnect() throws Exception {
-        listener.onDisconnect();
+        listener.onDisconnect(eq(0L));
         expectLastCall().once();
         replay(listener);
-        tracker.onDisconnect();
+        tracker.onDisconnect(0);
         verify(listener);
     }
 }

@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 import static org.easymock.EasyMock.expectLastCall;
 import static org.junit.Assert.assertTrue;
@@ -26,14 +27,20 @@ public class ITTest {
     @Before
     public void setUp() throws Exception {
         notifier = new NotifierMock();
-        cellListener = Builder.createListener(new PragueStations(), notifier, 100000);
+        cellListener = Builder.createListener(
+                new PragueStations(),
+                notifier,
+                TimeUnit.SECONDS.toMillis(180),
+                TimeUnit.SECONDS.toMillis(90));
     }
 
     private static class TestRecord {
         public final int cid;
         public final int lac;
+        public final long ts;
 
-        public TestRecord(int cid, int lac) {
+        public TestRecord(long ts, int cid, int lac) {
+            this.ts = ts;
             this.cid = cid;
             this.lac = lac;
         }
@@ -41,29 +48,50 @@ public class ITTest {
         private TestRecord() {
             this.cid = -2;
             this.lac = -2;
+            this.ts = 0;
         }
 
-        public static TestRecord DISCONNECT = new TestRecord();
+        public static int DISCONNECT_CID = -2;
     }
 
-    private List<TestRecord> readLines(String name) throws ParseException {
+    private List<TestRecord> readLegacyLines(String name) throws ParseException {
         InputStream stream = ITTest.class.getClassLoader().getResourceAsStream(name);
         String str = new Scanner(stream, "UTF-8").useDelimiter("\\A").next();
         List<TestRecord> result = new ArrayList<>();
         JSONArray array = (JSONArray)JSONValue.parse(str);
         for (Object item : array) {
+            long ts = (Long)((JSONObject)item).get("dumpTS");
             JSONObject obj = (JSONObject)((JSONObject)item).get("cellLocation");
             if (obj.get("gsm") != null) {
                 obj = (JSONObject)obj.get("gsm");
                 long cid = (Long)obj.get("cid");
                 long lac = (Long)obj.get("lac");
-                result.add(new TestRecord((int)cid,(int)lac));
+                result.add(new TestRecord(ts, (int)cid,(int)lac));
             } else {
-                result.add(TestRecord.DISCONNECT);
+                result.add(new TestRecord(ts, TestRecord.DISCONNECT_CID, 0));
             }
         }
         return result;
     }
+
+    private List<TestRecord> readMsLogsLines(String name) throws ParseException {
+        List<TestRecord> result = new ArrayList<>();
+        InputStream stream = ITTest.class.getClassLoader().getResourceAsStream(name);
+        String str = new Scanner(stream, "UTF-8").useDelimiter("\\A").next();
+        for (String line : str.split("\n")) {
+            JSONObject item = (JSONObject)JSONValue.parse(line);
+            long ts = (Long)item.get("ts");
+            if (item.containsKey("cid")) {
+                long cid = (Long)item.get("cid");
+                long lac = (Long)item.get("lac");
+                result.add(new TestRecord(ts, (int)cid, (int)lac));
+            } else {
+                result.add(new TestRecord(ts, TestRecord.DISCONNECT_CID, 0));
+            }
+        }
+        return result;
+    }
+
 
     private void expectUnknownStation() {
         notifier.onUnknownStation();
@@ -83,6 +111,9 @@ public class ITTest {
     private final static String STRASNICKA = "Strašnická";
     private final static String SKALKA = "Skalka";
     private final static String DEPO_HOSTIVAR = "Depo Hostivař";
+
+    private final static String HLAVNI_NADRAZI = "Hlavní nádraží";
+    private final static String FLORENC = "Florenc";
 
     private static class NotifierMock implements Notifier {
         private StringBuilder actual;
@@ -123,6 +154,10 @@ public class ITTest {
             onDisconnect(station, prediction);
         }
 
+        private String getCurrentCapture() {
+            return current.toString();
+        }
+
         public boolean verify() {
             boolean ok = true;
             StringBuilder result = new StringBuilder();
@@ -160,12 +195,12 @@ public class ITTest {
     @Test
     public void testVodafoneLineA() throws Exception {
 
-        List<TestRecord> testRecords = readLines("vodafone_A.log");
+        List<TestRecord> testRecords = readLegacyLines("legacy/vodafone_A.log");
         for (TestRecord record : testRecords) {
-            if (record != TestRecord.DISCONNECT) {
-                cellListener.cellInfo(record.cid, record.lac);
+            if (record.cid != TestRecord.DISCONNECT_CID) {
+                cellListener.cellInfo(record.ts, record.cid, record.lac);
             } else {
-                cellListener.disconnected();
+                cellListener.disconnected(record.ts);
             }
         }
 
@@ -191,4 +226,43 @@ public class ITTest {
 
         assertTrue(notifier.verify());
     }
+
+    @Test
+    public void testSkalkaToFlorencAndBack() throws Exception {
+
+        List<TestRecord> testRecords = readMsLogsLines("mslogs/ms.log");
+        for (TestRecord record : testRecords) {
+            if (record.cid != TestRecord.DISCONNECT_CID) {
+                cellListener.cellInfo(record.ts, record.cid, record.lac);
+            } else {
+                cellListener.disconnected(record.ts);
+            }
+        }
+
+        notifier.startExpect();
+        notifier.expectChunk(SKALKA);
+        notifier.expectChunk(STRASNICKA, ZELIVSKEHO);
+        notifier.expectChunk(ZELIVSKEHO, FLORA);
+        notifier.expectChunk(FLORA, JIRIHO_Z_PODEBRAD);
+        notifier.expectChunk(JIRIHO_Z_PODEBRAD, NAMESTI_MIRU);
+        notifier.expectChunk(NAMESTI_MIRU, MUZEUM);
+        notifier.expectChunk(MUZEUM);
+        notifier.expectChunk(HLAVNI_NADRAZI, FLORENC);
+        notifier.onStation(FLORENC);
+        notifier.onUnknownStation();
+        notifier.expectChunk(FLORENC);
+        notifier.expectChunk(HLAVNI_NADRAZI, MUZEUM);
+        notifier.expectChunk(MUZEUM);
+        notifier.expectChunk(NAMESTI_MIRU, JIRIHO_Z_PODEBRAD);
+        notifier.expectChunk(JIRIHO_Z_PODEBRAD, FLORA);
+        notifier.expectChunk(FLORA, ZELIVSKEHO);
+        notifier.expectChunk(ZELIVSKEHO, STRASNICKA);
+        notifier.expectChunk(STRASNICKA, SKALKA);
+        notifier.onStation(SKALKA);
+        notifier.onUnknownStation();
+
+        assertTrue(notifier.verify());
+    }
+
+
 }

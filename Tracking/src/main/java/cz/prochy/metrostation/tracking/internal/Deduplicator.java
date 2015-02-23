@@ -1,33 +1,68 @@
 package cz.prochy.metrostation.tracking.internal;
 
 import cz.prochy.metrostation.tracking.Check;
+import cz.prochy.metrostation.tracking.Notifier;
 
-public class Deduplicator implements StationListener {
+import java.util.Objects;
 
-    private final static StationGroup INITIAL = new StationGroup();
-    private final static StationGroup DISCONNECT = new StationGroup();
+public class Deduplicator implements Notifier {
 
-    private StationGroup lastStations = INITIAL;
+    private static enum LastNotification {
+        STATION, UNKNOWN_STATION, DISCONNECT;
+    }
 
-    private final StationListener listener;
+    private final Notifier notifier;
 
-    public Deduplicator(StationListener listener) {
-        this.listener = Check.notNull(listener);
+    private LastNotification lastNotification;
+    private String lastApproachingStation;
+    private String lastLeavingStation;
+
+    public Deduplicator(Notifier notifier) {
+        this.notifier = Check.notNull(notifier);
     }
 
     @Override
-    public void onStation(StationGroup stations, StationGroup predictions) {
-        if (!lastStations.equals(stations)) {
-            lastStations = stations;
-            listener.onStation(stations, predictions);
+    public void onStation(String approachingStation) {
+        Objects.requireNonNull(approachingStation);
+        if (!approachingStation.equals(lastApproachingStation) || lastNotification != LastNotification.STATION) {
+            lastNotification = LastNotification.STATION;
+            lastApproachingStation = approachingStation;
+            notifier.onStation(approachingStation);
         }
     }
 
     @Override
-    public void onDisconnect() {
-        if (lastStations != DISCONNECT) {
-            lastStations = DISCONNECT;
-            listener.onDisconnect();
+    public void onUnknownStation() {
+        if (lastNotification != LastNotification.UNKNOWN_STATION) {
+            lastNotification = LastNotification.UNKNOWN_STATION;
+            notifier.onUnknownStation();
         }
     }
+
+    @Override
+    public void onDisconnect(String leavingStation, String nextStation) {
+        Objects.requireNonNull(leavingStation);
+        Objects.requireNonNull(nextStation);
+        if (!leavingStation.equals(lastLeavingStation) || lastNotification != LastNotification.DISCONNECT) {
+            lastNotification = LastNotification.DISCONNECT;
+            lastLeavingStation = leavingStation;
+            notifier.onDisconnect(leavingStation, nextStation);
+        } else {
+            System.out.println("ignored disconnect 2");
+        }
+
+    }
+
+    @Override
+    public void onDisconnect(String leavingStation) {
+        Objects.requireNonNull(leavingStation);
+        if (!leavingStation.equals(lastLeavingStation) || lastNotification != LastNotification.DISCONNECT) {
+            lastNotification = LastNotification.DISCONNECT;
+            lastLeavingStation = leavingStation;
+            notifier.onDisconnect(leavingStation);
+        } else {
+            System.out.println("ignored disconnect");
+        }
+    }
+
 }

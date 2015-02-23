@@ -13,6 +13,9 @@ public class StationTest {
     private final static String STATION_NAME = "TEST";
     private final static String NEXT_STATION_NAME = "TEST2";
 
+    // TODO add tests for linebuilder related stuff
+    private final LineBuilder lineBuilder = new LineBuilder();
+
     private Station station;
     private Station nextStation;
 
@@ -41,7 +44,7 @@ public class StationTest {
 
     @Test
     public void testNext() throws Exception {
-        station.setNext(nextStation);
+        station.addNext(lineBuilder, nextStation);
         Set<Station> set = station.getNext();
         assertEquals(1, set.size());
         assertEquals(nextStation, set.iterator().next());
@@ -49,7 +52,7 @@ public class StationTest {
 
     @Test
     public void testPrev() throws Exception {
-        station.setPrev(nextStation);
+        station.addPrev(lineBuilder, nextStation);
         Set<Station> set = station.getPrev();
         assertEquals(1, set.size());
         assertEquals(nextStation, set.iterator().next());

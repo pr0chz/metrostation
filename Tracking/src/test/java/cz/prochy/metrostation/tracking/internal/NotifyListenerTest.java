@@ -54,11 +54,11 @@ public class NotifyListenerTest {
     }
 
     private Runnable onStation(StationGroup stations, StationGroup predictions) {
-        return () -> notifyListener.onStation(stations, predictions);
+        return () -> notifyListener.onStation(0, stations, predictions);
     }
 
     private Runnable onDisconnect() {
-        return () -> notifyListener.onDisconnect();
+        return () -> notifyListener.onDisconnect(0);
     }
 
     @Test

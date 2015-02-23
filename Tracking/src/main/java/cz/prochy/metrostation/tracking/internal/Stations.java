@@ -9,6 +9,7 @@ import java.util.Map;
 abstract public class Stations {
 
     private final Map<Long, StationGroup> cellMap = new HashMap<>();
+    private final Map<String, Station> transferStations = new HashMap<>();
 
     protected long id(String op, int cid, int lac) {
         return id(cid, lac);
@@ -23,15 +24,26 @@ abstract public class Stations {
         sealLists();
     }
 
-    protected void station(LineBuilder lineBuilder, String name, long... ids) {
-        Station station = new Station(name);
+    private void addStation(Station station, LineBuilder lineBuilder, long ... ids) {
         lineBuilder.addStation(station);
+        station.addLine(lineBuilder);
         for (long id : ids) {
             if (!cellMap.containsKey(id)) {
                 cellMap.put(id, new StationGroup());
             }
             cellMap.get(id).add(station);
         }
+    }
+
+    protected void station(LineBuilder lineBuilder, String name, long... ids) {
+        addStation(new Station(name), lineBuilder, ids);
+    }
+
+    protected void transferStation(LineBuilder lineBuilder, String name, long... ids) {
+        if (!transferStations.containsKey(name)) {
+            transferStations.put(name, new Station(name));
+        }
+        addStation(transferStations.get(name), lineBuilder, ids);
     }
 
     private void sealLists() {
