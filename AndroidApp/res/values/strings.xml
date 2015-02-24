@@ -5,13 +5,13 @@
     <string name="pref_toast_on_arrival_title">Arrival to station</string>
     <string name="pref_toast_on_departure_title">Departure from station</string>
     <string name="pref_notification_tray_title">Show current station</string>
-    <string name="pref_station_predictions_title">Predict next station</string>
+    <string name="pref_station_predictions_title">Before arrival to station</string>
 
     <string name="pref_toast_on_arrival_desc">Pop-up will be displayed on arrival to station.</string>
     <string name="pref_toast_on_departure_desc">Pop-up will be displayed on departure from station.</string>
     <string name="pref_notification_tray_desc">Shows an item with current or last station in notification area.
         It will disappear shortly after you leave the underground area.</string>
     <string name="pref_station_predictions_desc">If possible you will be notified in advance before arriving into
-        the station. It may take a station or two to grab the direction.</string>
+        the station. This is based on prediction and it may take a station or two to determine direction.</string>
 
 </resources>

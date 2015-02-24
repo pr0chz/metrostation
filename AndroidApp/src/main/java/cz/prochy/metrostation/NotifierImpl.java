@@ -30,10 +30,6 @@ public class NotifierImpl implements Notifier {
     @Override
     public void onStation(String approachingStation) {
         cancelPrediction();
-        notifyArrival(approachingStation);
-    }
-
-    private void notifyArrival(String approachingStation) {
         toastArrival(approachingStation);
         showNotification(approachingStation);
     }
@@ -63,6 +59,7 @@ public class NotifierImpl implements Notifier {
     }
 
     private void schedulePrediction(final String nextStation) {
+        Check.notNull(nextStation);
         if (settings.getPredictions()) {
             predictionTrigger.reset(new Runnable() {
                 @Override
@@ -72,7 +69,8 @@ public class NotifierImpl implements Notifier {
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
-                                notifyArrival(nextStation);
+                                toastPrediction(nextStation);
+                                showNotification(nextStation);
                             }
                         });
                     } catch (Exception e) {
@@ -90,6 +88,12 @@ public class NotifierImpl implements Notifier {
     private void toastArrival(String message) {
         Check.notNull(message);
         if (settings.getToastOnArrival()) {
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void toastPrediction(String message) {
+        if (settings.getPredictions()) {
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
         }
     }
