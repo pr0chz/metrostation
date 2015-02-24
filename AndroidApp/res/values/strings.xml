@@ -12,6 +12,6 @@
     <string name="pref_notification_tray_desc">Shows an item with current or last station in notification area.
         It will disappear shortly after you leave the underground area.</string>
     <string name="pref_station_predictions_desc">If possible you will be notified in advance before arriving into
-        station. It may take a station or two to grab the direction. Works together with all notification types.</string>
+        the station. It may take a station or two to grab the direction.</string>
 
 </resources>

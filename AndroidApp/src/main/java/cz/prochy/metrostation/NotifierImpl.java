@@ -3,6 +3,7 @@ package cz.prochy.metrostation;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.os.Handler;
 import android.widget.Toast;
 import cz.prochy.metrostation.tracking.Check;
 import cz.prochy.metrostation.tracking.Notifier;
@@ -45,13 +46,9 @@ public class NotifierImpl implements Notifier {
 
     @Override
     public void onDisconnect(String leavingStation, String nextStation) {
-        if (settings.getPredictions()) {
-            toastDeparture(direction(leavingStation, nextStation));
-            showNotification(direction(leavingStation, nextStation));
-            schedulePrediction(nextStation);
-        } else {
-            onDisconnect(leavingStation);
-        }
+        toastDeparture(direction(leavingStation, nextStation));
+        showNotification(direction(leavingStation, nextStation));
+        schedulePrediction(nextStation);
     }
 
     @Override
@@ -66,16 +63,24 @@ public class NotifierImpl implements Notifier {
     }
 
     private void schedulePrediction(final String nextStation) {
-        predictionTrigger.reset(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    notifyArrival(nextStation);
-                } catch (Exception e) {
-                    logger.log(e);
+        if (settings.getPredictions()) {
+            predictionTrigger.reset(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Handler handler = new Handler(context.getMainLooper());
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                notifyArrival(nextStation);
+                            }
+                        });
+                    } catch (Exception e) {
+                        logger.log(e);
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     private String direction(String from, String to) {
