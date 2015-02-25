@@ -25,11 +25,11 @@ public class Logger {
     }
 
     public void log(String message) {
-        doLog(message);
+        //doLog(message);
     }
 
     public void log(Throwable e) {
-        log(getStackTrace(e));
+        //log(getStackTrace(e));
     }
 
     private static String getStackTrace(Throwable aThrowable) {

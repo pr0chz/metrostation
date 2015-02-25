@@ -10,12 +10,6 @@
             android:defaultValue="true" />
 
     <CheckBoxPreference
-            android:key="station_predictions"
-            android:title="@string/pref_station_predictions_title"
-            android:summary="@string/pref_station_predictions_desc"
-            android:defaultValue="true" />
-
-    <CheckBoxPreference
             android:key="toast_on_leave"
             android:title="@string/pref_toast_on_departure_title"
             android:summary="@string/pref_toast_on_departure_desc"
@@ -27,6 +21,11 @@
             android:summary="@string/pref_notification_tray_desc"
             android:defaultValue="true" />
 
+    <CheckBoxPreference
+            android:key="station_predictions"
+            android:title="@string/pref_station_predictions_title"
+            android:summary="@string/pref_station_predictions_desc"
+            android:defaultValue="true" />
 
 
 </PreferenceScreen>

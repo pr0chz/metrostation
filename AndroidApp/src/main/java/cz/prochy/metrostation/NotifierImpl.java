@@ -20,6 +20,8 @@ public class NotifierImpl implements Notifier {
     private final NotificationSettings settings;
     private final Timeout predictionTrigger;
 
+    private volatile String predictedStation = null;
+
     public NotifierImpl(Context context, NotificationSettings settings, Timeout predictionTrigger) {
         this.context = Check.notNull(context);
         this.settings = Check.notNull(settings);
@@ -36,12 +38,14 @@ public class NotifierImpl implements Notifier {
 
     @Override
     public void onUnknownStation() {
+        resetPredictedStation();
         cancelPrediction();
         hideNotification();
     }
 
     @Override
     public void onDisconnect(String leavingStation, String nextStation) {
+        resetPredictedStation();
         toastDeparture(direction(leavingStation, nextStation));
         showNotification(direction(leavingStation, nextStation));
         schedulePrediction(nextStation);
@@ -49,9 +53,14 @@ public class NotifierImpl implements Notifier {
 
     @Override
     public void onDisconnect(String leavingStation) {
+        resetPredictedStation();
         cancelPrediction();
         toastDeparture(direction(leavingStation, UNKNOWN_STATION));
         showNotification(direction(leavingStation, UNKNOWN_STATION));
+    }
+
+    private void resetPredictedStation() {
+        predictedStation = null;
     }
 
     private void cancelPrediction() {
@@ -88,12 +97,17 @@ public class NotifierImpl implements Notifier {
     private void toastArrival(String message) {
         Check.notNull(message);
         if (settings.getToastOnArrival()) {
-            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+            if (!message.equals(predictedStation)) { // do not notify again if station was successfully predicted
+                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+            } else {
+                resetPredictedStation();
+            }
         }
     }
 
     private void toastPrediction(String message) {
         if (settings.getPredictions()) {
+            predictedStation = message;
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
         }
     }
