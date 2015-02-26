@@ -91,7 +91,7 @@ public class NotificationService extends Service {
     }
 
     private CellListener buildListeners() {
-        Timeout predictionTrigger = new Timeout(scheduledService, 25, TimeUnit.SECONDS);
+        Timeout predictionTrigger = new Timeout(scheduledService, 35, TimeUnit.SECONDS);
         Notifier notifier = new NotifierImpl(this, new NotificationSettings(this), predictionTrigger);
         long stationTimeout = TimeUnit.SECONDS.toMillis(180);
         long transferTimeout = TimeUnit.SECONDS.toMillis(90);

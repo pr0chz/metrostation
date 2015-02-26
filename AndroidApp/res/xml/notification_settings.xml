@@ -13,7 +13,7 @@
             android:key="toast_on_leave"
             android:title="@string/pref_toast_on_departure_title"
             android:summary="@string/pref_toast_on_departure_desc"
-            android:defaultValue="false" />
+            android:defaultValue="true" />
 
     <CheckBoxPreference
             android:key="tray_notification"
