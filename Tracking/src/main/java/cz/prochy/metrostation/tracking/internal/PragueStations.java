@@ -132,6 +132,7 @@ public class PragueStations extends Stations {
         );
         station(lineC, "Budějovická",
                 id(VODAFONE, 18844, 34300),
+                id(VODAFONE, 13611, 38300),
                 id(UNKNOWN, 6668472, 21820),
                 id(UNKNOWN, 6668475, 21820),
                 id(TMOBILE, 2801, 21780),
@@ -160,6 +161,7 @@ public class PragueStations extends Stations {
         );
         station(lineC, "I.P.Pavlova",
                 id(VODAFONE, 18841, 34300),
+                id(VODAFONE, 14711, 34300),
                 id(TMOBILE, 2803, 21780),
                 id(O2, 21299, 1139)
         );

@@ -62,7 +62,7 @@ public class Analyzer {
             if (cid != DISCONNECT_CID) {
                 return format.format(new Date(ts)) + ": {ts: " + ts + ", cid: " + cid + ", lac: " + lac + "}";
             } else {
-                return "{}";
+                return format.format(new Date(ts)) + ": {ts: " + ts + "}";
             }
         }
     }

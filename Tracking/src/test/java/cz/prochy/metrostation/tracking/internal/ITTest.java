@@ -76,8 +76,19 @@ public class ITTest {
     private final static String SKALKA = "Skalka";
     private final static String DEPO_HOSTIVAR = "Depo Hostivař";
 
-    private final static String HLAVNI_NADRAZI = "Hlavní nádraží";
     private final static String FLORENC = "Florenc";
+    private final static String HLAVNI_NADRAZI = "Hlavní nádraží";
+    // muzeum
+    private final static String IP_PAVLOVA = "I.P.Pavlova";
+    private final static String VYSEHRAD = "Vyšehrad";
+    private final static String PRAZSKEHO_POVSTANI = "Pražského povstání";
+    private final static String PANKRAC = "Pankrác";
+    private final static String BUDEJOVICKA = "Budějovická";
+    private final static String KACEROV = "Kačerov";
+    private final static String ROZTYLY = "Roztyly";
+    private final static String CHODOV = "Chodov";
+    private final static String OPATOV = "Opatov";
+    private final static String HAJE = "Háje";
 
     private static class NotifierMock implements Notifier {
         private StringBuilder actual;
@@ -270,6 +281,53 @@ public class ITTest {
         assertTrue(notifier.verify());
     }
 
+    @Test
+    public void testFlorencHajeAndBack() throws Exception {
+
+        List<Analyzer.TestRecord> testRecords = readMsLogsLines("mslogs/florenc_haje_1.log");
+        for (Analyzer.TestRecord record : testRecords) {
+            if (record.cid != Analyzer.TestRecord.DISCONNECT_CID) {
+                cellListener.cellInfo(record.ts, record.cid, record.lac);
+            } else {
+                cellListener.disconnected(record.ts);
+            }
+        }
+
+        notifier.startExpect();
+        notifier.expectChunk(FLORENC);
+        notifier.expectChunk(HLAVNI_NADRAZI, MUZEUM);
+        notifier.expectChunk(MUZEUM, IP_PAVLOVA);
+        notifier.onStation(IP_PAVLOVA);
+        notifier.onUnknownStation();
+        notifier.expectChunk(IP_PAVLOVA);
+        notifier.onStation(VYSEHRAD);
+        notifier.onUnknownStation();
+        notifier.expectChunk(VYSEHRAD);
+        notifier.expectChunk(PRAZSKEHO_POVSTANI, PANKRAC);
+        notifier.expectChunk(PANKRAC, BUDEJOVICKA);
+        notifier.expectChunk(BUDEJOVICKA, KACEROV);
+        notifier.expectChunk(KACEROV, ROZTYLY);
+        notifier.expectChunk(ROZTYLY, CHODOV);
+        notifier.expectChunk(CHODOV, OPATOV);
+        notifier.expectChunk(OPATOV, HAJE);
+        notifier.onStation(HAJE);
+        notifier.onUnknownStation();
+        notifier.expectChunk(OPATOV);
+        notifier.expectChunk(CHODOV, ROZTYLY);
+        notifier.expectChunk(ROZTYLY, KACEROV);
+        notifier.expectChunk(KACEROV, BUDEJOVICKA);
+        notifier.expectChunk(BUDEJOVICKA, PANKRAC);
+        notifier.expectChunk(PANKRAC, PRAZSKEHO_POVSTANI);
+        notifier.expectChunk(PRAZSKEHO_POVSTANI, VYSEHRAD);
+        notifier.expectChunk(VYSEHRAD, IP_PAVLOVA);
+        notifier.expectChunk(IP_PAVLOVA, MUZEUM);
+        notifier.expectChunk(MUZEUM, HLAVNI_NADRAZI);
+        notifier.expectChunk(HLAVNI_NADRAZI, FLORENC);
+        notifier.onStation(FLORENC);
+        notifier.onUnknownStation();
+
+        assertTrue(notifier.verify());
+    }
 
 
 }

@@ -47,8 +47,6 @@ public class Deduplicator implements Notifier {
             lastNotification = LastNotification.DISCONNECT;
             lastLeavingStation = leavingStation;
             notifier.onDisconnect(leavingStation, nextStation);
-        } else {
-            System.out.println("ignored disconnect 2");
         }
 
     }
@@ -60,8 +58,6 @@ public class Deduplicator implements Notifier {
             lastNotification = LastNotification.DISCONNECT;
             lastLeavingStation = leavingStation;
             notifier.onDisconnect(leavingStation);
-        } else {
-            System.out.println("ignored disconnect");
         }
     }
 
