@@ -3,8 +3,6 @@ package cz.prochy.metrostation.tracking.internal;
 import cz.prochy.metrostation.tracking.Check;
 import cz.prochy.metrostation.tracking.Notifier;
 
-import java.util.Objects;
-
 public class Deduplicator implements Notifier {
 
     private static enum LastNotification {
@@ -23,7 +21,7 @@ public class Deduplicator implements Notifier {
 
     @Override
     public void onStation(String approachingStation) {
-        Objects.requireNonNull(approachingStation);
+        Check.notNull(approachingStation);
         if (!approachingStation.equals(lastApproachingStation) || lastNotification != LastNotification.STATION) {
             lastNotification = LastNotification.STATION;
             lastApproachingStation = approachingStation;
@@ -41,8 +39,8 @@ public class Deduplicator implements Notifier {
 
     @Override
     public void onDisconnect(String leavingStation, String nextStation) {
-        Objects.requireNonNull(leavingStation);
-        Objects.requireNonNull(nextStation);
+        Check.notNull(leavingStation);
+        Check.notNull(nextStation);
         if (!leavingStation.equals(lastLeavingStation) || lastNotification != LastNotification.DISCONNECT) {
             lastNotification = LastNotification.DISCONNECT;
             lastLeavingStation = leavingStation;
@@ -53,7 +51,7 @@ public class Deduplicator implements Notifier {
 
     @Override
     public void onDisconnect(String leavingStation) {
-        Objects.requireNonNull(leavingStation);
+        Check.notNull(leavingStation);
         if (!leavingStation.equals(lastLeavingStation) || lastNotification != LastNotification.DISCONNECT) {
             lastNotification = LastNotification.DISCONNECT;
             lastLeavingStation = leavingStation;
