@@ -27,6 +27,7 @@ public class PragueStations extends Stations {
                 id(VODAFONE, 14853, 38400),
                 id(TMOBILE, 1988, 21820),
                 id(TMOBILE, 6671205, 21820),
+                id(TMOBILE, 6656614, 21820),
                 id(TMOBILE, 6668949, 21820),
                 id(TMOBILE, 6666419, 21820),
                 id(O2, 1097, 1146),

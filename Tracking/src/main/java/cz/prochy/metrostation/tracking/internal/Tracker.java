@@ -17,6 +17,7 @@ public class Tracker implements StationListener {
     private Direction directionHint;
     private LineBuilder line = NO_LINE;
     private long lastTs;
+    private boolean lastEventWasDisconnect = false;
 
     private enum Direction {
         LEFT, RIGHT, UNKNOWN
@@ -79,6 +80,8 @@ public class Tracker implements StationListener {
 
     @Override
     public void onStation(long ts, StationGroup stations, StationGroup ignoredPredictions) {
+        lastEventWasDisconnect = false;
+
         if (stations.isEmpty()) {
             if (!current.isEmpty() && timedOut(ts)) {
                 reset(ts);
@@ -133,11 +136,13 @@ public class Tracker implements StationListener {
         // cancel prediction on transfer timeout
         if (ts - lastTs > transferStationTimeoutMs
                 && current.hasSingleValue()
-                && current.getStation().isTransfer()) {
+                && current.getStation().isTransfer()
+                && !lastEventWasDisconnect) {
             setState(ts, current, NO_STATIONS, Direction.UNKNOWN);
             line = NO_LINE;
             notifyListener(ts);
         }
+        lastEventWasDisconnect = true;
 
         listener.onDisconnect(ts);
     }
