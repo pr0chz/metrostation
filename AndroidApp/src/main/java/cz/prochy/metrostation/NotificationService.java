@@ -127,7 +127,7 @@ public class NotificationService extends Service {
     public synchronized int onStartCommand(Intent intent, int flags, int startId) {
         Log.i(LOG_NAME, "Starting service...");
 
-        if (getMockAction().equals(intent.getAction())) {
+        if (intent != null && getMockAction().equals(intent.getAction())) {
             playbackMockEvents();
         } else {
             if (stateListener == null) {
