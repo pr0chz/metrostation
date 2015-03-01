@@ -1,0 +1,208 @@
+cz.prochy.metrostation.Logger -> cz.prochy.metrostation.a:
+    java.io.File logFile -> a
+    void log(java.lang.String) -> a
+    void log(java.lang.Throwable) -> a
+cz.prochy.metrostation.NotificationService -> cz.prochy.metrostation.NotificationService:
+    cz.prochy.metrostation.Logger logger -> a
+    java.util.concurrent.ScheduledExecutorService scheduledService -> b
+    cz.prochy.metrostation.NotificationService$StateListener stateListener -> c
+    java.lang.String getStartAction() -> a
+    java.lang.String getMockAction() -> b
+    java.lang.String disconnectMessage() -> d
+    java.lang.String cellMessage(int,int) -> a
+    cz.prochy.metrostation.tracking.CellListener buildListeners() -> e
+    android.telephony.TelephonyManager getTelephonyManager() -> f
+    void setListenerStatus(int) -> a
+    int onStartCommand(android.content.Intent,int,int) -> onStartCommand
+    void playbackMockEvents() -> g
+    android.os.IBinder onBind(android.content.Intent) -> onBind
+    void onDestroy() -> onDestroy
+    java.lang.String access$000(cz.prochy.metrostation.NotificationService) -> a
+    cz.prochy.metrostation.Logger access$100() -> c
+    android.telephony.TelephonyManager access$200(cz.prochy.metrostation.NotificationService) -> b
+    java.lang.String access$300(cz.prochy.metrostation.NotificationService,int,int) -> a
+cz.prochy.metrostation.NotificationService$1 -> cz.prochy.metrostation.b:
+cz.prochy.metrostation.NotificationService$StateListener -> cz.prochy.metrostation.c:
+    cz.prochy.metrostation.tracking.CellListener listener -> b
+    cz.prochy.metrostation.NotificationService this$0 -> a
+    void onServiceStateChanged(android.telephony.ServiceState) -> onServiceStateChanged
+cz.prochy.metrostation.NotificationSettings -> cz.prochy.metrostation.d:
+    android.content.Context context -> a
+    android.content.SharedPreferences prefs() -> e
+    boolean getToastOnArrival() -> a
+    boolean getToastOnDeparture() -> b
+    boolean getTrayNotification() -> c
+    boolean getPredictions() -> d
+cz.prochy.metrostation.NotifierImpl -> cz.prochy.metrostation.e:
+    cz.prochy.metrostation.Logger logger -> a
+    android.content.Context context -> b
+    cz.prochy.metrostation.NotificationSettings settings -> c
+    cz.prochy.metrostation.tracking.Timeout predictionTrigger -> d
+    java.lang.String predictedStation -> e
+    void onStation(java.lang.String) -> a
+    void onUnknownStation() -> a
+    void onDisconnect(java.lang.String,java.lang.String) -> a
+    void onDisconnect(java.lang.String) -> b
+    void resetPredictedStation() -> c
+    void cancelPrediction() -> d
+    void schedulePrediction(java.lang.String) -> c
+    java.lang.String direction(java.lang.String,java.lang.String) -> b
+    void toastArrival(java.lang.String) -> d
+    void toastPrediction(java.lang.String) -> e
+    void toastDeparture(java.lang.String) -> f
+    android.app.NotificationManager getNotificationManager() -> e
+    void showNotification(java.lang.String) -> g
+    void hideNotification() -> f
+    android.content.Context access$000(cz.prochy.metrostation.NotifierImpl) -> a
+    void access$100(cz.prochy.metrostation.NotifierImpl,java.lang.String) -> a
+    void access$200(cz.prochy.metrostation.NotifierImpl,java.lang.String) -> b
+    cz.prochy.metrostation.Logger access$300() -> b
+cz.prochy.metrostation.NotifierImpl$1 -> cz.prochy.metrostation.f:
+    java.lang.String val$nextStation -> a
+    cz.prochy.metrostation.NotifierImpl this$0 -> b
+    void run() -> run
+cz.prochy.metrostation.NotifierImpl$1$1 -> cz.prochy.metrostation.g:
+    cz.prochy.metrostation.NotifierImpl$1 this$1 -> a
+    void run() -> run
+cz.prochy.metrostation.ServiceRunner -> cz.prochy.metrostation.h:
+    android.content.Intent getStartIntent(android.content.Context) -> c
+    android.content.Intent getMockIntent(android.content.Context) -> d
+    void runService(android.content.Context) -> a
+    void mockStations(android.content.Context) -> b
+    void onReceive(android.content.Context,android.content.Intent) -> onReceive
+cz.prochy.metrostation.SettingsActivity -> cz.prochy.metrostation.SettingsActivity:
+    java.util.Deque keyBuffer -> a
+    void onCreate(android.os.Bundle) -> onCreate
+    void addKeyToBuffer(int) -> a
+    boolean secretMatches() -> a
+    boolean onKeyDown(int,android.view.KeyEvent) -> onKeyDown
+cz.prochy.metrostation.SettingsActivity$SettingsFragment -> cz.prochy.metrostation.i:
+    void onCreate(android.os.Bundle) -> onCreate
+cz.prochy.metrostation.tracking.Builder -> cz.prochy.metrostation.a.a:
+    cz.prochy.metrostation.tracking.CellListener createListener(cz.prochy.metrostation.tracking.internal.Stations,cz.prochy.metrostation.tracking.Notifier,long,long) -> a
+cz.prochy.metrostation.tracking.CellListener -> cz.prochy.metrostation.a.b:
+    void cellInfo(long,int,int) -> a
+    void disconnected(long) -> a
+cz.prochy.metrostation.tracking.Check -> cz.prochy.metrostation.a.c:
+    java.lang.Object notNull(java.lang.Object) -> a
+cz.prochy.metrostation.tracking.LineBuilder -> cz.prochy.metrostation.a.d:
+    cz.prochy.metrostation.tracking.Station last -> a
+    void addStation(cz.prochy.metrostation.tracking.Station) -> a
+cz.prochy.metrostation.tracking.Notifier -> cz.prochy.metrostation.a.e:
+    void onStation(java.lang.String) -> a
+    void onUnknownStation() -> a
+    void onDisconnect(java.lang.String,java.lang.String) -> a
+    void onDisconnect(java.lang.String) -> b
+cz.prochy.metrostation.tracking.Station -> cz.prochy.metrostation.a.f:
+    java.lang.String name -> a
+    java.util.Set lines -> b
+    java.util.HashMap prev -> c
+    java.util.HashMap next -> d
+    void addLine(cz.prochy.metrostation.tracking.LineBuilder) -> a
+    java.util.Set getLines() -> a
+    boolean isTransfer() -> b
+    java.util.Set getPrev() -> c
+    void addPrev(cz.prochy.metrostation.tracking.LineBuilder,cz.prochy.metrostation.tracking.Station) -> a
+    java.util.Set getNext() -> d
+    void addNext(cz.prochy.metrostation.tracking.LineBuilder,cz.prochy.metrostation.tracking.Station) -> b
+    java.lang.String getName() -> e
+cz.prochy.metrostation.tracking.Timeout -> cz.prochy.metrostation.a.g:
+    long timeout -> a
+    java.util.concurrent.TimeUnit timeUnit -> b
+    java.util.concurrent.ScheduledExecutorService executor -> c
+    java.lang.Object lock -> d
+    java.util.concurrent.Future taskFuture -> e
+    void reset(java.lang.Runnable) -> a
+    void cancel() -> a
+cz.prochy.metrostation.tracking.internal.Deduplicator -> cz.prochy.metrostation.a.a.a:
+    cz.prochy.metrostation.tracking.Notifier notifier -> a
+    cz.prochy.metrostation.tracking.internal.Deduplicator$LastNotification lastNotification -> b
+    java.lang.String lastApproachingStation -> c
+    java.lang.String lastLeavingStation -> d
+    void onStation(java.lang.String) -> a
+    void onUnknownStation() -> a
+    void onDisconnect(java.lang.String,java.lang.String) -> a
+    void onDisconnect(java.lang.String) -> b
+cz.prochy.metrostation.tracking.internal.Deduplicator$LastNotification -> cz.prochy.metrostation.a.a.b:
+    cz.prochy.metrostation.tracking.internal.Deduplicator$LastNotification STATION -> a
+    cz.prochy.metrostation.tracking.internal.Deduplicator$LastNotification UNKNOWN_STATION -> b
+    cz.prochy.metrostation.tracking.internal.Deduplicator$LastNotification DISCONNECT -> c
+    cz.prochy.metrostation.tracking.internal.Deduplicator$LastNotification[] $VALUES -> d
+    cz.prochy.metrostation.tracking.internal.Deduplicator$LastNotification[] values() -> values
+    cz.prochy.metrostation.tracking.internal.Deduplicator$LastNotification valueOf(java.lang.String) -> valueOf
+cz.prochy.metrostation.tracking.internal.NotifyListener -> cz.prochy.metrostation.a.a.c:
+    cz.prochy.metrostation.tracking.Notifier notifier -> b
+    cz.prochy.metrostation.tracking.internal.StationGroup lastStations -> c
+    cz.prochy.metrostation.tracking.internal.StationGroup lastPredictions -> d
+    void onStation(long,cz.prochy.metrostation.tracking.internal.StationGroup,cz.prochy.metrostation.tracking.internal.StationGroup) -> a
+    void onDisconnect(long) -> a
+cz.prochy.metrostation.tracking.internal.PragueStations -> cz.prochy.metrostation.a.a.d:
+    void buildStations() -> a
+cz.prochy.metrostation.tracking.internal.StationGroup -> cz.prochy.metrostation.a.a.e:
+    cz.prochy.metrostation.tracking.internal.StationGroup EMPTY_GROUP -> a
+    java.util.Set set -> b
+    void add(cz.prochy.metrostation.tracking.Station) -> a
+    boolean isEmpty() -> a
+    cz.prochy.metrostation.tracking.internal.StationGroup immutable() -> b
+    cz.prochy.metrostation.tracking.internal.StationGroup empty() -> c
+    boolean hasSingleValue() -> d
+    cz.prochy.metrostation.tracking.Station getStation() -> e
+    cz.prochy.metrostation.tracking.internal.StationGroup intersect(cz.prochy.metrostation.tracking.internal.StationGroup) -> a
+    boolean intersects(cz.prochy.metrostation.tracking.internal.StationGroup) -> b
+    cz.prochy.metrostation.tracking.internal.StationGroup left() -> f
+    cz.prochy.metrostation.tracking.internal.StationGroup right() -> g
+    cz.prochy.metrostation.tracking.internal.StationGroup left(cz.prochy.metrostation.tracking.LineBuilder) -> a
+    cz.prochy.metrostation.tracking.internal.StationGroup right(cz.prochy.metrostation.tracking.LineBuilder) -> b
+    boolean equals(java.lang.Object) -> equals
+    int hashCode() -> hashCode
+    java.lang.String toString() -> toString
+cz.prochy.metrostation.tracking.internal.StationGroup$Immutable -> cz.prochy.metrostation.a.a.f:
+    cz.prochy.metrostation.tracking.internal.StationGroup this$0 -> a
+    void add(cz.prochy.metrostation.tracking.Station) -> a
+cz.prochy.metrostation.tracking.internal.StationListener -> cz.prochy.metrostation.a.a.g:
+    cz.prochy.metrostation.tracking.internal.StationGroup NO_STATIONS -> a
+    void onStation(long,cz.prochy.metrostation.tracking.internal.StationGroup,cz.prochy.metrostation.tracking.internal.StationGroup) -> a
+    void onDisconnect(long) -> a
+cz.prochy.metrostation.tracking.internal.Stations -> cz.prochy.metrostation.a.a.h:
+    java.util.Map cellMap -> a
+    java.util.Map transferStations -> b
+    long id(java.lang.String,int,int) -> a
+    long id(int,int) -> b
+    void addStation(cz.prochy.metrostation.tracking.Station,cz.prochy.metrostation.tracking.LineBuilder,long[]) -> a
+    void station(cz.prochy.metrostation.tracking.LineBuilder,java.lang.String,long[]) -> a
+    void transferStation(cz.prochy.metrostation.tracking.LineBuilder,java.lang.String,long[]) -> b
+    void sealLists() -> b
+    void buildStations() -> a
+    cz.prochy.metrostation.tracking.internal.StationGroup getStations(int,int) -> a
+cz.prochy.metrostation.tracking.internal.StationsCellListener -> cz.prochy.metrostation.a.a.i:
+    cz.prochy.metrostation.tracking.internal.Stations stations -> a
+    cz.prochy.metrostation.tracking.internal.StationListener listener -> b
+    void cellInfo(long,int,int) -> a
+    void disconnected(long) -> a
+cz.prochy.metrostation.tracking.internal.Tracker -> cz.prochy.metrostation.a.a.j:
+    cz.prochy.metrostation.tracking.LineBuilder NO_LINE -> b
+    cz.prochy.metrostation.tracking.internal.StationListener listener -> c
+    long trackLostTimeoutMs -> d
+    long transferStationTimeoutMs -> e
+    cz.prochy.metrostation.tracking.internal.StationGroup current -> f
+    cz.prochy.metrostation.tracking.internal.StationGroup prediction -> g
+    cz.prochy.metrostation.tracking.internal.Tracker$Direction directionHint -> h
+    cz.prochy.metrostation.tracking.LineBuilder line -> i
+    long lastTs -> j
+    boolean lastEventWasDisconnect -> k
+    void setState(long,cz.prochy.metrostation.tracking.internal.StationGroup,cz.prochy.metrostation.tracking.internal.StationGroup,cz.prochy.metrostation.tracking.internal.Tracker$Direction) -> a
+    void updateLine(cz.prochy.metrostation.tracking.internal.StationGroup) -> a
+    void reset(long) -> b
+    void notifyListener(long) -> c
+    int countTrue(boolean[]) -> a
+    boolean timedOut(long) -> d
+    cz.prochy.metrostation.tracking.LineBuilder getLine(cz.prochy.metrostation.tracking.internal.StationGroup) -> b
+    void onStation(long,cz.prochy.metrostation.tracking.internal.StationGroup,cz.prochy.metrostation.tracking.internal.StationGroup) -> a
+    void onDisconnect(long) -> a
+cz.prochy.metrostation.tracking.internal.Tracker$Direction -> cz.prochy.metrostation.a.a.k:
+    cz.prochy.metrostation.tracking.internal.Tracker$Direction LEFT -> a
+    cz.prochy.metrostation.tracking.internal.Tracker$Direction RIGHT -> b
+    cz.prochy.metrostation.tracking.internal.Tracker$Direction UNKNOWN -> c
+    cz.prochy.metrostation.tracking.internal.Tracker$Direction[] $VALUES -> d
+    cz.prochy.metrostation.tracking.internal.Tracker$Direction[] values() -> values
+    cz.prochy.metrostation.tracking.internal.Tracker$Direction valueOf(java.lang.String) -> valueOf
