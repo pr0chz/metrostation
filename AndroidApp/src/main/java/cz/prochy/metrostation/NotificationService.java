@@ -25,13 +25,20 @@ import java.util.concurrent.TimeUnit;
 @ThreadSafe
 public class NotificationService extends Service {
 
-    private final static PragueStations stations = new PragueStations();
     private final static String LOG_NAME = "MetroStation";
 
     private final static Logger logger = new Logger();
 
     private ScheduledExecutorService scheduledService;
     private StateListener stateListener;
+
+    public static String getStartAction() {
+        return NotificationService.class.getName() + ".start";
+    }
+
+    public static String getMockAction() {
+        return NotificationService.class.getName() + ".mock";
+    }
 
     private class StateListener extends PhoneStateListener {
 
@@ -95,7 +102,7 @@ public class NotificationService extends Service {
         Notifier notifier = new NotifierImpl(this, new NotificationSettings(this), predictionTrigger);
         long stationTimeout = TimeUnit.SECONDS.toMillis(180);
         long transferTimeout = TimeUnit.SECONDS.toMillis(90);
-        return Builder.createListener(stations, notifier, stationTimeout, transferTimeout);
+        return Builder.createListener(new PragueStations(), notifier, stationTimeout, transferTimeout);
     }
 
     private TelephonyManager getTelephonyManager() {
@@ -119,13 +126,28 @@ public class NotificationService extends Service {
     @Override
     public synchronized int onStartCommand(Intent intent, int flags, int startId) {
         Log.i(LOG_NAME, "Starting service...");
-        logger.log("Starting...\n");
-        if (stateListener == null) {
-            scheduledService = Executors.newSingleThreadScheduledExecutor();
-            stateListener = new StateListener(buildListeners());
-            setListenerStatus(PhoneStateListener.LISTEN_SERVICE_STATE);
+
+        if (getMockAction().equals(intent.getAction())) {
+            playbackMockEvents();
+        } else {
+            if (stateListener == null) {
+                logger.log("Starting...\n");
+                scheduledService = Executors.newSingleThreadScheduledExecutor();
+                stateListener = new StateListener(buildListeners());
+                setListenerStatus(PhoneStateListener.LISTEN_SERVICE_STATE);
+            }
         }
         return START_STICKY;
+    }
+
+    private void playbackMockEvents() {
+        CellListener cellListener = buildListeners();
+        cellListener.cellInfo(1000, 18807, 34300);
+        cellListener.disconnected(2000);
+        cellListener.cellInfo(3000, 18806, 34300);
+        cellListener.disconnected(4000);
+        cellListener.cellInfo(5000, 18805, 34300);
+        cellListener.cellInfo(6000, 1, 1);
     }
 
     @Override

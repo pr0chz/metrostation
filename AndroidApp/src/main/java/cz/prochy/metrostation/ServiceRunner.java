@@ -7,12 +7,24 @@ import android.util.Log;
 
 public class ServiceRunner extends BroadcastReceiver {
 
-    private Intent getIntent(Context context) {
-        return new Intent(context, NotificationService.class);
+    private static Intent getStartIntent(Context context) {
+        Intent intent = new Intent(context, NotificationService.class);
+        intent.setAction(NotificationService.getStartAction());
+        return intent;
     }
 
-    void runService(Context context) {
-        context.startService(getIntent(context));
+    private static Intent getMockIntent(Context context) {
+        Intent intent = new Intent(context, NotificationService.class);
+        intent.setAction(NotificationService.getMockAction());
+        return intent;
+    }
+
+    static void runService(Context context) {
+        context.startService(getStartIntent(context));
+    }
+
+    static void mockStations(Context context) {
+        context.startService(getMockIntent(context));
     }
 
     @Override

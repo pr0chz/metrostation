@@ -89,6 +89,9 @@
                                 <debug>false</debug>
                             </sign>
                             <release>true</release>
+                            <proguard>
+                                <skip>false</skip>
+                            </proguard>
                         </configuration>
                     </plugin>
                     <plugin>

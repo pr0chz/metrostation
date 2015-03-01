@@ -4,8 +4,15 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.view.KeyEvent;
+
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.Iterator;
 
 public class SettingsActivity extends Activity {
+
+    private final Deque<Integer> keyBuffer = new ArrayDeque<>(4);
 
     public static class SettingsFragment extends PreferenceFragment {
         @Override
@@ -26,7 +33,39 @@ public class SettingsActivity extends Activity {
                 .replace(android.R.id.content, new SettingsFragment())
                 .commit();
 
-        new ServiceRunner().runService(SettingsActivity.this);
+        ServiceRunner.runService(SettingsActivity.this);
     }
 
+    private void addKeyToBuffer(int keyCode) {
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+            if (keyBuffer.size() == 4) {
+                keyBuffer.removeFirst();
+            }
+            keyBuffer.addLast(keyCode);
+        } else {
+            keyBuffer.clear();
+        }
+    }
+
+    private boolean secretMatches() {
+        if (keyBuffer.size() == 4) {
+            Iterator<Integer> it = keyBuffer.iterator();
+            return it.next() == KeyEvent.KEYCODE_VOLUME_UP
+                    && it.next() == KeyEvent.KEYCODE_VOLUME_DOWN
+                    && it.next() == KeyEvent.KEYCODE_VOLUME_UP
+                    && it.next() == KeyEvent.KEYCODE_VOLUME_DOWN;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        addKeyToBuffer(keyCode);
+        if (secretMatches()) {
+            ServiceRunner.mockStations(SettingsActivity.this);
+            keyBuffer.clear();
+        }
+        return super.onKeyDown(keyCode, event);
+    }
 }
