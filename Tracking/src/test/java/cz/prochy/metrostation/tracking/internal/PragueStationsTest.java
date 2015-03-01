@@ -26,7 +26,7 @@ public class PragueStationsTest {
 
     @Test
     public void testMultipleMatchingStations() throws Exception {
-        assertTrue(stations.getStations(21198, 1139).hasMultipleValues());
+        assertTrue(stations.getStations(2801, 21780).hasMultipleValues());
     }
 
     @Test

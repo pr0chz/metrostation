@@ -168,6 +168,10 @@ public class ITTest {
             boolean ok = true;
             StringBuilder result = new StringBuilder();
 
+            if (actual == null) {
+                throw new IllegalStateException("Start expect has not been called!");
+            }
+
             String [] a = actual.toString().split("\n");
             String [] e = current.toString().split("\n");
             if (a.length != e.length) {
@@ -528,6 +532,146 @@ public class ITTest {
         // Nove Butovice missing in source data
         // TODO prediction track lost
         notifier.expectChunk(JINONICE);
+        notifier.expectChunk(RADLICKA, SMICHOVSKE_NADRAZI);
+        notifier.expectChunk(SMICHOVSKE_NADRAZI, ANDEL);
+        notifier.expectChunk(ANDEL, KARLOVO_NAMESTI);
+        notifier.expectChunk(KARLOVO_NAMESTI, NARODNI_TRIDA);
+        notifier.expectChunk(NARODNI_TRIDA, MUSTEK);
+        notifier.expectChunk(MUSTEK, NAMESTI_REPUBLIKY);
+        notifier.expectChunk(NAMESTI_REPUBLIKY, FLORENC);
+        notifier.expectChunk(FLORENC, KRIZIKOVA);
+        notifier.expectChunk(KRIZIKOVA, INVALIDOVNA);
+        notifier.expectChunk(INVALIDOVNA, PALMOVKA);
+        notifier.expectChunk(PALMOVKA, CESKOMORAVSKA);
+        notifier.expectChunk(CESKOMORAVSKA, VYSOCANSKA);
+        notifier.expectChunk(VYSOCANSKA, KOLBENOVA);
+        notifier.expectChunk(KOLBENOVA, HLOUBETIN);
+        notifier.expectChunk(HLOUBETIN, RAJSKA_ZAHRADA);
+        // Rajska zahrada goes continuously into Cerny most
+        notifier.onStation(RAJSKA_ZAHRADA);
+        notifier.onStation(CERNY_MOST);
+        notifier.expectChunk(RAJSKA_ZAHRADA, HLOUBETIN);
+        notifier.expectChunk(HLOUBETIN, KOLBENOVA);
+        notifier.expectChunk(KOLBENOVA, VYSOCANSKA);
+        notifier.expectChunk(VYSOCANSKA, CESKOMORAVSKA);
+        notifier.expectChunk(CESKOMORAVSKA, PALMOVKA);
+        notifier.expectChunk(PALMOVKA, INVALIDOVNA);
+        notifier.expectChunk(INVALIDOVNA, KRIZIKOVA);
+        notifier.expectChunk(KRIZIKOVA, FLORENC);
+        notifier.expectChunk(FLORENC, NAMESTI_REPUBLIKY);
+        notifier.expectChunk(NAMESTI_REPUBLIKY, MUSTEK);
+        notifier.expectChunk(MUSTEK);
+
+        // line A
+        notifier.expectChunk(STAROMESTSKA, MALOSTRANSKA);
+        notifier.expectChunk(MALOSTRANSKA, HRADCANSKA);
+        notifier.expectChunk(HRADCANSKA, DEJVICKA);
+        notifier.expectChunk(DEJVICKA);
+        notifier.expectChunk(HRADCANSKA, MALOSTRANSKA);
+        notifier.expectChunk(MALOSTRANSKA, STAROMESTSKA);
+        notifier.expectChunk(STAROMESTSKA, MUSTEK);
+        notifier.expectChunk(MUSTEK, MUZEUM);
+        notifier.expectChunk(MUZEUM, NAMESTI_MIRU);
+        notifier.expectChunk(NAMESTI_MIRU, JIRIHO_Z_PODEBRAD);
+        notifier.expectChunk(JIRIHO_Z_PODEBRAD, FLORA);
+        notifier.expectChunk(FLORA, ZELIVSKEHO);
+        notifier.expectChunk(ZELIVSKEHO, STRASNICKA);
+        notifier.expectChunk(STRASNICKA, SKALKA);
+        notifier.expectChunk(SKALKA, DEPO_HOSTIVAR);
+        notifier.expectChunk(DEPO_HOSTIVAR);
+        notifier.onStation(SKALKA);
+
+        assertTrue(notifier.verify());
+    }
+
+
+    @Test
+    public void testO2() throws Exception {
+        replayFile("legacy/mslogs/o2.ms.log");
+
+        // line C
+        // journey begins heading to Haje
+        notifier.startExpect();
+        notifier.expectChunk(FLORENC);
+        notifier.onStation(HLAVNI_NADRAZI); // missing disconnect in source data
+        notifier.expectChunk(MUZEUM, IP_PAVLOVA);
+        notifier.expectChunk(IP_PAVLOVA, VYSEHRAD);
+        notifier.expectChunk(VYSEHRAD, PRAZSKEHO_POVSTANI);
+        notifier.expectChunk(PRAZSKEHO_POVSTANI, PANKRAC);
+        notifier.expectChunk(PANKRAC, BUDEJOVICKA);
+        notifier.expectChunk(BUDEJOVICKA, KACEROV);
+        notifier.expectChunk(KACEROV, ROZTYLY);
+        notifier.expectChunk(ROZTYLY, CHODOV);
+        notifier.expectChunk(CHODOV, OPATOV);
+        notifier.expectChunk(OPATOV, HAJE);
+        notifier.expectChunk(HAJE);
+        notifier.expectChunk(OPATOV, CHODOV);
+        notifier.expectChunk(CHODOV, ROZTYLY);
+        notifier.expectChunk(ROZTYLY, KACEROV);
+        notifier.expectChunk(KACEROV, BUDEJOVICKA);
+        notifier.expectChunk(BUDEJOVICKA, PANKRAC);
+        notifier.expectChunk(PANKRAC, PRAZSKEHO_POVSTANI);
+        notifier.expectChunk(PRAZSKEHO_POVSTANI, VYSEHRAD);
+        notifier.expectChunk(VYSEHRAD, IP_PAVLOVA);
+        notifier.expectChunk(IP_PAVLOVA, MUZEUM);
+        notifier.onStation(MUZEUM); // missing disconnect in source data
+        notifier.expectChunk(HLAVNI_NADRAZI, FLORENC);
+        notifier.expectChunk(FLORENC, VLTAVSKA);
+        notifier.expectChunk(VLTAVSKA, NADRAZI_HOLESOVICE);
+        notifier.expectChunk(NADRAZI_HOLESOVICE, KOBYLISY);
+        notifier.expectChunk(KOBYLISY, LADVI);
+        notifier.expectChunk(LADVI, STRIZKOV);
+        notifier.expectChunk(STRIZKOV, PROSEK);
+        notifier.expectChunk(PROSEK, LETNANY);
+        notifier.expectChunk(LETNANY);
+
+        notifier.expectChunk(PROSEK, STRIZKOV);
+        notifier.expectChunk(STRIZKOV, LADVI);
+        notifier.expectChunk(LADVI, KOBYLISY);
+        notifier.expectChunk(KOBYLISY, NADRAZI_HOLESOVICE);
+        notifier.expectChunk(NADRAZI_HOLESOVICE, VLTAVSKA);
+        notifier.expectChunk(VLTAVSKA, FLORENC);
+        notifier.expectChunk(FLORENC, HLAVNI_NADRAZI);
+        notifier.onStation(HLAVNI_NADRAZI); // missing disconnect in source data
+
+        // transfer to A -> Skalka
+        notifier.expectChunk(MUZEUM);
+
+        notifier.expectChunk(NAMESTI_MIRU, JIRIHO_Z_PODEBRAD);
+        notifier.expectChunk(JIRIHO_Z_PODEBRAD, FLORA);
+        notifier.expectChunk(FLORA, ZELIVSKEHO);
+        notifier.expectChunk(ZELIVSKEHO, STRASNICKA);
+        notifier.expectChunk(STRASNICKA, SKALKA);
+        notifier.onStation(SKALKA);
+
+        // pause
+        notifier.onUnknownStation();
+
+        // resume again on Florenc next day
+        // line B
+        notifier.expectChunk(FLORENC);
+        notifier.expectChunk(NAMESTI_REPUBLIKY, MUSTEK);
+        notifier.expectChunk(MUSTEK, NARODNI_TRIDA);
+        notifier.expectChunk(NARODNI_TRIDA, KARLOVO_NAMESTI);
+        notifier.expectChunk(KARLOVO_NAMESTI, ANDEL);
+        notifier.expectChunk(ANDEL, SMICHOVSKE_NADRAZI);
+        notifier.expectChunk(SMICHOVSKE_NADRAZI, RADLICKA);
+        notifier.expectChunk(RADLICKA, JINONICE);
+        notifier.expectChunk(JINONICE, NOVE_BUTOVICE);
+        notifier.expectChunk(NOVE_BUTOVICE, HURKA);
+        notifier.expectChunk(HURKA, LUZINY);
+        // Luziny missing in source data
+        // TODO prediction track lost
+        notifier.expectChunk(LUKA);
+        notifier.expectChunk(STODULKY, ZLICIN);
+        notifier.expectChunk(ZLICIN);
+        notifier.expectChunk(STODULKY, LUKA);
+        notifier.expectChunk(LUKA, LUZINY);
+        // TODO there seems to be mess in cellids around this place
+        notifier.onStation(LUZINY); // missing disconnect in source data
+        notifier.expectChunk(HURKA, NOVE_BUTOVICE);
+        notifier.expectChunk(NOVE_BUTOVICE, JINONICE);
+        notifier.expectChunk(JINONICE, RADLICKA);
         notifier.expectChunk(RADLICKA, SMICHOVSKE_NADRAZI);
         notifier.expectChunk(SMICHOVSKE_NADRAZI, ANDEL);
         notifier.expectChunk(ANDEL, KARLOVO_NAMESTI);

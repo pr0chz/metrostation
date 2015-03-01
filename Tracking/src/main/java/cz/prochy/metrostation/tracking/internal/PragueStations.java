@@ -90,12 +90,12 @@ public class PragueStations extends Stations {
         station(lineA, "Hradčanská",
                 id(VODAFONE, 18803, 34300),
                 id(TMOBILE, 2206, 21780),
-                id(O2, 21198, 1139)
+                id(O2, 21698, 1139)
         );
         station(lineA, "Dejvická",
                 id(VODAFONE, 18801, 34300),
                 id(TMOBILE, 2205, 21780),
-                id(O2, 21199, 1139)
+                id(O2, 21699, 1139)
         );
 		
 		/*
