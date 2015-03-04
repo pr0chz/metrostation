@@ -78,7 +78,8 @@ public class NotifierImpl implements Notifier {
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
-                                toastPrediction(nextStation);
+                                toastArrival(nextStation);
+                                predictedStation = nextStation;
                                 showNotification(nextStation);
                             }
                         });
@@ -105,13 +106,6 @@ public class NotifierImpl implements Notifier {
         }
     }
 
-    private void toastPrediction(String message) {
-        if (settings.getPredictions()) {
-            predictedStation = message;
-            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-        }
-    }
-
     private void toastDeparture(String message) {
         Check.notNull(message);
         if (settings.getToastOnDeparture()) {
@@ -128,8 +122,7 @@ public class NotifierImpl implements Notifier {
         if (settings.getTrayNotification()) {
             Notification.Builder builder = new Notification.Builder(context)
                     .setSmallIcon(R.drawable.ic_stat_notify)
-                    .setContentTitle("Metro station")
-                    .setContentText(Check.notNull(message))
+                    .setContentTitle(Check.notNull(message))
                     .setPriority(Notification.PRIORITY_MAX)
                     .setAutoCancel(true);
 

@@ -29,8 +29,8 @@ public class NotificationService extends Service {
 
     private final static Logger logger = new Logger();
 
-    private ScheduledExecutorService scheduledService;
-    private StateListener stateListener;
+    private volatile ScheduledExecutorService scheduledService;
+    private volatile StateListener stateListener;
 
     public static String getStartAction() {
         return NotificationService.class.getName() + ".start";
@@ -146,8 +146,6 @@ public class NotificationService extends Service {
         cellListener.disconnected(2000);
         cellListener.cellInfo(3000, 18806, 34300);
         cellListener.disconnected(4000);
-        cellListener.cellInfo(5000, 18805, 34300);
-        cellListener.cellInfo(6000, 1, 1);
     }
 
     @Override
