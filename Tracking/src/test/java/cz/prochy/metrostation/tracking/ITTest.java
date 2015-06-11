@@ -59,6 +59,10 @@ public class ITTest {
         expectLastCall().once();
     }
 
+    private final static String NEMOCNICE_MOTOL = "Nemocnice Motol";
+    private final static String PETRINY = "Petřiny";
+    private final static String NADRAZI_VELESLAVIN = "Nádraží Veleslavín";
+    private final static String BORISLAVKA = "Bořislavka";
     private final static String DEJVICKA = "Dejvická";
     private final static String HRADCANSKA = "Hradčanská";
     private final static String MALOSTRANSKA = "Malostranská";
@@ -566,7 +570,7 @@ public class ITTest {
         notifier.expectChunk(STAROMESTSKA, MALOSTRANSKA);
         notifier.expectChunk(MALOSTRANSKA, HRADCANSKA);
         notifier.expectChunk(HRADCANSKA, DEJVICKA);
-        notifier.expectChunk(DEJVICKA);
+        notifier.expectChunk(DEJVICKA, BORISLAVKA);
         notifier.expectChunk(HRADCANSKA, MALOSTRANSKA);
         notifier.expectChunk(MALOSTRANSKA, STAROMESTSKA);
         notifier.expectChunk(STAROMESTSKA, MUSTEK);
@@ -706,7 +710,7 @@ public class ITTest {
         notifier.expectChunk(STAROMESTSKA, MALOSTRANSKA);
         notifier.expectChunk(MALOSTRANSKA, HRADCANSKA);
         notifier.expectChunk(HRADCANSKA, DEJVICKA);
-        notifier.expectChunk(DEJVICKA);
+        notifier.expectChunk(DEJVICKA, BORISLAVKA);
         notifier.expectChunk(HRADCANSKA, MALOSTRANSKA);
         notifier.expectChunk(MALOSTRANSKA, STAROMESTSKA);
         notifier.expectChunk(STAROMESTSKA, MUSTEK);
@@ -720,6 +724,21 @@ public class ITTest {
         notifier.expectChunk(SKALKA, DEPO_HOSTIVAR);
         notifier.expectChunk(DEPO_HOSTIVAR);
         notifier.onStation(SKALKA);
+
+        assertTrue(notifier.verify());
+    }
+
+    @Test
+    public void testDejvickaMotolTmobile() throws Exception {
+        replayFile("mslogs/dejvicka_motol_tmobile.log");
+
+        notifier.startExpect();
+        notifier.expectChunk(HRADCANSKA);
+        notifier.expectChunk(DEJVICKA, BORISLAVKA);
+        notifier.expectChunk(BORISLAVKA, NADRAZI_VELESLAVIN);
+        notifier.expectChunk(NADRAZI_VELESLAVIN, PETRINY);
+        notifier.expectChunk(PETRINY, NEMOCNICE_MOTOL);
+        notifier.expectChunk(NEMOCNICE_MOTOL);
 
         assertTrue(notifier.verify());
     }

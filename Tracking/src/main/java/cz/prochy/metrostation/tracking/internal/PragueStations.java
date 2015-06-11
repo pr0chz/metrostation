@@ -97,7 +97,34 @@ public class PragueStations extends Stations {
                 id(TMOBILE, 2205, 21780),
                 id(O2, 21699, 1139)
         );
-		
+        station(lineA, "Bořislavka",
+                id(VODAFONE, 18860, 34200),
+                id(VODAFONE, 377658, 34200),
+                id(TMOBILE, 2204, 21780),
+                id(TMOBILE, 6658240, 21780)
+        );
+        station(lineA, "Nádraží Veleslavín",
+                id(VODAFONE, 18859, 34200),
+                id(VODAFONE, 377653, 34200),
+                id(TMOBILE, 25686325, 10104)
+        );
+        station(lineA, "Petřiny",
+                id(VODAFONE, 377656, 34200),
+                id(VODAFONE, 377652, 34200),
+                id(TMOBILE, 2202, 21780),
+                id(TMOBILE, 25686324, 10104)
+        );
+        station(lineA, "Nemocnice Motol",
+                id(VODAFONE, 18857, 34200),
+                id(VODAFONE, 377651, 34200),
+                id(VODAFONE, 377655, 34200),
+                id(VODAFONE, 380861, 39502),
+                id(TMOBILE, 6658237, 21780),
+                id(TMOBILE, 25686323, 10104),
+                id(O2, 10349312, 1153),
+                id(O2, 10495747, 1137)
+        );
+
 		/*
 		 * Metro C
 		 * Vodafone - OK
