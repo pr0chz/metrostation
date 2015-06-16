@@ -743,5 +743,24 @@ public class ITTest {
         assertTrue(notifier.verify());
     }
 
+    @Test
+    public void testDejvickaMotolDejvickaO2() throws Exception {
+        replayFile("mslogs/dejvicka_motol_o2.log");
+
+        notifier.startExpect();
+        notifier.expectChunk(HRADCANSKA);
+        notifier.expectChunk(DEJVICKA, BORISLAVKA);
+        notifier.onStation(BORISLAVKA); // missing disconnect
+        notifier.expectChunk(NADRAZI_VELESLAVIN, PETRINY);
+        notifier.expectChunk(PETRINY, NEMOCNICE_MOTOL);
+        notifier.onStation(NEMOCNICE_MOTOL); // missing disconnect
+        notifier.expectChunk(PETRINY, NADRAZI_VELESLAVIN);
+        notifier.expectChunk(NADRAZI_VELESLAVIN, BORISLAVKA);
+        notifier.expectChunk(BORISLAVKA, DEJVICKA);
+        notifier.onStation(DEJVICKA);
+
+        assertTrue(notifier.verify());
+    }
+
 
 }
