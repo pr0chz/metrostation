@@ -1,5 +1,6 @@
 package cz.prochy.cellar;
 
+import com.github.ziplet.filter.compression.CompressingFilter;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.springframework.boot.SpringApplication;
@@ -8,7 +9,9 @@ import org.springframework.boot.context.embedded.ConfigurableEmbeddedServletCont
 import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
 import org.springframework.boot.context.embedded.jetty.JettyEmbeddedServletContainerFactory;
 import org.springframework.boot.context.embedded.jetty.JettyServerCustomizer;
+import org.springframework.context.annotation.Bean;
 
+import javax.servlet.Filter;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
@@ -33,5 +36,10 @@ public class Application implements EmbeddedServletContainerCustomizer {
                 threadPool.setIdleTimeout(20);
             }
         }));
+    }
+
+    @Bean
+    public Filter gzipFilter() {
+        return new CompressingFilter();
     }
 }

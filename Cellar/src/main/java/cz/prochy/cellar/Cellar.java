@@ -1,6 +1,7 @@
 package cz.prochy.cellar;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
 import org.springframework.boot.autoconfigure.web.ErrorController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import java.util.Random;
 @RestController
 public class Cellar implements ErrorController {
 
+    final static Logger logger = Logger.getLogger(Cellar.class);
     final Random random = new Random();
 
     @RequestMapping(value = "/store", method = RequestMethod.POST)
@@ -25,15 +27,16 @@ public class Cellar implements ErrorController {
         String filename = "blob_" + System.currentTimeMillis() + "_" + request.getRemoteAddr() + "_" + random.nextInt(1000);
         try {
             FileUtils.writeStringToFile(new File(filename), body);
-            System.out.println("Written blob: " + filename);
+            logger.info("Written blob: " + filename);
         } catch (IOException e) {
-            System.out.println("Failed to write blob: " + filename);
+            logger.error("Failed to write blob: " + filename);
         }
         return respond();
     }
 
     @RequestMapping(value = "/error")
-    public ResponseEntity<String> error() {
+    public ResponseEntity<String> error(HttpServletRequest request) {
+        logger.info("Returning error response to " + request.getRemoteHost());
         return respond();
     }
 
