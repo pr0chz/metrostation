@@ -6,6 +6,7 @@
     <string name="pref_toast_on_departure_title">Departure from station</string>
     <string name="pref_notification_tray_title">Show current station</string>
     <string name="pref_station_predictions_title">Predictive notification</string>
+    <string name="pref_cell_logging_title">GSM cell logging</string>
 
     <string name="pref_toast_on_arrival_desc">Pop-up will be displayed on arrival to station.</string>
     <string name="pref_toast_on_departure_desc">Pop-up will be displayed on departure from station. If available
@@ -14,5 +15,8 @@
         notification area. It will disappear shortly after you leave the underground area.</string>
     <string name="pref_station_predictions_desc">If possible you will be notified in advance before arriving into
         the station. This is based on prediction and it may take a station or two to determine direction.</string>
+    <string name="pref_cell_logging_desc">Make the application better and automatically collect anonymous GSM cell
+        location data. Data will be used to improve application and fix errors in station detection. No personal data
+        will be collected.</string>
 
 </resources>

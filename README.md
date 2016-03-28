@@ -15,11 +15,28 @@ git tag -a v1.0.0
 
 ## Building
 
+ * Use JDK 8
  * Either change path to android sdk in pom file or supply it with cmdline param `-Dandroid.sdk.path=...path...`
  * You should have API SDK 15 installed via Android SDK Manager
  * `mvn clean install`
  
 ## Release build
+
+### Prerequisites
+
+#### Signing key.
+
+If you do not have a key already, you can generate the keystore with key like this:
+
+`keytool -genkey -v -keystore keystore -alias metrostation-key -keyalg RSA -keysize 2048 -validity 10000`
+
+#### Proguard
+
+Release build uses proguard to obfuscate and minimize app size. Unfortunately build needs JDK8 which makes default
+android proguard fail. As a workaround you can put new proguard version into android-sdk/tools/proguard directory
+(keep default configuration files). 5.2 seems to work ok.
+
+### Building
 
 You have to activate profile release and specify some key-store related parameters (which are for obvious reasons
 not included in pom).
@@ -30,8 +47,5 @@ not included in pom).
  
 `zipalign -v 4 metrostation-prg.apk metrostation-prg-aligned.apk`
  
-If you do not have a key already, you can generate the keystore with key like this:
-
-`keytool -genkey -v -keystore keystore -alias metrostation-key -keyalg RSA -keysize 2048 -validity 10000`
 
 

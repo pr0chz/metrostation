@@ -16,9 +16,9 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<platform.version> 4.1.1.4</platform.version>
-		<android.plugin.version>3.8.2</android.plugin.version>
-        <android.sdk.path>/home/jirka/adt-bundle-linux-x86_64-20140702/sdk</android.sdk.path>
-        <key.store.path>/home/jirka/AndroidProjects/keystore</key.store.path>
+		<android.plugin.version>4.4.1</android.plugin.version>
+        <android.sdk.path>/home/jirka/Android/Sdk</android.sdk.path>
+        <key.store.path>/home/jirka/projects/keystore</key.store.path>
         <key.alias>metrostation-key</key.alias>
     </properties>
 
@@ -41,10 +41,10 @@
 		<pluginManagement>
 			<plugins>
 				<plugin>
-					<groupId>com.jayway.maven.plugins.android.generation2</groupId>
-					<artifactId>android-maven-plugin</artifactId>
-					<version>${android.plugin.version}</version>
-					<extensions>true</extensions>
+                    <groupId>com.simpligility.maven.plugins</groupId>
+                    <artifactId>android-maven-plugin</artifactId>
+                    <version>${android.plugin.version}</version>
+                    <extensions>true</extensions>
 				</plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -55,7 +55,7 @@
         </pluginManagement>
 		<plugins>
 			<plugin>
-				<groupId>com.jayway.maven.plugins.android.generation2</groupId>
+				<groupId>com.simpligility.maven.plugins</groupId>
 				<artifactId>android-maven-plugin</artifactId>
 				<configuration>
 					<sdk>
@@ -79,7 +79,7 @@
             <build>
                 <plugins>
                     <plugin>
-                        <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+                        <groupId>com.simpligility.maven.plugins</groupId>
                         <artifactId>android-maven-plugin</artifactId>
                         <configuration>
                             <sdk>
@@ -91,6 +91,7 @@
                             <release>true</release>
                             <proguard>
                                 <skip>false</skip>
+                                <config>proguard.cfg</config>
                             </proguard>
                         </configuration>
                     </plugin>

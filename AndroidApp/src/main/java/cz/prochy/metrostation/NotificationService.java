@@ -42,6 +42,7 @@ public class NotificationService extends Service {
     private volatile ScheduledExecutorService scheduledService;
     private volatile StateListener stateListener;
     private volatile BoundedStringBuffer cellLogger;
+    private volatile NotificationSettings notificationSettings;
 
     private volatile int instanceId;
 
@@ -114,7 +115,7 @@ public class NotificationService extends Service {
 
     private CellListener buildListeners() {
         Timeout predictionTrigger = new Timeout(scheduledService, 35, TimeUnit.SECONDS);
-        Notifier notifier = new NotifierImpl(this, new NotificationSettings(this), predictionTrigger);
+        Notifier notifier = new NotifierImpl(this, notificationSettings, predictionTrigger);
         long stationTimeout = TimeUnit.SECONDS.toMillis(180);
         long transferTimeout = TimeUnit.SECONDS.toMillis(90);
         return Builder.createListener(new PragueStations(), notifier, stationTimeout, transferTimeout);
@@ -148,6 +149,8 @@ public class NotificationService extends Service {
             if (stateListener == null) {
                 logger.log("Starting...\n");
                 scheduledService = Executors.newScheduledThreadPool(3);
+                notificationSettings = new NotificationSettings(this);
+                notificationSettings.setDefaults();
                 stateListener = new StateListener(buildListeners());
                 cellLogger = new BoundedStringBuffer(100);
                 setListenerStatus(PhoneStateListener.LISTEN_SERVICE_STATE);
@@ -173,12 +176,15 @@ public class NotificationService extends Service {
     }
 
     private void emitCellDataAsync() {
-        if (emitTaskInProgress.compareAndSet(false, true)) {
+        if (notificationSettings.getCellLogging() && emitTaskInProgress.compareAndSet(false, true)) {
             scheduledService.submit(new Runnable() {
                 @Override
                 public void run() {
+                try {
                     emitCellData();
+                } finally {
                     emitTaskInProgress.set(false);
+                }
                 }
             });
         }
@@ -206,35 +212,43 @@ public class NotificationService extends Service {
         }
     }
 
+    private void sendRequest(byte [] loggerData) throws IOException{
+        byte [] content = encodeToGzip(loggerData);
+        URL url = new URL("http://46.101.221.156:48989/store");
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestProperty( "Content-Type", "text/plain");
+        conn.setRequestProperty("Content-Encoding", "gzip");
+        conn.setRequestProperty( "charset", "utf-8");
+        conn.setRequestProperty( "Content-Length", Integer.toString(content.length));
+        conn.setReadTimeout(10000);
+        conn.setConnectTimeout(15000);
+        conn.setRequestMethod("POST");
+        conn.setDoOutput(true);
+        conn.setDoInput(false);
+        conn.connect();
+        OutputStream stream = null;
+        try {
+            stream = conn.getOutputStream();
+            stream.write(content);
+        } finally {
+            if (stream != null) {
+                stream.close();
+            }
+        }
+        conn.getResponseCode();
+        conn.disconnect();
+    }
+
+    private boolean cellLoggerReady() {
+        return cellLogger.getSize() > 30 && cellLogger.getSize() % 5 == 0; // try just once in a time
+    }
+
     private void emitCellData() {
         try {
             ConnectivityManager connMgr = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-            if (cellLogger.getSize() > 30 && networkInfo != null && networkInfo.isConnected()) {
-                byte [] content = encodeToGzip(cellLogger.getContent().getBytes(Charset.forName("utf-8")));
-                URL url = new URL("http://46.101.221.156:48989/store");
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestProperty( "Content-Type", "text/plain");
-                conn.setRequestProperty("Content-Encoding", "gzip");
-                conn.setRequestProperty( "charset", "utf-8");
-                conn.setRequestProperty( "Content-Length", Integer.toString(content.length));
-                conn.setReadTimeout(10000);
-                conn.setConnectTimeout(15000);
-                conn.setRequestMethod("POST");
-                conn.setDoOutput(true);
-                conn.setDoInput(false);
-                conn.connect();
-                OutputStream stream = null;
-                try {
-                    stream = conn.getOutputStream();
-                    stream.write(content);
-                } finally {
-                    if (stream != null) {
-                        stream.close();
-                    }
-                }
-                conn.getResponseCode();
-                conn.disconnect();
+            if (cellLoggerReady() && networkInfo != null && networkInfo.isConnected()) {
+                sendRequest(cellLogger.getContent().getBytes(Charset.forName("utf-8")));
                 cellLogger.clear();
             }
         } catch (Exception e) {

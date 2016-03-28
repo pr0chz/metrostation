@@ -6,7 +6,7 @@
     <string name="pref_toast_on_departure_title">Odjezd ze stanice</string>
     <string name="pref_notification_tray_title">Zobrazení aktuální stanice</string>
     <string name="pref_station_predictions_title">Prediktivní notifikace</string>
-
+    <string name="pref_cell_logging_title">Logování GSM buněk</string>
 
     <string name="pref_toast_on_arrival_desc">Notifikace se zobrazí po příjezdu do stanice.</string>
     <string name="pref_toast_on_departure_desc">Notifikace se zobrazí po výjezdu ze stanice. Pokud je to možné
@@ -16,5 +16,8 @@
     <string name="pref_station_predictions_desc">Pokud to bude možné, budete notifikováni o stanici s předstihem
         ještě než do ní přijedete. Tato funkce je závislá na předpovědi příští stanice a může trvat jednu nebo dvě
         stanice než bude rozpoznán směr jízdy.</string>
+    <string name="pref_cell_logging_desc">Vylepšete tuto aplikaci povolením automatického sběru anonymních dat o GSM
+        síti. Data budou použita pro vylepšení aplikace a opravu chyb v detekci stanic. Žádná osobní data nejsou
+        schromažďována.</string>
 
 </resources>

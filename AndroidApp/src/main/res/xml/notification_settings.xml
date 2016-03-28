@@ -4,6 +4,12 @@
         android:title="MetroStation">
 
     <CheckBoxPreference
+            android:key="cell_logging"
+            android:title="@string/pref_cell_logging_title"
+            android:summary="@string/pref_cell_logging_desc"
+            android:defaultValue="false"/>
+
+    <CheckBoxPreference
             android:key="toast_on_arrival"
             android:title="@string/pref_toast_on_arrival_title"
             android:summary="@string/pref_toast_on_arrival_desc"
@@ -26,6 +32,5 @@
             android:title="@string/pref_station_predictions_title"
             android:summary="@string/pref_station_predictions_desc"
             android:defaultValue="true" />
-
 
 </PreferenceScreen>
