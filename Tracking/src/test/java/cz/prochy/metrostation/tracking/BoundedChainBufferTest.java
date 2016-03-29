@@ -26,13 +26,10 @@ public class BoundedChainBufferTest {
 
     @Test
     public void testAppendOverSizeBoundary() throws Exception {
-        buffer.append(1);
-        buffer.append(2);
-        buffer.append(3);
-        buffer.append(4);
-        buffer.append(5);
-        buffer.append(6);
-        assertArrayEquals(new Integer[] {2, 3, 4, 5, 6}, buffer.get().toArray());
+        for (int i=1; i<100; ++i) {
+            buffer.append(i);
+        }
+        assertArrayEquals(new Integer[] {95, 96, 97, 98, 99}, buffer.get().toArray());
     }
 
     @Test
