@@ -17,18 +17,12 @@ import cz.prochy.metrostation.tracking.*;
 import cz.prochy.metrostation.tracking.internal.PragueStations;
 import net.jcip.annotations.ThreadSafe;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.Charset;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.zip.GZIPOutputStream;
 
 @ThreadSafe
 public class NotificationService extends Service {
@@ -41,10 +35,8 @@ public class NotificationService extends Service {
 
     private volatile ScheduledExecutorService scheduledService;
     private volatile StateListener stateListener;
-    private volatile BoundedStringBuffer cellLogger;
     private volatile NotificationSettings notificationSettings;
-
-    private volatile int instanceId;
+    private volatile LoggingCellListener cellListener;
 
     public static String getStartAction() {
         return NotificationService.class.getName() + ".start";
@@ -69,7 +61,6 @@ public class NotificationService extends Service {
                 switch (serviceState.getState()) {
                     case ServiceState.STATE_OUT_OF_SERVICE:
                         Log.v(LOG_NAME, "Disconnected");
-                        cellLogger.addLine(disconnectMessage());
                         listener.disconnected(ts);
                         break;
                     case ServiceState.STATE_EMERGENCY_ONLY:
@@ -81,11 +72,9 @@ public class NotificationService extends Service {
                             if (cl != null) {
                                 if (cl instanceof GsmCellLocation) {
                                     GsmCellLocation gcl = (GsmCellLocation) cl;
-                                    cellLogger.addLine(cellMessage(gcl.getCid(), gcl.getLac()));
                                     listener.cellInfo(ts, gcl.getCid(), gcl.getLac());
                                 } else if (cl instanceof CdmaCellLocation) {
                                     CdmaCellLocation ccl = (CdmaCellLocation) cl;
-                                    cellLogger.addLine(cellMessage(ccl.getBaseStationId(), -1));
                                     listener.cellInfo(ts, ccl.getBaseStationId(), -1);
                                 }
                             }
@@ -95,7 +84,6 @@ public class NotificationService extends Service {
                         break;
                     default:
                         Log.v(LOG_NAME, "Other state");
-                        logger.log(disconnectMessage());
                         listener.disconnected(ts);
                 }
                 super.onServiceStateChanged(serviceState);
@@ -105,13 +93,7 @@ public class NotificationService extends Service {
         }
     }
 
-    private String disconnectMessage() {
-        return "{\"id\": " + instanceId +", \"ts\": " + System.currentTimeMillis() + "}";
-    }
 
-    private String cellMessage(int cid, int lac) {
-        return "{\"id\": " + instanceId +", \"ts\": " + System.currentTimeMillis() + ", \"cid\": " + cid + ", \"lac\": " + lac + "}";
-    }
 
     private CellListener buildListeners() {
         Timeout predictionTrigger = new Timeout(scheduledService, 35, TimeUnit.SECONDS);
@@ -151,42 +133,75 @@ public class NotificationService extends Service {
                 scheduledService = Executors.newScheduledThreadPool(3);
                 notificationSettings = new NotificationSettings(this);
                 notificationSettings.setDefaults();
-                stateListener = new StateListener(buildListeners());
-                cellLogger = new BoundedStringBuffer(100);
+
+                int instanceId = new Random().nextInt();
+                cellListener = new LoggingCellListener(instanceId, 100, buildListeners());
+                stateListener = new StateListener(cellListener);
+
                 setListenerStatus(PhoneStateListener.LISTEN_SERVICE_STATE);
-                instanceId = new Random().nextInt();
             }
         }
         return START_STICKY;
     }
 
     private void playbackMockEvents() {
-        CellListener cellListener = buildListeners();
-        cellListener.cellInfo(1000, 18807, 34300);
-        cellListener.disconnected(2000);
-        cellListener.cellInfo(3000, 18806, 34300);
-        cellListener.disconnected(4000);
-        cellLogger.addLine(cellMessage(1000, 2000));
-        cellLogger.addLine(disconnectMessage());
-        cellLogger.addLine(cellMessage(1000, 2000));
-        cellLogger.addLine(disconnectMessage());
-        cellLogger.addLine(cellMessage(1000, 2000));
-        cellLogger.addLine(disconnectMessage());
-        emitCellDataAsync();
+        try {
+            cellListener.cellInfo(1, 18807, 34300);
+            emitCellDataAsync();
+            Thread.sleep(100);
+            cellListener.disconnected(2);
+            emitCellDataAsync();
+            Thread.sleep(100);
+            cellListener.cellInfo(3, 18806, 34300);
+            emitCellDataAsync();
+            Thread.sleep(100);
+            cellListener.disconnected(4);
+            emitCellDataAsync();
+            Thread.sleep(100);
+        } catch (InterruptedException ignored) {
+        }
+    }
+
+    public static String joinStrings(List<String> strings) {
+        StringBuffer result = new StringBuffer();
+        for (String s : strings) {
+            result.append(s).append('\n');
+        }
+        return result.toString();
+    }
+
+    private boolean networkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        return networkInfo != null && networkInfo.isConnected();
     }
 
     private void emitCellDataAsync() {
-        if (notificationSettings.getCellLogging() && emitTaskInProgress.compareAndSet(false, true)) {
+        final BoundedChainBuffer<String> cellLogger = cellListener.getCellLogger();
+
+        if (notificationSettings.getCellLogging()
+                && cellLogger.size() >= 15 && cellLogger.size() % 5 == 0 // try just once in a time
+                && emitTaskInProgress.compareAndSet(false, true)) {
+
             scheduledService.submit(new Runnable() {
                 @Override
                 public void run() {
-                try {
-                    emitCellData();
-                } finally {
-                    emitTaskInProgress.set(false);
-                }
+                    final List<String> cells = cellLogger.get();
+                    try {
+                        if (networkAvailable()) {
+                            DataUploader.upload(joinStrings(cells));
+                        } else {
+                            cellLogger.putBack(cells);
+                        }
+                    } catch (Exception e) {
+                        cellLogger.putBack(cells);
+                        logger.log(e);
+                    } finally {
+                        emitTaskInProgress.set(false);
+                    }
                 }
             });
+
         }
     }
 
@@ -195,66 +210,6 @@ public class NotificationService extends Service {
         return null;
     }
 
-    private static byte [] encodeToGzip(byte [] data) throws IOException {
-        GZIPOutputStream gzip = null;
-        try {
-            ByteArrayOutputStream byteArrayOS = new ByteArrayOutputStream();
-            gzip = new GZIPOutputStream(byteArrayOS);
-            gzip.write(data);
-            gzip.flush();
-            gzip.close();
-            gzip = null;
-            return byteArrayOS.toByteArray();
-        } finally {
-            if (gzip != null) {
-                try { gzip.close(); } catch (Exception ignored) {}
-            }
-        }
-    }
-
-    private void sendRequest(byte [] loggerData) throws IOException{
-        byte [] content = encodeToGzip(loggerData);
-        URL url = new URL("http://46.101.221.156:48989/store");
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestProperty( "Content-Type", "text/plain");
-        conn.setRequestProperty("Content-Encoding", "gzip");
-        conn.setRequestProperty( "charset", "utf-8");
-        conn.setRequestProperty( "Content-Length", Integer.toString(content.length));
-        conn.setReadTimeout(10000);
-        conn.setConnectTimeout(15000);
-        conn.setRequestMethod("POST");
-        conn.setDoOutput(true);
-        conn.setDoInput(false);
-        conn.connect();
-        OutputStream stream = null;
-        try {
-            stream = conn.getOutputStream();
-            stream.write(content);
-        } finally {
-            if (stream != null) {
-                stream.close();
-            }
-        }
-        conn.getResponseCode();
-        conn.disconnect();
-    }
-
-    private boolean cellLoggerReady() {
-        return cellLogger.getSize() > 30 && cellLogger.getSize() % 5 == 0; // try just once in a time
-    }
-
-    private void emitCellData() {
-        try {
-            ConnectivityManager connMgr = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-            if (cellLoggerReady() && networkInfo != null && networkInfo.isConnected()) {
-                sendRequest(cellLogger.getContent().getBytes(Charset.forName("utf-8")));
-                cellLogger.clear();
-            }
-        } catch (Exception e) {
-            logger.log(e);
-        }
-    }
 
     @Override
     public synchronized void onDestroy() {
