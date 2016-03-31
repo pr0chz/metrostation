@@ -31,10 +31,10 @@ public class DataUploader {
         byte [] content = encodeToGzip(loggerData);
         URL url = new URL("http://46.101.221.156:48989/store");
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestProperty( "Content-Type", "text/plain");
+        conn.setRequestProperty("Content-Type", "text/plain");
         conn.setRequestProperty("Content-Encoding", "gzip");
-        conn.setRequestProperty( "charset", "utf-8");
-        conn.setRequestProperty( "Content-Length", Integer.toString(content.length));
+        conn.setRequestProperty("charset", "utf-8");
+        conn.setRequestProperty("Content-Length", Integer.toString(content.length));
         conn.setReadTimeout(10000);
         conn.setConnectTimeout(15000);
         conn.setRequestMethod("POST");
@@ -47,11 +47,13 @@ public class DataUploader {
             stream.write(content);
         } finally {
             if (stream != null) {
-                stream.close();
+                try {
+                    stream.close();
+                } catch (IOException ignored) {}
             }
+            conn.getResponseCode();
+            conn.disconnect();
         }
-        conn.getResponseCode();
-        conn.disconnect();
     }
 
     public static void upload(String data) throws Exception {
