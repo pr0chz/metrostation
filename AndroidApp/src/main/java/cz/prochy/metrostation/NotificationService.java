@@ -78,14 +78,13 @@ public class NotificationService extends Service {
                                     listener.cellInfo(ts, ccl.getBaseStationId(), -1);
                                 }
                             }
-
-                            emitCellDataAsync();
                         }
                         break;
                     default:
                         Log.v(LOG_NAME, "Other state");
                         listener.disconnected(ts);
                 }
+                emitCellDataAsync();
                 super.onServiceStateChanged(serviceState);
             } catch (Throwable e) {
                 logger.log(e);
