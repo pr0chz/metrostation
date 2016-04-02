@@ -180,7 +180,7 @@ public class NotificationService extends Service {
         final BoundedChainBuffer<String> cellLogger = cellListener.getCellLogger();
 
         if (notificationSettings.getCellLogging()
-                && cellLogger.size() >= 15 && cellLogger.size() % 5 == 0 // try just once in a time
+                && cellLogger.size() >= 20 && cellLogger.size() % 5 == 0 // try just once in a time
                 && emitTaskInProgress.compareAndSet(false, true)) {
 
             scheduledService.submit(new Runnable() {
