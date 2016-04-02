@@ -1,0 +1,44 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:1.5.0'
+    }
+}
+
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.3"
+
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 23
+        versionCode 22
+        versionName "2.7"
+    }
+    signingConfigs {
+        release {
+            def emptyEnv = "Missing environment variable"
+            storeFile file(System.getenv("MS_KEYSTORE") ?: emptyEnv)
+            storePassword System.getenv("MS_KEYSTORE_PASS" ?: emptyEnv)
+            keyAlias System.getenv("MS_KEY" ?: emptyEnv)
+            keyPassword System.getenv("MS_KEY_PASS" ?: emptyEnv)
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard.cfg'
+            signingConfig signingConfigs.release
+        }
+    }
+
+}
+
+
+dependencies {
+    compile project(':Tracking')
+}

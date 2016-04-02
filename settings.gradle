@@ -1,0 +1,8 @@
+rootProject.name = "Metro Station Prague"
+
+include ':Tracking', ':MetroStation', ':Cellar'
+
+project(':Tracking').buildFileName = 'tracking.gradle'
+project(':MetroStation').buildFileName = 'metrostation.gradle'
+project(':Cellar').buildFileName = 'cellar.gradle'
+

@@ -1,0 +1,26 @@
+buildscript {
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.5.RELEASE")
+    }
+    repositories {
+        maven {
+            url "https://repo.spring.io/libs-release"
+        }
+    }
+}
+apply plugin: 'spring-boot'
+
+
+dependencies {
+//    configurations {
+//        all*.exclude module : 'spring-boot-starter-logging'
+//    }
+    compile ('org.springframework.boot:spring-boot-starter-web') {
+        exclude module:'org.springframework.boot:spring-boot-starter-tomcat'
+        exclude module : 'spring-boot-starter-logging'
+    }
+    compile 'org.springframework.boot:spring-boot-starter-jetty'
+    compile 'commons-io:commons-io:2.4'
+    compile 'com.github.ziplet:ziplet:2.0.0'
+}
+

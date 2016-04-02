@@ -1,6 +1,5 @@
 package cz.prochy.metrostation.tracking;
 
-import cz.prochy.metrostation.tracking.internal.PragueStations;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
@@ -11,31 +10,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
 
 public class Analyzer {
-
-    private static class PrintingNotifier implements Notifier {
-        @Override
-        public void onStation(String approachingStation) {
-            System.out.println("* OnStation: " + approachingStation);
-        }
-
-        @Override
-        public void onUnknownStation() {
-            System.out.println("* OnUnknownStation");
-        }
-
-        @Override
-        public void onDisconnect(String leavingStation, String nextStation) {
-            System.out.println("* OnDisconnect: " + leavingStation + " -> " + nextStation);
-        }
-
-        @Override
-        public void onDisconnect(String leavingStation) {
-            System.out.println("* OnDisconnect: " + leavingStation);
-        }
-    }
 
     public static class TestRecord {
         public final int cid;
@@ -82,30 +58,6 @@ public class Analyzer {
             }
         }
         return result;
-    }
-
-    public static void main(String [] args) {
-        long stationTimeout = TimeUnit.SECONDS.toMillis(180);
-        long transferTimeout = TimeUnit.SECONDS.toMillis(90);
-        PragueStations stations = new PragueStations();
-        CellListener cellListener = Builder.createListener(stations, new PrintingNotifier(), stationTimeout, transferTimeout);
-
-        List<TestRecord> testRecords = null;
-        try {
-            testRecords = readMsLogsLines(System.in);
-            for (Analyzer.TestRecord record : testRecords) {
-                if (record.cid != Analyzer.TestRecord.DISCONNECT_CID) {
-                    System.out.println(record + ": " + stations.getStations(record.cid, record.lac));
-                    cellListener.cellInfo(record.ts, record.cid, record.lac);
-                } else {
-                    System.out.println(record);
-                    cellListener.disconnected(record.ts);
-                }
-            }
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
     }
 
 }
