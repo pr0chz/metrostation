@@ -16,8 +16,8 @@
     <string name="pref_station_predictions_desc">Pokud to bude možné, budete notifikováni o stanici s předstihem
         ještě než do ní přijedete. Tato funkce je závislá na předpovědi příští stanice a může trvat jednu nebo dvě
         stanice než bude rozpoznán směr jízdy.</string>
-    <string name="pref_cell_logging_desc">Vylepšete tuto aplikaci povolením automatického sběru anonymních dat o GSM
-        síti. Data budou použita pro vylepšení aplikace a opravu chyb v detekci stanic. Žádná osobní data nejsou
-        schromažďována.</string>
+    <string name="pref_cell_logging_desc">Vylepšete tuto aplikaci automatickým sběrem anonymních dat o GSM
+        síti. Data budou použita pro vylepšení aplikace a opravu chyb v detekci stanic. Žádná osobní data nebudou
+        shromažďována.</string>
 
 </resources>
