@@ -1,7 +1,8 @@
 package cz.prochy.cellar;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.web.ErrorController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ import java.util.Random;
 @RestController
 public class Cellar implements ErrorController {
 
-    final static Logger logger = Logger.getLogger(Cellar.class);
+    final static Logger logger = LoggerFactory.getLogger(Cellar.class);
     final Random random = new Random();
 
     @RequestMapping(value = "/store", method = RequestMethod.POST)
