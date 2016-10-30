@@ -1,9 +1,12 @@
 package cz.prochy.metrostation;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.view.KeyEvent;
 
 import java.util.ArrayDeque;
@@ -34,6 +37,14 @@ public class SettingsActivity extends Activity {
                 .commit();
 
         ServiceRunner.runService(SettingsActivity.this);
+
+//        if (!Settings.canDrawOverlays(this)) {
+//            /** if not construct intent to request permission */
+//            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+//                    Uri.parse("package:" + getPackageName()));
+//            /** request permission via start activity for result */
+//            startActivityForResult(intent, 3456); // we do not process result, yet, so let's use magic number
+//        }
     }
 
     private void addKeyToBuffer(int keyCode) {
