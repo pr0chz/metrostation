@@ -3,34 +3,58 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
         android:title="MetroStation">
 
-    <CheckBoxPreference
-            android:key="toast_on_arrival"
-            android:title="@string/pref_toast_on_arrival_title"
-            android:summary="@string/pref_toast_on_arrival_desc"
-            android:defaultValue="true" />
 
-    <CheckBoxPreference
-            android:key="toast_on_leave"
-            android:title="@string/pref_toast_on_departure_title"
-            android:summary="@string/pref_toast_on_departure_desc"
-            android:defaultValue="true" />
+    <PreferenceCategory
+            android:title="@string/pref_notifications"
+            android:key="pref_notifications">
 
-    <CheckBoxPreference
-            android:key="tray_notification"
-            android:title="@string/pref_notification_tray_title"
-            android:summary="@string/pref_notification_tray_desc"
-            android:defaultValue="true" />
+        <Preference
+                android:key="pref_static_field_key"
+                android:selectable="false"
+                android:persistent="false"
+                android:summary="@string/pref_notification_desc"/>
 
-    <CheckBoxPreference
-            android:key="station_predictions"
-            android:title="@string/pref_station_predictions_title"
-            android:summary="@string/pref_station_predictions_desc"
-            android:defaultValue="true" />
+        <CheckBoxPreference
+                android:key="tray_notification"
+                android:title="@string/pref_notification_tray_title"
+                android:summary="@string/pref_notification_tray_desc"
+                android:defaultValue="true" />
 
-    <CheckBoxPreference
-            android:key="cell_logging"
-            android:title="@string/pref_cell_logging_title"
-            android:summary="@string/pref_cell_logging_desc"
-            android:defaultValue="false"/>
+        <CheckBoxPreference
+                android:key="overlay"
+                android:title="@string/pref_overlay_title"
+                android:summary="@string/pref_overlay_desc"
+                android:defaultValue="true" />
 
+        <CheckBoxPreference
+                android:key="toast_on_arrival"
+                android:title="@string/pref_toast_on_arrival_title"
+                android:summary="@string/pref_toast_on_arrival_desc"
+                android:defaultValue="false" />
+
+        <CheckBoxPreference
+                android:key="toast_on_leave"
+                android:title="@string/pref_toast_on_departure_title"
+                android:summary="@string/pref_toast_on_departure_desc"
+                android:defaultValue="false" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+            android:title="@string/pref_advanced"
+            android:key="pref_advanced">
+
+        <CheckBoxPreference
+                android:key="station_predictions"
+                android:title="@string/pref_station_predictions_title"
+                android:summary="@string/pref_station_predictions_desc"
+                android:defaultValue="true" />
+
+        <CheckBoxPreference
+                android:key="cell_logging"
+                android:title="@string/pref_cell_logging_title"
+                android:summary="@string/pref_cell_logging_desc"
+                android:defaultValue="true"/>
+
+    </PreferenceCategory>
 </PreferenceScreen>

@@ -2,21 +2,31 @@
 
     <string name="app_name">MetroStation</string>
 
-    <string name="pref_toast_on_arrival_title">Arrival to station</string>
-    <string name="pref_toast_on_departure_title">Departure from station</string>
-    <string name="pref_notification_tray_title">Show current station</string>
-    <string name="pref_station_predictions_title">Predictive notification</string>
-    <string name="pref_cell_logging_title">GSM cell logging</string>
+    <string name="pref_notifications">Notification types</string>
+    <string name="pref_notification_desc">Notifications are visible only when you are in the metro underground area. It
+        is recommended to tune your settings while travelling in metro.
+    </string>
 
-    <string name="pref_toast_on_arrival_desc">Pop-up will be displayed on arrival to station.</string>
-    <string name="pref_toast_on_departure_desc">Pop-up will be displayed on departure from station. If available
-        it will contain next station.</string>
-    <string name="pref_notification_tray_desc">Shows an item with current station or last and next station in
-        notification area. It will disappear shortly after you leave the underground area.</string>
-    <string name="pref_station_predictions_desc">If possible you will be notified in advance before arriving into
-        the station. This is based on prediction and it may take a station or two to determine direction.</string>
-    <string name="pref_cell_logging_desc">Make the application better and automatically collect anonymous GSM cell
-        location data. Data will be used to improve application and fix errors in station detection. No personal data
-        will be collected.</string>
+    <string name="pref_notification_tray_title">Notification area</string>
+    <string name="pref_notification_tray_desc"></string>
+
+    <string name="pref_overlay_title">Always on top</string>
+    <string name="pref_overlay_desc">Always visible overlay over any running application.</string>
+
+
+    <string name="pref_toast_on_arrival_title">Pop-up on arrival</string>
+    <string name="pref_toast_on_arrival_desc"></string>
+
+    <string name="pref_toast_on_departure_title">Pop-up on departure</string>
+    <string name="pref_toast_on_departure_desc"></string>
+
+    <string name="pref_advanced">Advanced</string>
+
+    <string name="pref_station_predictions_title">Predict next station</string>
+    <string name="pref_station_predictions_desc">It may take a station or two to determine direction.</string>
+
+    <string name="pref_cell_logging_title">Cell logging</string>
+    <string name="pref_cell_logging_desc">Collect anonymous location data to improve application. No
+        personal data will be collected.</string>
 
 </resources>

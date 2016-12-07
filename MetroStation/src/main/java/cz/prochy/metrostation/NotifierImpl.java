@@ -3,7 +3,14 @@ package cz.prochy.metrostation;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.graphics.PixelFormat;
 import android.os.Handler;
+import android.provider.Settings;
+import android.view.Gravity;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 import cz.prochy.metrostation.tracking.Check;
 import cz.prochy.metrostation.tracking.Notifier;
@@ -21,6 +28,8 @@ public class NotifierImpl implements Notifier {
     private final Timeout predictionTrigger;
 
     private volatile String predictedStation = null;
+
+    private TextView overlay;
 
     public NotifierImpl(Context context, NotificationSettings settings, Timeout predictionTrigger) {
         this.context = Check.notNull(context);
@@ -117,8 +126,51 @@ public class NotifierImpl implements Notifier {
         return (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
+    private WindowManager getWindowManager() {
+        return (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+    }
+
+    synchronized private void showOverlay(String message) {
+        Check.notNull(message);
+        if (overlay == null) {
+            WindowManager windowManager = getWindowManager();
+
+            if (windowManager != null) {
+                overlay = new TextView(context);
+                overlay.setBackgroundColor(0x88000000);
+                overlay.setTextColor(0xffffffff);
+
+                WindowManager.LayoutParams params = new WindowManager.LayoutParams(
+                        WindowManager.LayoutParams.WRAP_CONTENT,
+                        WindowManager.LayoutParams.WRAP_CONTENT,
+                        WindowManager.LayoutParams.TYPE_SYSTEM_ALERT,
+                        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                        PixelFormat.TRANSLUCENT);
+
+                params.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
+                windowManager.addView(overlay, params);
+            }
+        }
+        if (overlay != null) {
+            overlay.setText(message);
+        }
+    }
+
+    synchronized private void hideOverlay() {
+        if (overlay != null) {
+            WindowManager windowManager = getWindowManager();
+            if (windowManager != null) {
+                windowManager.removeView(overlay);
+                overlay = null;
+            }
+        }
+    }
+
     private void showNotification(String message) {
         Check.notNull(message);
+        if (settings.getOverlay()) {
+            showOverlay(message);
+        }
         if (settings.getTrayNotification()) {
             Notification.Builder builder = new Notification.Builder(context)
                     .setSmallIcon(R.drawable.ic_stat_notify)
@@ -134,6 +186,7 @@ public class NotifierImpl implements Notifier {
     }
 
     private void hideNotification() {
+        hideOverlay();
         NotificationManager notificationManager = getNotificationManager();
         if (notificationManager != null) {
             notificationManager.cancel(NOTIFICATION_ID);
