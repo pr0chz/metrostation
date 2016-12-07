@@ -4,7 +4,7 @@
 
 
     <string name="pref_notifications">Typy notifikací</string>
-    <string name="pref_notification_desc">Notifikace se objevují pouze pokud jste přímo v metru. Doporučujeme nastavovat
+    <string name="pref_notification_desc">Notifikace se objevují pouze pokud jste dole v metru. Doporučujeme nastavovat
         notifikace přímo při cestě metrem.</string>
 
     <string name="pref_notification_tray_title">Notifikační lišta</string>
