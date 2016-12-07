@@ -9,14 +9,16 @@ public class NotificationSettings {
     private static final String PREF_TOAST_ON_ARRIVAL = "toast_on_arrival";
     private static final String PREF_TOAST_ON_LEAVE = "toast_on_leave";
     private static final String PREF_TRAY_NOTIFICATION = "tray_notification";
+    private static final String PREF_OVERLAY = "overlay";
     private static final String PREF_STATION_PREDICTIONS = "station_predictions";
     private static final String PREF_CELL_LOGGING = "cell_logging";
 
-    private static final boolean PREF_TOAST_ON_ARRIVAL_DEFAULT = true;
+    private static final boolean PREF_TOAST_ON_ARRIVAL_DEFAULT = false;
     private static final boolean PREF_TOAST_ON_LEAVE_DEFAULT = false;
     private static final boolean PREF_TRAY_NOTIFICATION_DEFAULT = true;
+    private static final boolean PREF_OVERLAY_DEFAULT = true;
     private static final boolean PREF_STATION_PREDICTIONS_DEFAULT = true;
-    private static final boolean PREF_CELL_LOGGING_DEFAULT = false;
+    private static final boolean PREF_CELL_LOGGING_DEFAULT = true;
 
 
     private final Context context;
@@ -45,6 +47,10 @@ public class NotificationSettings {
         return prefs().getBoolean(PREF_STATION_PREDICTIONS, PREF_STATION_PREDICTIONS_DEFAULT);
     }
 
+    public boolean getOverlay() {
+        return prefs().getBoolean(PREF_OVERLAY, PREF_OVERLAY_DEFAULT);
+    }
+
     public boolean getCellLogging() {
         return prefs().getBoolean(PREF_CELL_LOGGING, PREF_CELL_LOGGING_DEFAULT);
     }
@@ -63,6 +69,7 @@ public class NotificationSettings {
         setDefaultBoolean(PREF_TOAST_ON_ARRIVAL, PREF_TOAST_ON_ARRIVAL_DEFAULT);
         setDefaultBoolean(PREF_TOAST_ON_LEAVE, PREF_TOAST_ON_LEAVE_DEFAULT);
         setDefaultBoolean(PREF_TRAY_NOTIFICATION, PREF_TRAY_NOTIFICATION_DEFAULT);
+        setDefaultBoolean(PREF_OVERLAY, PREF_OVERLAY_DEFAULT);
         setDefaultBoolean(PREF_STATION_PREDICTIONS, PREF_STATION_PREDICTIONS_DEFAULT);
         setDefaultBoolean(PREF_CELL_LOGGING, PREF_CELL_LOGGING_DEFAULT);
     }

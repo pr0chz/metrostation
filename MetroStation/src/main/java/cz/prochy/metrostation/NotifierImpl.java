@@ -28,8 +28,9 @@ public class NotifierImpl implements Notifier {
     private final Timeout predictionTrigger;
 
     private volatile String predictedStation = null;
-    private volatile WindowManager windowManager;
-    private volatile TextView overlay;
+
+    private WindowManager windowManager;
+    private TextView overlay;
 
     public NotifierImpl(Context context, NotificationSettings settings, Timeout predictionTrigger) {
         this.context = Check.notNull(context);
@@ -126,12 +127,12 @@ public class NotifierImpl implements Notifier {
         return (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
-    private void showOverlay(String message) {
+    synchronized private void showOverlay(String message) {
         Check.notNull(message);
-//        if (Settings.canDrawOverlays(context)) {
-            if (overlay == null) {
-                windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        if (overlay == null) {
+            windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
 
+            if (windowManager != null) {
                 overlay = new TextView(context);
                 overlay.setBackgroundColor(0x88000000);
                 overlay.setTextColor(0xffffffff);
@@ -147,10 +148,10 @@ public class NotifierImpl implements Notifier {
                 windowManager.addView(overlay, params);
             }
             overlay.setText(message);
-//        }
+        }
     }
 
-    private void hideOverlay() {
+    synchronized private void hideOverlay() {
         if (overlay != null) {
             windowManager.removeView(overlay);
             overlay = null;
@@ -159,7 +160,9 @@ public class NotifierImpl implements Notifier {
 
     private void showNotification(String message) {
         Check.notNull(message);
-        showOverlay(message);
+        if (settings.getOverlay()) {
+            showOverlay(message);
+        }
         if (settings.getTrayNotification()) {
             Notification.Builder builder = new Notification.Builder(context)
                     .setSmallIcon(R.drawable.ic_stat_notify)
