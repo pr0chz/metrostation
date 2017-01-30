@@ -7,13 +7,13 @@ import static org.easymock.EasyMock.*;
 
 public class StationsCellListenerTest {
 
-    private Stations stations;
+    private TrackingStationGraph stations;
     private StationsCellListener listener;
     private StationListener output;
 
     @Before
     public void setUp() throws Exception {
-        stations = createStrictMock(Stations.class);
+        stations = createStrictMock(TrackingStationGraph.class);
         output = createStrictMock(StationListener.class);
         listener = new StationsCellListener(stations, output);
     }

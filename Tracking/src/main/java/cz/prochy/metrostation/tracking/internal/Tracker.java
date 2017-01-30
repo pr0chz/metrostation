@@ -1,12 +1,10 @@
 package cz.prochy.metrostation.tracking.internal;
 
-import cz.prochy.metrostation.tracking.LineBuilder;
-
 import java.util.Set;
 
 public class Tracker implements StationListener {
 
-    private final static LineBuilder NO_LINE = new LineBuilder();
+    private final static Line NO_LINE = new Line();
 
     private final StationListener listener;
     private final long trackLostTimeoutMs;
@@ -15,7 +13,7 @@ public class Tracker implements StationListener {
     private StationGroup current;
     private StationGroup prediction;
     private Direction directionHint;
-    private LineBuilder line = NO_LINE;
+    private Line line = NO_LINE;
     private long lastTs;
     private boolean lastEventWasDisconnect = false;
 
@@ -38,7 +36,7 @@ public class Tracker implements StationListener {
     }
 
     private void updateLine(StationGroup stations) {
-        LineBuilder l = getLine(stations);
+        Line l = getLine(stations);
         if (l != NO_LINE) {
             this.line = l;
         }
@@ -67,10 +65,10 @@ public class Tracker implements StationListener {
         return ts - lastTs > trackLostTimeoutMs;
     }
 
-    private LineBuilder getLine(StationGroup stations) {
-        LineBuilder line = NO_LINE;
+    private Line getLine(StationGroup stations) {
+        Line line = NO_LINE;
         if (stations.hasSingleValue()) {
-            Set<LineBuilder> lines = stations.getStation().getLines();
+            Set<Line> lines = stations.getStation().getLines();
             if (lines.size() == 1) {
                 line = lines.iterator().next();
             }

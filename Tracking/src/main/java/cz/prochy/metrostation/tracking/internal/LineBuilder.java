@@ -1,4 +1,6 @@
-package cz.prochy.metrostation.tracking;
+package cz.prochy.metrostation.tracking.internal;
+
+import cz.prochy.metrostation.tracking.Check;
 
 public class LineBuilder {
 

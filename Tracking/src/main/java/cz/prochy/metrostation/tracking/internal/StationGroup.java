@@ -1,8 +1,6 @@
 package cz.prochy.metrostation.tracking.internal;
 
 import cz.prochy.metrostation.tracking.Check;
-import cz.prochy.metrostation.tracking.LineBuilder;
-import cz.prochy.metrostation.tracking.Station;
 
 import java.util.Collections;
 import java.util.HashSet;

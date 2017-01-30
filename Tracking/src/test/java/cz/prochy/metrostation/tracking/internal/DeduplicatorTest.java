@@ -1,6 +1,6 @@
 //package cz.prochy.metrostation.tracking.internal;
 //
-//import cz.prochy.metrostation.tracking.Station;
+//import cz.prochy.metrostation.tracking.internal.Station;
 //import org.junit.Before;
 //import org.junit.Test;
 //

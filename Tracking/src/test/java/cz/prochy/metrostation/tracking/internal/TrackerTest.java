@@ -1,7 +1,6 @@
 package cz.prochy.metrostation.tracking.internal;
 
-import cz.prochy.metrostation.tracking.LineBuilder;
-import cz.prochy.metrostation.tracking.Station;
+import cz.prochy.metrostation.tracking.StationGraphBuilder;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -16,7 +15,7 @@ public class TrackerTest {
     private StationListener listener;
     private StepVerifier verifier;
 
-    private Stations stations;
+    private TrackingStationGraph stations;
 
     private final static long TRACK_LOST_TIMEOUT = TimeUnit.DAYS.toMillis(1);
     private final static long TRANSFER_TIMEOUT = TimeUnit.DAYS.toMillis(1);
@@ -29,18 +28,20 @@ public class TrackerTest {
         verifier = new StepVerifier(listener);
     }
 
-    private final Stations detStations = new Stations() {
-        @Override
-        void buildStations() {
-            final LineBuilder line = new LineBuilder();
+    private final TrackingStationGraph detStations = getDetStations();
 
-            station(line, "station 1", id("", 1, 1));
-            station(line, "station 2", id("", 2, 2));
-            station(line, "station 3", id("", 3, 3));
-            station(line, "station 4", id("", 4, 4));
-            station(line, "station 5", id("", 5, 5));
-        }
-    };
+    private TrackingStationGraph getDetStations() {
+        final TrackingStationGraphBuilder builder = new TrackingStationGraphBuilder();
+        final StationGraphBuilder.LineBuilder<Long> line = builder.newLine("");
+
+        line.station("station 1", builder.id("", 1, 1));
+        line.station("station 2", builder.id("", 2, 2));
+        line.station("station 3", builder.id("", 3, 3));
+        line.station("station 4", builder.id("", 4, 4));
+        line.station("station 5", builder.id("", 5, 5));
+
+        return builder.build();
+    }
 
     private StationGroup getStations(int cid, int lac) {
         return stations.getStations(cid, lac);
@@ -138,7 +139,7 @@ public class TrackerTest {
 
     // TODO add tests for transfer timeout
 
-    private final NonDetStations nonDetStations = new NonDetStations();
+    private final TrackingStationGraph nonDetStations = getNonDetStations();
 
     public final static String S11 = "s11";
     public final static String S12 = "s12";
@@ -148,35 +149,29 @@ public class TrackerTest {
     public final static String S32 = "s32";
     public final static String S5 = "s5";
 
-    private static class NonDetStations extends Stations {
+    private TrackingStationGraph getNonDetStations() {
+        final TrackingStationGraphBuilder builder = new TrackingStationGraphBuilder();
+        final StationGraphBuilder.LineBuilder<Long> line = builder.newLine("");
 
-        @Override
-        void buildStations() {
-            final LineBuilder line = new LineBuilder();
+        line.station(S21, builder.id("", 2, 2));
+        line.station(S5, builder.id("", 5, 5));
+        line.station(S11, builder.id("", 1, 1));
+        line.station(S31, builder.id("", 3, 3));
+        line.station(S12, builder.id("", 1, 1));
+        line.station(S22, builder.id("", 2, 2));
+        line.station(S32, builder.id("", 3, 3));
 
-            station(line, S21, id("", 2, 2));
-            station(line, S5, id("", 5, 5));
-            station(line, S11, id("", 1, 1));
-            station(line, S31, id("", 3, 3));
-            station(line, S12, id("", 1, 1));
-            station(line, S22, id("", 2, 2));
-            station(line, S32, id("", 3, 3));
-        }
-
-        public StationGroup findSingle(int id, String name) {
-            for (Station station : getStations(id, id).asSet()) {
-                if (station.getName().equals(name)) {
-                    return StationGroup.from(station);
-                }
-            }
-            throw new NoSuchElementException("Cannot find " + name);
-        }
-
-    };
+        return builder.build();
+    }
 
 
     private StationGroup findSingle(int id, String name) {
-        return nonDetStations.findSingle(id, name);
+        for (Station station : nonDetStations.getStations(id, id).asSet()) {
+            if (station.getName().equals(name)) {
+                return StationGroup.from(station);
+            }
+        }
+        throw new NoSuchElementException("Cannot find " + name);
     }
 
     @Test

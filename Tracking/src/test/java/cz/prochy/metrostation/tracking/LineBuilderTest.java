@@ -1,5 +1,7 @@
 package cz.prochy.metrostation.tracking;
 
+import cz.prochy.metrostation.tracking.internal.LineBuilder;
+import cz.prochy.metrostation.tracking.internal.Station;
 import org.junit.Before;
 import org.junit.Test;
 

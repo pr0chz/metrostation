@@ -1,7 +1,6 @@
 package cz.prochy.metrostation.tracking.internal;
 
 import cz.prochy.metrostation.tracking.Notifier;
-import cz.prochy.metrostation.tracking.Station;
 import org.junit.Before;
 import org.junit.Test;
 

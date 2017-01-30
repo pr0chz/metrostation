@@ -7,10 +7,10 @@ import net.jcip.annotations.NotThreadSafe;
 @NotThreadSafe
 public class StationsCellListener implements CellListener {
 
-    private final Stations stations;
+    private final TrackingStationGraph stations;
     private final StationListener listener;
 
-    public StationsCellListener(Stations stations, StationListener listener) {
+    public StationsCellListener(TrackingStationGraph stations, StationListener listener) {
         this.stations = Check.notNull(stations);
         this.listener = Check.notNull(listener);
     }

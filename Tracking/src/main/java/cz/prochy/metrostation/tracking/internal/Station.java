@@ -1,4 +1,4 @@
-package cz.prochy.metrostation.tracking;
+package cz.prochy.metrostation.tracking.internal;
 
 import net.jcip.annotations.NotThreadSafe;
 
@@ -12,19 +12,19 @@ public class Station {
     private final String name;
 
     // TODO use something different than linebuilder here
-    private final Set<LineBuilder> lines = new HashSet<>();
-    private final HashMap<LineBuilder, Station> prev = new HashMap<>();
-    private final HashMap<LineBuilder, Station> next = new HashMap<>();
+    private final Set<Line> lines = new HashSet<>();
+    private final HashMap<Line, Station> prev = new HashMap<>();
+    private final HashMap<Line, Station> next = new HashMap<>();
 
     public Station(String name) {
         this.name = name;
     }
 
-    public void addLine(LineBuilder lineBuilder) {
-        lines.add(lineBuilder);
+    public void addLine(Line line) {
+        lines.add(line);
     }
 
-    public Set<LineBuilder> getLines() {
+    public Set<Line> getLines() {
         return lines;
     }
 
@@ -36,7 +36,7 @@ public class Station {
         return new HashSet<>(prev.values());
     }
 
-    public void addPrev(LineBuilder line, Station prev) {
+    public void addPrev(Line line, Station prev) {
         this.prev.put(line, prev);
     }
 
@@ -44,7 +44,7 @@ public class Station {
         return new HashSet<>(next.values());
     }
 
-    public void addNext(LineBuilder line, Station next) {
+    public void addNext(Line line, Station next) {
         this.next.put(line, next);
     }
 

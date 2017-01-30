@@ -4,7 +4,7 @@ import cz.prochy.metrostation.tracking.internal.*;
 
 public class Builder {
 
-    public static CellListener createListener(Stations stations, Notifier notifier, long trackLostTimeoutMs,
+    public static CellListener createListener(TrackingStationGraph stations, Notifier notifier, long trackLostTimeoutMs,
                                               long transferTimeoutMs) {
 
         return new StationsCellListener(
