@@ -2,15 +2,16 @@ package cz.prochy.metrostation.tracking.internal;
 
 import cz.prochy.metrostation.tracking.CellListener;
 import cz.prochy.metrostation.tracking.Check;
+import cz.prochy.metrostation.tracking.internal.graph.StationGraph;
 import net.jcip.annotations.NotThreadSafe;
 
 @NotThreadSafe
 public class StationsCellListener implements CellListener {
 
-    private final TrackingStationGraph stations;
+    private final StationGraph stations;
     private final StationListener listener;
 
-    public StationsCellListener(TrackingStationGraph stations, StationListener listener) {
+    public StationsCellListener(StationGraph stations, StationListener listener) {
         this.stations = Check.notNull(stations);
         this.listener = Check.notNull(listener);
     }

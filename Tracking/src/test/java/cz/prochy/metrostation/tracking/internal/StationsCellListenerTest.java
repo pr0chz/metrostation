@@ -1,5 +1,6 @@
 package cz.prochy.metrostation.tracking.internal;
 
+import cz.prochy.metrostation.tracking.internal.graph.StationGraph;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -7,13 +8,13 @@ import static org.easymock.EasyMock.*;
 
 public class StationsCellListenerTest {
 
-    private TrackingStationGraph stations;
+    private StationGraph stations;
     private StationsCellListener listener;
     private StationListener output;
 
     @Before
     public void setUp() throws Exception {
-        stations = createStrictMock(TrackingStationGraph.class);
+        stations = createStrictMock(StationGraph.class);
         output = createStrictMock(StationListener.class);
         listener = new StationsCellListener(stations, output);
     }

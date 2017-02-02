@@ -1,6 +1,5 @@
 package cz.prochy.metrostation.tracking;
 
-import cz.prochy.metrostation.tracking.internal.PragueStations;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -26,7 +25,7 @@ public class ITTest {
     public void setUp() throws Exception {
         notifier = new NotifierMock();
         cellListener = Builder.createListener(
-                new PragueStations(),
+                PragueStations.newGraph(),
                 notifier,
                 TimeUnit.SECONDS.toMillis(180),
                 TimeUnit.SECONDS.toMillis(90));

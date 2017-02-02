@@ -14,7 +14,7 @@ import android.telephony.cdma.CdmaCellLocation;
 import android.telephony.gsm.GsmCellLocation;
 import android.util.Log;
 import cz.prochy.metrostation.tracking.*;
-import cz.prochy.metrostation.tracking.internal.PragueStations;
+import cz.prochy.metrostation.tracking.PragueStations;
 import net.jcip.annotations.ThreadSafe;
 
 import java.util.List;
@@ -99,7 +99,7 @@ public class NotificationService extends Service {
         Notifier notifier = new NotifierImpl(this, notificationSettings, predictionTrigger);
         long stationTimeout = TimeUnit.SECONDS.toMillis(180);
         long transferTimeout = TimeUnit.SECONDS.toMillis(90);
-        return Builder.createListener(new PragueStations(), notifier, stationTimeout, transferTimeout);
+        return Builder.createListener(PragueStations.newGraph(), notifier, stationTimeout, transferTimeout);
     }
 
     private TelephonyManager getTelephonyManager() {

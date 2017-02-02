@@ -107,7 +107,7 @@ public class StationGroup {
         return s;
     }
 
-    public StationGroup left(LineBuilder line) {
+    public StationGroup left(Line line) {
         StationGroup s = new StationGroup();
         for (Station station : set) {
             for (Station prevStation : station.getPrev()) {
@@ -119,7 +119,7 @@ public class StationGroup {
         return s;
     }
 
-    public StationGroup right(LineBuilder line) {
+    public StationGroup right(Line line) {
         StationGroup s = new StationGroup();
         for (Station station : set) {
             for (Station nextStation : station.getNext()) {

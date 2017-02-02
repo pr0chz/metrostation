@@ -1,5 +1,7 @@
-package cz.prochy.metrostation.tracking.internal;
+package cz.prochy.metrostation.tracking;
 
+import cz.prochy.metrostation.tracking.PragueStations;
+import cz.prochy.metrostation.tracking.internal.graph.StationGraph;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -7,11 +9,11 @@ import static org.junit.Assert.assertTrue;
 
 public class PragueStationsTest {
 
-    private PragueStations stations;
+    private StationGraph stations;
 
     @Before
     public void setUp() throws Exception {
-        stations = new PragueStations();
+        stations = PragueStations.newGraph();
     }
 
     @Test

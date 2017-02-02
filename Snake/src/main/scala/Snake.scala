@@ -1,7 +1,7 @@
 import java.io.{FileInputStream, InputStream}
 import java.util.Scanner
 
-import cz.prochy.metrostation.tracking.internal.PragueStations
+import cz.prochy.metrostation.tracking.PragueStations
 import org.json.simple.{JSONObject, JSONValue}
 
 import scala.collection.JavaConverters._
@@ -42,7 +42,7 @@ object Snake {
     output
   }
 
-  val stations = new PragueStations()
+  val stations = PragueStations.newGraph
 
   def hasMetroStation(events:IndexedSeq[Event]): Boolean = {
     val nonEmptyCells = for {
