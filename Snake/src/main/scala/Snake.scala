@@ -1,7 +1,8 @@
 package cz.prochy.metrostation.snake
 
 import java.io.{FileInputStream, InputStream}
-import java.util.Scanner
+import java.text.SimpleDateFormat
+import java.util.{Date, Scanner}
 
 import cz.prochy.metrostation.tracking.PragueStations
 import cz.prochy.metrostation.tracking.graph.{GraphBuilder, LineBuilder, StationBuilder}
@@ -15,8 +16,13 @@ object Snake {
 
   case class Location(cid:Int, lac:Int)
   case class Event(id:Long, ts:Long, loc:Option[Location]) extends Ordered[Event] {
+    def date = Event.format.format(new Date(ts))
     override def compare(that: Event): Int = ts compare that.ts
   }
+  object Event {
+    val format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ")
+  }
+
 
   def readInput(is:InputStream):IndexedSeq[Event] = {
     def parseEvent(s:String):Event = {
@@ -88,14 +94,69 @@ object Snake {
     val missingCids = extractCi(cellsByCid.keySet -- eventSetByCid)
 
     val carriers = cells.map(ci => (ci.line, ci.carrier)).distinct
-    println(s"Carrier coverage:")
+    println("\nCarrier coverage:")
     for ((line, carrier) <- carriers) {
-      println(f"$line%s $carrier%s: ${ratio(presentCids, cells, ci => ci.carrier == carrier && ci.line == line)}%2.2f%%")
+      println(f"$line%s $carrier%10s: ${ratio(presentCids, cells, ci => ci.carrier == carrier && ci.line == line)}%2.2f%%")
     }
 
-//    println(s"Present cids: $presentCids")
-//    println(s"Missing cids: $missingCids")
+    // sort (carrier, cid) sorted by incidence count
+    val cellIndicence = events
+      .collect { case Event(_, _, location) => location }
+      .flatten
+      .groupBy(identity)
+      .mapValues(x => x.size)
+      .toSeq
+      .sortBy { case (_, c) => c }
+      .reverse
+
+    println("\nCells (most occurences first)")
+    for {
+      (Location(cid, lac), count) <- cellIndicence
+      cell <- cellsByCid.get(cid, lac)
+    } {
+      println(f"${count}%5d: ${cell}")
+    }
   }
+
+  def visualizeSnakes(snakes:Map[Long, Seq[Event]]):Unit = {
+
+    def drawsnake(id:Long, events:Seq[Event]): Unit = {
+      print(f"$id%12d: ")
+      var lastLoc:Option[Snake.Location] = None
+      var unknowns = 0
+      for (ev <- events) {
+        val char = if (lastLoc == ev.loc) {
+          "" // deduplicate
+        } else {
+          if (!ev.loc.isDefined) {
+            unknowns = 0
+            "|"
+          } else {
+            val loc = ev.loc.get
+            if (loc.cid == 0 || loc.lac == 0) {
+              unknowns = 0
+              "/"
+            } else {
+              val group = stations.getStations(loc.cid, loc.lac)
+              if (group.isEmpty) {
+                unknowns += 1
+                if (unknowns < 5) "_" else ""
+              } else {
+                unknowns = 0
+                "."
+              }
+            }
+          }
+        }
+        lastLoc = ev.loc
+        print(char)
+      }
+      println()
+    }
+
+    snakes.foreach { case (id, seq) => drawsnake(id, seq) }
+  }
+
 
   // TODO
   // analyze which stations are present in data on which operators (and which are not)
@@ -121,6 +182,8 @@ object Snake {
     val cells = graphBuilder.build
 
     coverageReport(cells, events)
+
+    visualizeSnakes(snakesWithMetro)
   }
 
 }
