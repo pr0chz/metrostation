@@ -1,7 +1,10 @@
+package cz.prochy.metrostation.snake
+
 import java.io.{FileInputStream, InputStream}
 import java.util.Scanner
 
 import cz.prochy.metrostation.tracking.PragueStations
+import cz.prochy.metrostation.tracking.graph.{GraphBuilder, LineBuilder, StationBuilder}
 import org.json.simple.{JSONObject, JSONValue}
 
 import scala.collection.JavaConverters._
@@ -62,8 +65,39 @@ object Snake {
     stationNames.toSet
   }
 
+  def coverageReport(cells:Seq[CellInfo], events:Iterable[Event]):Unit = {
+    val cellsByCid = cells.groupBy { case CellInfo(_, _, _, cid, lac) => (cid, lac) }
+
+    def extractCi(keySet:Set[(Int, Int)]): Seq[CellInfo] = {
+      for {
+        key <- keySet.toSeq
+        ci <- cellsByCid(key)
+      } yield (ci)
+    }
+
+    def ratio(a:Seq[CellInfo], total:Seq[CellInfo], condition:(CellInfo) => Boolean):Double = {
+      return 100 * a.count(condition).toDouble / total.count(condition)
+    }
+
+    val eventSetByCid = (for {
+      event <- events
+      loc <- event.loc.toIterable
+    } yield (loc.cid, loc.lac)).toSet
+
+    val presentCids = extractCi(cellsByCid.keySet & eventSetByCid)
+    val missingCids = extractCi(cellsByCid.keySet -- eventSetByCid)
+
+    val carriers = cells.map(ci => (ci.line, ci.carrier)).distinct
+    println(s"Carrier coverage:")
+    for ((line, carrier) <- carriers) {
+      println(f"$line%s $carrier%s: ${ratio(presentCids, cells, ci => ci.carrier == carrier && ci.line == line)}%2.2f%%")
+    }
+
+//    println(s"Present cids: $presentCids")
+//    println(s"Missing cids: $missingCids")
+  }
+
   // TODO
-  // refactor Stations to provide better suited data for analysis
   // analyze which stations are present in data on which operators (and which are not)
   // analyze which cids are not present in data at all (evalute whether we have enough data for this classification)
   // find unknown cids - go through a snake and detect unknown cids inside otherwise reasonable metro travel sequence
@@ -81,6 +115,12 @@ object Snake {
 
     val snakesWithMetro = snakes filter { case (id, events) => hasMetroStation(events) }
     println(s"Snakes with station ${snakesWithMetro.size}")
+
+    val graphBuilder = new AnalysisGraphBuilder
+    PragueStations.buildStations(graphBuilder)
+    val cells = graphBuilder.build
+
+    coverageReport(cells, events)
   }
 
 }
