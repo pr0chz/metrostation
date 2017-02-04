@@ -1,20 +1,23 @@
 package cz.prochy.metrostation.snake
 
-import java.io.{FileInputStream, InputStream}
+import java.io._
+import java.nio.file.{Files, Path, Paths}
 import java.text.SimpleDateFormat
 import java.util.{Date, Scanner}
 
 import cz.prochy.metrostation.tracking.PragueStations
-import cz.prochy.metrostation.tracking.graph.{GraphBuilder, LineBuilder, StationBuilder}
+import cz.prochy.metrostation.tracking.internal.Station
 import org.json.simple.{JSONObject, JSONValue}
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable
-import scala.collection.mutable.ArrayBuffer
+import scala.io.Source
 
 object Snake {
 
-  case class Location(cid:Int, lac:Int)
+  case class Location(cid:Int, lac:Int) {
+    def valid = !(cid == 0 || lac == 0 || cid == 2147483647 || lac == 2147483647)
+  }
   case class Event(id:Long, ts:Long, loc:Option[Location]) extends Ordered[Event] {
     def date = Event.format.format(new Date(ts))
     override def compare(that: Event): Int = ts compare that.ts
@@ -53,6 +56,14 @@ object Snake {
 
   val stations = PragueStations.newGraph
 
+  val graphBuilder = new AnalysisGraphBuilder
+  PragueStations.buildStations(graphBuilder)
+  val cells = graphBuilder.build
+  val cellsByCid = cells
+    .groupBy { case CellInfo(_, _, _, cid, lac) => (cid, lac) }
+    .withDefaultValue(Seq())
+
+
   def hasMetroStation(events:IndexedSeq[Event]): Boolean = {
     val nonEmptyCells = for {
       event <- events
@@ -71,8 +82,7 @@ object Snake {
     stationNames.toSet
   }
 
-  def coverageReport(cells:Seq[CellInfo], events:Iterable[Event]):Unit = {
-    val cellsByCid = cells.groupBy { case CellInfo(_, _, _, cid, lac) => (cid, lac) }
+  def coverageReport(events:Iterable[Event]):Unit = {
 
     def extractCi(keySet:Set[(Int, Int)]): Seq[CellInfo] = {
       for {
@@ -133,7 +143,7 @@ object Snake {
             "|"
           } else {
             val loc = ev.loc.get
-            if (loc.cid == 0 || loc.lac == 0) {
+            if (!loc.valid) {
               unknowns = 0
               "/"
             } else {
@@ -157,6 +167,39 @@ object Snake {
     snakes.foreach { case (id, seq) => drawsnake(id, seq) }
   }
 
+  def dumpSnake(events:Seq[Event]): String = {
+    val eventLines = for {
+      firstEv <- events.headOption.toIterable
+      ev <- events
+    } yield {
+      val relTs = f"[${ev.ts - firstEv.ts}%10d]"
+      val time = f"[${ev.date}%15s]"
+      val cid = ev.loc.map(loc => f"connected(${loc.cid}%d, ${loc.lac}%d)").getOrElse("disconnected")
+      val stationStr = ev.loc.toIterable
+        .map(loc => stations.getStations(loc.cid, loc.lac))
+        .flatMap(stationGroup => stationGroup.asSet().asScala)
+        .map(_.getName)
+        .mkString(",")
+      val carrier = ev.loc.toIterable
+        .flatMap(loc => cellsByCid(loc.cid, loc.lac))
+        .map(_.carrier)
+        .mkString(",")
+      f"${time}%s ${relTs}%s - ${carrier}%10s - ${stationStr}%20s - ${cid}%s"
+    }
+    eventLines.mkString("\n")
+  }
+
+  def filterInterestingEvents(events:Seq[Event]): Seq[Event] = {
+    def knownCell(loc:Option[Location]) = loc.map(l => !cellsByCid(l.cid, l.lac).isEmpty).getOrElse(false)
+    def interesting(events: Seq[Event]) = events.exists(ev => knownCell(ev.loc))
+
+    val interestingEvents = events.sliding(5).map(interesting).toSeq
+    val first = interestingEvents.head
+    val last = interestingEvents.last
+    val padded = first +: first +: interestingEvents.drop(2).dropRight(2) :+ last :+ last
+    padded.zip(events).collect { case (true, ev) => ev }
+  }
+
 
   // TODO
   // analyze which stations are present in data on which operators (and which are not)
@@ -177,13 +220,19 @@ object Snake {
     val snakesWithMetro = snakes filter { case (id, events) => hasMetroStation(events) }
     println(s"Snakes with station ${snakesWithMetro.size}")
 
-    val graphBuilder = new AnalysisGraphBuilder
-    PragueStations.buildStations(graphBuilder)
-    val cells = graphBuilder.build
 
-    coverageReport(cells, events)
+    coverageReport(events)
 
     visualizeSnakes(snakesWithMetro)
+
+    val dir = "snakefiles"
+    Files.createDirectories(Paths.get(dir))
+    for ((id, seq) <- snakesWithMetro) {
+      val os = Files.newOutputStream(Paths.get(dir, id.toString))
+      val writer = new PrintWriter(os)
+      writer.write(dumpSnake(snakesWithMetro(id)))
+      writer.close
+    }
   }
 
 }
