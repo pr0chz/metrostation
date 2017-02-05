@@ -3,15 +3,15 @@ package cz.prochy.metrostation.snake
 import java.io._
 import java.nio.file.{Files, Path, Paths}
 import java.text.SimpleDateFormat
+import java.util.concurrent.TimeUnit
 import java.util.{Date, Scanner}
 
 import cz.prochy.metrostation.tracking.PragueStations
-import cz.prochy.metrostation.tracking.internal.Station
 import org.json.simple.{JSONObject, JSONValue}
 
+import scala.annotation.tailrec
 import scala.collection.JavaConverters._
 import scala.collection.mutable
-import scala.io.Source
 
 object Snake {
 
@@ -128,43 +128,59 @@ object Snake {
     }
   }
 
-  def visualizeSnakes(snakes:Map[Long, Seq[Event]]):Unit = {
+  def collect[T](events:Seq[Event], what:CellInfo => T):String = {
+    (
+      for {
+        event <- events
+        loc <- event.loc.toIterable
+        cellInfo <- cellsByCid(loc.cid, loc.lac)
+      } yield (what(cellInfo))
+    ).toSet.mkString
+  }
 
-    def drawsnake(id:Long, events:Seq[Event]): Unit = {
-      print(f"$id%12d: ")
-      var lastLoc:Option[Snake.Location] = None
-      var unknowns = 0
-      for (ev <- events) {
-        val char = if (lastLoc == ev.loc) {
-          "" // deduplicate
+  def niceCarrierName(name:String):String = name match {
+    case "t-mobile" => "TM"
+    case "o2" => "O2"
+    case "vodafone" => "VF"
+    case "unknown" => "U"
+    case x => x
+  }
+
+  def drawsnake(id:String, events:Seq[Event]): Unit = {
+    print(f"$id%15s ")
+    print(f"${collect(events, ci => niceCarrierName(ci.carrier))}%-5s")
+    print(f"${collect(events, ci => ci.line)}%-4s")
+    print(": ")
+    var lastLoc:Option[Snake.Location] = None
+    var unknowns = 0
+    for (ev <- events) {
+      val char = if (lastLoc == ev.loc) {
+        "" // deduplicate
+      } else {
+        if (!ev.loc.isDefined) {
+          unknowns = 0
+          "|"
         } else {
-          if (!ev.loc.isDefined) {
+          val loc = ev.loc.get
+          if (!loc.valid) {
             unknowns = 0
-            "|"
+            "/"
           } else {
-            val loc = ev.loc.get
-            if (!loc.valid) {
-              unknowns = 0
-              "/"
+            val group = stations.getStations(loc.cid, loc.lac)
+            if (group.isEmpty) {
+              unknowns += 1
+              if (unknowns < 5) "_" else ""
             } else {
-              val group = stations.getStations(loc.cid, loc.lac)
-              if (group.isEmpty) {
-                unknowns += 1
-                if (unknowns < 5) "_" else ""
-              } else {
-                unknowns = 0
-                "."
-              }
+              unknowns = 0
+              "."
             }
           }
         }
-        lastLoc = ev.loc
-        print(char)
       }
-      println()
+      lastLoc = ev.loc
+      print(char)
     }
-
-    snakes.foreach { case (id, seq) => drawsnake(id, seq) }
+    println()
   }
 
   def dumpSnake(events:Seq[Event]): String = {
@@ -183,21 +199,53 @@ object Snake {
       val carrier = ev.loc.toIterable
         .flatMap(loc => cellsByCid(loc.cid, loc.lac))
         .map(_.carrier)
+        .map(niceCarrierName)
         .mkString(",")
-      f"${time}%s ${relTs}%s - ${carrier}%10s - ${stationStr}%20s - ${cid}%s"
+      f"${time}%s ${relTs}%s - ${carrier}%5s - ${stationStr}%20s - ${cid}%s"
     }
     eventLines.mkString("\n")
   }
 
-  def filterInterestingEvents(events:Seq[Event]): Seq[Event] = {
-    def knownCell(loc:Option[Location]) = loc.map(l => !cellsByCid(l.cid, l.lac).isEmpty).getOrElse(false)
-    def interesting(events: Seq[Event]) = events.exists(ev => knownCell(ev.loc))
+  def splitBetween[T, C <: Seq[T]](c:C, split: (T, T) => Boolean): Seq[Seq[T]] = {
 
-    val interestingEvents = events.sliding(5).map(interesting).toSeq
-    val first = interestingEvents.head
-    val last = interestingEvents.last
-    val padded = first +: first +: interestingEvents.drop(2).dropRight(2) :+ last :+ last
-    padded.zip(events).collect { case (true, ev) => ev }
+    @tailrec
+    def takeUntil(c:List[T], acc:List[T] = Nil): (List[T], List[T]) = c match {
+      case Nil => (acc.reverse, Nil)
+      case x :: Nil => ((x :: acc).reverse, Nil)
+      case x :: tail => {
+        val next = tail.head
+        if (split(x, next)) ((x :: acc).reverse, tail) else takeUntil(tail, x :: acc)
+      }
+    }
+
+    @tailrec
+    def splitAll(c:List[T], acc:List[List[T]] = Nil): List[List[T]] = {
+      if (c.isEmpty) acc.reverse
+      else {
+        val (part, tail) = takeUntil(c)
+        splitAll(tail, part :: acc)
+      }
+    }
+
+    splitAll(c.toList)
+  }
+
+  def filterInterestingEvents(events:Seq[Event], maxDelayM:Long): Seq[Seq[Event]] = {
+    val maxMs = TimeUnit.MINUTES.toMillis(maxDelayM)
+
+    def longPause(delayMs:Long)(x:Event, y:Event) = y.ts - x.ts > delayMs
+    def disconnect(ev:Event) = !ev.loc.isDefined
+
+    val splits = splitBetween(events.filter(disconnect), longPause(maxMs))
+    for {
+      split <- splits
+      if split.size > 3
+    } yield {
+      val tss = split.map(_.ts)
+      val lower = tss.min - maxMs
+      val upper = tss.max + maxMs
+      events.filter(e => e.ts > lower && e.ts < upper)
+    }
   }
 
 
@@ -223,14 +271,22 @@ object Snake {
 
     coverageReport(events)
 
-    visualizeSnakes(snakesWithMetro)
+    snakesWithMetro.foreach { case (id, seq) => drawsnake(id.toString, seq) }
+    println("============")
 
     val dir = "snakefiles"
     Files.createDirectories(Paths.get(dir))
     for ((id, seq) <- snakesWithMetro) {
       val os = Files.newOutputStream(Paths.get(dir, id.toString))
       val writer = new PrintWriter(os)
-      writer.write(dumpSnake(snakesWithMetro(id)))
+      for ((events, i) <- filterInterestingEvents(snakesWithMetro(id), 15).zipWithIndex) {
+        drawsnake(s"${id} $i", events)
+        writer.write("=========\n")
+        writer.write(dumpSnake(events))
+        writer.write("\n")
+      }
+      writer.write("\n\n===== Full dump =====\n")
+      writer.write(dumpSnake(seq))
       writer.close
     }
   }
