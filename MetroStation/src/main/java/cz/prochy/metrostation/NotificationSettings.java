@@ -13,10 +13,10 @@ public class NotificationSettings {
     private static final String PREF_STATION_PREDICTIONS = "station_predictions";
     private static final String PREF_CELL_LOGGING = "cell_logging";
 
-    private static final boolean PREF_TOAST_ON_ARRIVAL_DEFAULT = false;
-    private static final boolean PREF_TOAST_ON_LEAVE_DEFAULT = false;
+    private static final boolean PREF_TOAST_ON_ARRIVAL_DEFAULT = true;
+    private static final boolean PREF_TOAST_ON_LEAVE_DEFAULT = true;
     private static final boolean PREF_TRAY_NOTIFICATION_DEFAULT = true;
-    private static final boolean PREF_OVERLAY_DEFAULT = true;
+    private static final boolean PREF_OVERLAY_DEFAULT = false;
     private static final boolean PREF_STATION_PREDICTIONS_DEFAULT = true;
     private static final boolean PREF_CELL_LOGGING_DEFAULT = true;
 
