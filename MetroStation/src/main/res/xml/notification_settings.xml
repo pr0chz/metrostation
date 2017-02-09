@@ -24,19 +24,19 @@
                 android:key="overlay"
                 android:title="@string/pref_overlay_title"
                 android:summary="@string/pref_overlay_desc"
-                android:defaultValue="true" />
+                android:defaultValue="false" />
 
         <CheckBoxPreference
                 android:key="toast_on_arrival"
                 android:title="@string/pref_toast_on_arrival_title"
                 android:summary="@string/pref_toast_on_arrival_desc"
-                android:defaultValue="false" />
+                android:defaultValue="true" />
 
         <CheckBoxPreference
                 android:key="toast_on_leave"
                 android:title="@string/pref_toast_on_departure_title"
                 android:summary="@string/pref_toast_on_departure_desc"
-                android:defaultValue="false" />
+                android:defaultValue="true" />
 
     </PreferenceCategory>
 
