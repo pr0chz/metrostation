@@ -108,3 +108,11 @@ Prestup
 
 
 -2118504786 - line B + C, missing stations
+
+
+-1900137983 0          : ____|_/__|___|_|_|_|____/___
+-1900137983 1          : ____/____|_|_|____|_|____|_|_|_|_|_|_|_
+
+
+
+Seems to contain some metro-sequences, but they are completely unanchored.
