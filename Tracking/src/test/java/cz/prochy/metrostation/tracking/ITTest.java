@@ -449,6 +449,8 @@ public class ITTest {
         notifier.onStation(STRASNICKA);
         notifier.onStation(SKALKA);
         notifier.onStation(DEPO_HOSTIVAR);
+        notifier.onUnknownStation();
+        notifier.onStation(DEPO_HOSTIVAR);
         notifier.onStation(SKALKA);
 
         assertTrue(notifier.verify());
