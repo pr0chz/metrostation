@@ -110,5 +110,9 @@ Added luziny cell.
 
 Added vysehrad cell.
 
+   1027664687 0 O2   A   : _|.|.
+   1027664687 1 O2   C   : .|.|.|.|.
+   1027664687 2 O2   CB  : .|.|.|.|.
 
+Added Strizkov and Letnany for O2.
 

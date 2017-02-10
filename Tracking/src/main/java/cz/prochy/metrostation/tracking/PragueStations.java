@@ -289,6 +289,7 @@ public class PragueStations {
                 .id(O2, 11979, 1182)
                 .id(O2, 203717516, 1182)
                 .id(O2, 10342401, 1182)
+                .id(O2, 10341889, 1182)
         ;
         lineC.station("Prosek")
                 .id(VODAFONE, 18849, 34300)
@@ -297,6 +298,7 @@ public class PragueStations {
                 .id(TMOBILE, 2252, 21780)
                 .id(O2, 21992, 1139)
                 .id(O2, 203717116, 1182)
+                .id(O2, 203717117, 1182)
         ;
         lineC.station("Letňany")
                 .id(VODAFONE, 18850, 34300)
