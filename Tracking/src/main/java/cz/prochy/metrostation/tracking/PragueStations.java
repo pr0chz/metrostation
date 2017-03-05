@@ -24,9 +24,6 @@ public class PragueStations {
 
 		/*
 		 * Metro A
-		 * Vodafone - OK
-		 * Tmobile - OK
-		 * O2 - OK
 		 */
         lineA.station("Depo Hostivař")
                 .id(VODAFONE, 115607, 38300)
@@ -142,9 +139,6 @@ public class PragueStations {
 
 		/*
 		 * Metro C
-		 * Vodafone - OK
-		 * Tmobile - conflicts
-		 * O2 - OK
 		 */
 
         lineC.station("Háje")
@@ -209,6 +203,8 @@ public class PragueStations {
                 .id(TMOBILE, 2262, 21780)
                 .id(TMOBILE, 371, 21780)
                 .id(TMOBILE, 876, 21780)
+                .id(TMOBILE, 18247, 21780)
+                .id(TMOBILE, 459, 21780)
                 .id(O2, 21499, 1139)
                 .id(O2, 1275, 1137)
                 .id(O2, 10405, 1138)
@@ -217,6 +213,7 @@ public class PragueStations {
                 .id(O2, 10245124, 1138)
                 .id(O2, 203715927, 1137)
                 .id(O2, 10242817, 1137)
+                .id(O2, 262915321, 21780)
         ;
         lineC.station("I.P.Pavlova")
                 .id(VODAFONE, 18841, 34300)
@@ -248,6 +245,8 @@ public class PragueStations {
         ;
         lineC.station("Florenc")
                 .id(VODAFONE, 18836, 34300)
+                .id(VODAFONE, 510211, 34300)
+                .id(VODAFONE, 382683, 34300)
                 .id(TMOBILE, 2258, 21780)
                 .id(O2, 21899, 1139)
                 .id(O2, 10301440, 1138)
@@ -259,8 +258,11 @@ public class PragueStations {
                 .id(O2, 21798, 1139)
         ;
         lineC.station("Nádraží Holešovice")
-                .id(VODAFONE, 18835, 34300)
-                .id(VODAFONE, 19121, 34700)
+                .id(VODAFONE, 18835, 34300) // old
+                .id(VODAFONE, 19121, 34700) // old
+                .id(VODAFONE, 493313, 34700) // old
+                .id(VODAFONE, 775517, 34700)
+                .id(VODAFONE, 775517, 34300)
                 .id(TMOBILE, 2256, 21780)
                 .id(O2, 185693, 34700)
                 .id(O2, 21799, 1139)
@@ -309,12 +311,6 @@ public class PragueStations {
         ;
 
         // Metro B
-        // Vodafone - OK, possible problems between Stodulky and Radlicka
-        // T-mobile - multiple problems:
-        //   - mess between Stodulky and Smichovske nadrazi
-        //   - non-unique Narodni trida - Kolbenova
-        //   - some stations missing completely
-        // O2 done - OK
 
         lineB.station("Zličín")
                 .id(VODAFONE, 18814, 34300)
@@ -357,21 +353,25 @@ public class PragueStations {
                 .id(O2, 1523, 1153)
         ;
         lineB.station("Hůrka")
-                .id(VODAFONE, 16062, 38100)
+                .id(VODAFONE, 16062, 38100) // old
+                .id(VODAFONE, 13341, 38100) // old
+                .id(VODAFONE, 18821, 34300) // old
                 .id(VODAFONE, 118807, 38100)
-                .id(VODAFONE, 13341, 38100)
-                .id(VODAFONE, 18821, 34300)
+                .id(VODAFONE, 118809, 38100)
+                .id(VODAFONE, 11121, 38100)
+                .id(VODAFONE, 11123, 38100)
                 .id(TMOBILE, 1924, 17230) // old
                 .id(TMOBILE, 453, 17230) // old
                 .id(TMOBILE, 1244, 17230) // old
                 .id(TMOBILE, 1245, 17230) // old
                 .id(TMOBILE, 6736893, 17230) // old
-                .id(TMOBILE, 6721459, 17230) // old
                 .id(TMOBILE, 6736958, 17230) // old
                 .id(TMOBILE, 6721479, 17230) // old
                 .id(TMOBILE, 6721461, 17230) // old
                 .id(TMOBILE, 2431, 21780) // old
+                .id(TMOBILE, 6721459, 17230)
                 .id(TMOBILE, 2225, 21780)
+                .id(TMOBILE, 6736895, 17230)
                 .id(O2, 21595, 1139)
         ;
         lineB.station("Nové Butovice")
@@ -386,6 +386,7 @@ public class PragueStations {
         ;
         lineB.station("Radlická")
                 .id(VODAFONE, 18824, 34300)
+                .id(VODAFONE, 18824, 37200)
                 .id(TMOBILE, 2431, 21780) // old
                 .id(TMOBILE, 2228, 21780)
                 .id(O2, 21592, 1139)
