@@ -35,8 +35,8 @@ class EventProcessor {
     private final Settings settings;
     private final LoggingCellListener cellListener;
 
-    private final int UPLOAD_MIN_EVENTS = 20; // threshold for minimum events in buffer
-    private final int UPLOAD_SKIP_EVENTS = 5; // upload every nth event
+    private final static int UPLOAD_MIN_EVENTS = 20; // threshold for minimum events in buffer
+    private final static int UPLOAD_SKIP_EVENTS = 5; // upload every nth event
 
     private class StateListener extends PhoneStateListener {
 
@@ -164,7 +164,7 @@ class EventProcessor {
     }
 
     private static String joinStrings(List<String> strings) {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         for (String s : strings) {
             result.append(s).append('\n');
         }

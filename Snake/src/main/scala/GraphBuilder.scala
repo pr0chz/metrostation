@@ -22,7 +22,7 @@ import cz.prochy.metrostation.tracking.graph.{GraphBuilder, LineBuilder, Station
 
 import scala.collection.mutable
 
-case class CellInfo(val line:String, val name:String, val carrier:String, val cid:Int, val lac:Int)
+case class CellInfo(line:String, name:String, carrier:String, cid:Int, lac:Int)
 
 class AnalysisGraphBuilder extends GraphBuilder[Seq[CellInfo]] {
   val buffer: mutable.ArrayBuffer[CellInfo] = mutable.ArrayBuffer()
@@ -40,5 +40,5 @@ class AnalysisGraphBuilder extends GraphBuilder[Seq[CellInfo]] {
 
   override def newLine(name: String): LineBuilder = new LB(name)
 
-  override def build(): Seq[CellInfo] = buffer
+  override def build: Seq[CellInfo] = buffer
 }

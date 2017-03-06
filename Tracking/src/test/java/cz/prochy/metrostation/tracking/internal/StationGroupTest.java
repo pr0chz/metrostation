@@ -21,7 +21,7 @@ package cz.prochy.metrostation.tracking.internal;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.NoSuchElementException;
 
@@ -156,7 +156,7 @@ public class StationGroupTest {
     public void testLeft() throws Exception {
         Station leftStation = createNiceMock(Station.class);
         Station station = createNiceMock(Station.class);
-        expect(station.getPrev()).andReturn(new HashSet<>(Arrays.asList(leftStation))).anyTimes();
+        expect(station.getPrev()).andReturn(new HashSet<>(Collections.singletonList(leftStation))).anyTimes();
         expect(station.getNext()).andReturn(new HashSet<>()).anyTimes();
         replay(leftStation, station);
 
@@ -169,7 +169,7 @@ public class StationGroupTest {
     public void testRight() throws Exception {
         Station rightStation = createNiceMock(Station.class);
         Station station = createNiceMock(Station.class);
-        expect(station.getNext()).andReturn(new HashSet<>(Arrays.asList(rightStation))).anyTimes();
+        expect(station.getNext()).andReturn(new HashSet<>(Collections.singletonList(rightStation))).anyTimes();
         expect(station.getPrev()).andReturn(new HashSet<>()).anyTimes();
         replay(rightStation, station);
 

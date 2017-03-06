@@ -23,8 +23,8 @@ import cz.prochy.metrostation.tracking.Notifier;
 
 public class Deduplicator implements Notifier {
 
-    private static enum LastNotification {
-        STATION, UNKNOWN_STATION, DISCONNECT;
+    private enum LastNotification {
+        STATION, UNKNOWN_STATION, DISCONNECT
     }
 
     private final Notifier notifier;

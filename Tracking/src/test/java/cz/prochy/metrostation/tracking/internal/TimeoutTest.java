@@ -65,7 +65,7 @@ public class TimeoutTest {
         expect(executorService.schedule(same(task), eq(TIMEOUT), eq(TIMEUNIT))).andReturn(future);
     }
 
-    private void expectCancel() throws ExecutionException, InterruptedException {
+    private void expectCancel() {
         expect(future.cancel(eq(false))).andReturn(true);
     }
 

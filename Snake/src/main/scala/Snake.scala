@@ -25,6 +25,7 @@ import java.util.concurrent.TimeUnit
 import java.util.{Date, Scanner}
 
 import cz.prochy.metrostation.tracking.PragueStations
+import cz.prochy.metrostation.tracking.internal.graph.StationGraph
 import org.json.simple.{JSONObject, JSONValue}
 
 import scala.annotation.tailrec
@@ -34,10 +35,10 @@ import scala.collection.mutable
 object Snake {
 
   case class Location(cid:Int, lac:Int) {
-    def valid = !(cid == 0 || lac == 0 || cid == 2147483647 || lac == 2147483647)
+    def valid:Boolean = !(cid == 0 || lac == 0 || cid == 2147483647 || lac == 2147483647)
   }
   case class Event(id:Long, ts:Long, loc:Option[Location]) extends Ordered[Event] {
-    def date = Event.format.format(new Date(ts))
+    def date:String = Event.format.format(new Date(ts))
     override def compare(that: Event): Int = ts compare that.ts
   }
   object Event {
@@ -72,12 +73,12 @@ object Snake {
     output
   }
 
-  val stations = PragueStations.newGraph
+  val stations:StationGraph = PragueStations.newGraph
 
-  val graphBuilder = new AnalysisGraphBuilder
+  val graphBuilder:AnalysisGraphBuilder = new AnalysisGraphBuilder
   PragueStations.buildStations(graphBuilder)
-  val cells = graphBuilder.build
-  val cellsByCid = cells
+  val cells:Seq[CellInfo] = graphBuilder.build
+  val cellsByCid:Map[(Int, Int), Seq[CellInfo]] = cells
     .groupBy { case CellInfo(_, _, _, cid, lac) => (cid, lac) }
     .withDefaultValue(Seq())
 
@@ -86,7 +87,7 @@ object Snake {
     val nonEmptyCells = for {
       event <- events
       loc <- event.loc
-    } yield (!stations.getStations(loc.cid, loc.lac).isEmpty)
+    } yield !stations.getStations(loc.cid, loc.lac).isEmpty
     nonEmptyCells.exists(identity)
   }
 
@@ -96,7 +97,7 @@ object Snake {
       event <- snake
       location <- event.loc.toIterable
       station <- stations.getStations(location.cid, location.lac).asSet.asScala
-    } yield (station.getName)
+    } yield station.getName
     stationNames.toSet
   }
 
@@ -106,11 +107,11 @@ object Snake {
       for {
         key <- keySet.toSeq
         ci <- cellsByCid(key)
-      } yield (ci)
+      } yield ci
     }
 
     def ratio(a:Seq[CellInfo], total:Seq[CellInfo], condition:(CellInfo) => Boolean):Double = {
-      return 100 * a.count(condition).toDouble / total.count(condition)
+      100 * a.count(condition).toDouble / total.count(condition)
     }
 
     val eventSetByCid = (for {
@@ -141,9 +142,7 @@ object Snake {
     for {
       (Location(cid, lac), count) <- cellIndicence
       cell <- cellsByCid.get(cid, lac)
-    } {
-      println(f"${count}%5d: ${cell}")
-    }
+    } println(f"$count%5d: $cell")
   }
 
   def collect[T](events:Seq[Event], what:CellInfo => T):String = {
@@ -152,7 +151,7 @@ object Snake {
         event <- events
         loc <- event.loc.toIterable
         cellInfo <- cellsByCid(loc.cid, loc.lac)
-      } yield (what(cellInfo))
+      } yield what(cellInfo)
     ).toSet.mkString
   }
 
@@ -175,7 +174,7 @@ object Snake {
       val char = if (lastLoc == ev.loc) {
         "" // deduplicate
       } else {
-        if (!ev.loc.isDefined) {
+        if (ev.loc.isEmpty) {
           unknowns = 0
           "|"
         } else {
@@ -219,7 +218,7 @@ object Snake {
         .map(_.carrier)
         .map(niceCarrierName)
         .mkString(",")
-      f"${time}%s ${relTs}%s - ${carrier}%5s - ${stationStr}%20s - ${cid}%s"
+      f"$time%s $relTs%s - $carrier%5s - $stationStr%20s - $cid%s"
     }
     eventLines.mkString("\n")
   }
@@ -230,10 +229,9 @@ object Snake {
     def takeUntil(c:List[T], acc:List[T] = Nil): (List[T], List[T]) = c match {
       case Nil => (acc.reverse, Nil)
       case x :: Nil => ((x :: acc).reverse, Nil)
-      case x :: tail => {
+      case x :: tail =>
         val next = tail.head
         if (split(x, next)) ((x :: acc).reverse, tail) else takeUntil(tail, x :: acc)
-      }
     }
 
     @tailrec
@@ -252,7 +250,7 @@ object Snake {
     val maxMs = TimeUnit.MINUTES.toMillis(maxDelayM)
 
     def longPause(delayMs:Long)(x:Event, y:Event) = y.ts - x.ts > delayMs
-    def disconnect(ev:Event) = !ev.loc.isDefined
+    def disconnect(ev:Event) = ev.loc.isEmpty
 
     val splits = splitBetween(events.filter(disconnect), longPause(maxMs))
     for {
@@ -274,7 +272,7 @@ object Snake {
     println(s"Total snakes ${snakes.size}")
     println(enumerateStations(snakes.values).toArray.sorted)
 
-    val snakesWithMetro = snakes filter { case (id, events) => hasMetroStation(events) }
+    val snakesWithMetro = snakes filter { case (_, snakeEvents) => hasMetroStation(snakeEvents) }
     println(s"Snakes with station ${snakesWithMetro.size}")
 
 
@@ -289,14 +287,14 @@ object Snake {
       val os = Files.newOutputStream(Paths.get(dir, id.toString))
       val writer = new PrintWriter(os)
       for ((events, i) <- filterInterestingEvents(snakesWithMetro(id), 15).zipWithIndex) {
-        drawsnake(s"${id} $i", events)
+        drawsnake(s"$id $i", events)
         writer.write("=========\n")
         writer.write(dumpSnake(events))
         writer.write("\n")
       }
       writer.write("\n\n===== Full dump =====\n")
       writer.write(dumpSnake(seq))
-      writer.close
+      writer.close()
     }
   }
 

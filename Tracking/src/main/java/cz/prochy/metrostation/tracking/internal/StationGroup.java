@@ -47,7 +47,7 @@ public class StationGroup {
     }
 
     public StationGroup(StationGroup group) {
-        this.set = new HashSet(group.set);
+        this.set = new HashSet<>(group.set);
     }
 
     public void add(Station station) {
@@ -160,9 +160,7 @@ public class StationGroup {
 
         StationGroup that = (StationGroup) o;
 
-        if (!set.equals(that.set)) return false;
-
-        return true;
+        return set.equals(that.set);
     }
 
     @Override

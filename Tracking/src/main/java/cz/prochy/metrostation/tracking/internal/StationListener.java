@@ -25,7 +25,7 @@ package cz.prochy.metrostation.tracking.internal;
  */
 public interface StationListener {
 
-    public final static StationGroup NO_STATIONS = StationGroup.empty();
+    StationGroup NO_STATIONS = StationGroup.empty();
 
     /**
      * There has been a change in GSM cells and this set represents possible stations where we are. When empty

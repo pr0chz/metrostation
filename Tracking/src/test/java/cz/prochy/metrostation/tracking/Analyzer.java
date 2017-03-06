@@ -22,7 +22,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
 import java.io.InputStream;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -42,13 +41,7 @@ public class Analyzer {
             this.lac = lac;
         }
 
-        private TestRecord() {
-            this.cid = -2;
-            this.lac = -2;
-            this.ts = 0;
-        }
-
-        public static int DISCONNECT_CID = -2;
+        public static final int DISCONNECT_CID = -2;
 
         @Override
         public String toString() {
@@ -61,7 +54,7 @@ public class Analyzer {
         }
     }
 
-    public static List<TestRecord> readMsLogsLines(InputStream stream) throws ParseException {
+    public static List<TestRecord> readMsLogsLines(InputStream stream) {
         List<TestRecord> result = new ArrayList<>();
         String str = new Scanner(stream, "UTF-8").useDelimiter("\\A").next();
         for (String line : str.split("\n")) {

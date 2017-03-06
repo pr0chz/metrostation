@@ -1,12 +1,9 @@
 package cz.prochy.metrostation;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.provider.Settings;
 import android.view.KeyEvent;
 
 import java.util.ArrayDeque;

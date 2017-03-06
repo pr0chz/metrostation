@@ -21,7 +21,6 @@ package cz.prochy.metrostation.tracking;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
-import org.json.simple.parser.ParseException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -51,7 +50,7 @@ public class ITTest {
 
 
 
-    private List<Analyzer.TestRecord> readLegacyLines(String name) throws ParseException {
+    private List<Analyzer.TestRecord> readLegacyLines(String name) {
         InputStream stream = ITTest.class.getClassLoader().getResourceAsStream(name);
         String str = new Scanner(stream, "UTF-8").useDelimiter("\\A").next();
         List<Analyzer.TestRecord> result = new ArrayList<>();
@@ -223,7 +222,7 @@ public class ITTest {
         }
     }
 
-    private void replayFile(String name) throws java.text.ParseException {
+    private void replayFile(String name) {
         List<Analyzer.TestRecord> testRecords = readMsLogsLines(name);
         for (Analyzer.TestRecord record : testRecords) {
             if (record.cid != Analyzer.TestRecord.DISCONNECT_CID) {
@@ -234,7 +233,7 @@ public class ITTest {
         }
     }
 
-    private List<Analyzer.TestRecord> readMsLogsLines(String filename) throws java.text.ParseException {
+    private List<Analyzer.TestRecord> readMsLogsLines(String filename) {
         InputStream stream = ITTest.class.getClassLoader().getResourceAsStream(filename);
         return Analyzer.readMsLogsLines(stream);
     }
