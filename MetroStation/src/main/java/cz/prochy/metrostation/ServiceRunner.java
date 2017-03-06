@@ -4,18 +4,22 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import net.jcip.annotations.ThreadSafe;
 
+@ThreadSafe
 public class ServiceRunner extends BroadcastReceiver {
+
+    private static final String BOOT_COMPLETED = "android.intent.action.BOOT_COMPLETED";
 
     private static Intent getStartIntent(Context context) {
         Intent intent = new Intent(context, NotificationService.class);
-        intent.setAction(NotificationService.getStartAction());
+        intent.setAction(NotificationService.START_ACTION);
         return intent;
     }
 
     private static Intent getMockIntent(Context context) {
         Intent intent = new Intent(context, NotificationService.class);
-        intent.setAction(NotificationService.getMockAction());
+        intent.setAction(NotificationService.MOCK_ACTION);
         return intent;
     }
 
@@ -29,9 +33,9 @@ public class ServiceRunner extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if ("android.intent.action.BOOT_COMPLETED".equals(intent.getAction())) {
+        if (BOOT_COMPLETED.equals(intent.getAction())) {
             runService(context);
-            Log.v("TEST", "Service loaded at start");
+            Log.i("MSServiceRunner", "Service loaded at start");
         }
     }
 

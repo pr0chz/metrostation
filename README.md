@@ -51,8 +51,8 @@ Application is not 100% reliable. There are few situations which can prevent app
  * **Cellar** - Small spring based web server for receiving data from clients.
  * **MetroStation** - Main android application. Contains UI, settings and event retrieval code.
  Produces apk.
- * **Snake** - Small Scala program to analyze cell data from phones. It produces "snakes" of event chains
- in which it is visually easy to identify problems.
+ * **Snake** - Small quick and dirty Scala program to analyze cell data from phones. It produces "snakes" of event 
+ chains in which it is visually easy to identify problems.
  * **Tracking** - most of the logic is here in plain java library. Involves detection of location,
  predictions and via api is used by main application. Tests are using Java 8 but library needs
  to stay at Java 7 (which may give you a little trouble in IDE).

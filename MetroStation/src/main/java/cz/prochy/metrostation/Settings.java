@@ -3,8 +3,10 @@ package cz.prochy.metrostation;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import net.jcip.annotations.ThreadSafe;
 
-public class NotificationSettings {
+@ThreadSafe
+public class Settings {
 
     private static final String PREF_TOAST_ON_ARRIVAL = "toast_on_arrival";
     private static final String PREF_TOAST_ON_LEAVE = "toast_on_leave";
@@ -23,7 +25,7 @@ public class NotificationSettings {
 
     private final Context context;
 
-    public NotificationSettings(Context context) {
+    public Settings(Context context) {
         this.context = context;
     }
 
@@ -31,19 +33,19 @@ public class NotificationSettings {
         return PreferenceManager.getDefaultSharedPreferences(context);
     }
 
-    public boolean getToastOnArrival() {
+    public boolean getToastOnArrivalEnabled() {
         return prefs().getBoolean(PREF_TOAST_ON_ARRIVAL, PREF_TOAST_ON_ARRIVAL_DEFAULT);
     }
 
-    public boolean getToastOnDeparture() {
+    public boolean getToastOnDepartureEnabled() {
         return prefs().getBoolean(PREF_TOAST_ON_LEAVE, PREF_TOAST_ON_LEAVE_DEFAULT);
     }
 
-    public boolean getTrayNotification() {
+    public boolean getTrayNotificationEnabled() {
         return prefs().getBoolean(PREF_TRAY_NOTIFICATION, PREF_TRAY_NOTIFICATION_DEFAULT);
     }
 
-    public boolean getPredictions() {
+    public boolean getPredictionsEnabled() {
         return prefs().getBoolean(PREF_STATION_PREDICTIONS, PREF_STATION_PREDICTIONS_DEFAULT);
     }
 
@@ -51,7 +53,7 @@ public class NotificationSettings {
         return prefs().getBoolean(PREF_OVERLAY, PREF_OVERLAY_DEFAULT);
     }
 
-    public boolean getCellLogging() {
+    public boolean getCellLoggingEnabled() {
         return prefs().getBoolean(PREF_CELL_LOGGING, PREF_CELL_LOGGING_DEFAULT);
     }
 

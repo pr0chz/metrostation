@@ -5,33 +5,33 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.graphics.PixelFormat;
 import android.os.Handler;
-import android.provider.Settings;
+import android.util.Log;
 import android.view.Gravity;
-import android.view.View;
 import android.view.WindowManager;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import cz.prochy.metrostation.tracking.Check;
 import cz.prochy.metrostation.tracking.Notifier;
 import cz.prochy.metrostation.tracking.Timeout;
+import net.jcip.annotations.NotThreadSafe;
 
+@NotThreadSafe
 public class NotifierImpl implements Notifier {
 
     private static final int NOTIFICATION_ID = 0x6a3ab12f;
     private static final String UNKNOWN_STATION = "???";
 
-    private static final Logger logger = new Logger();
+    private static final String LOG_NAME = "MSNotifierImpl";
 
     private final Context context;
-    private final NotificationSettings settings;
+    private final Settings settings;
     private final Timeout predictionTrigger;
 
     private volatile String predictedStation = null;
 
     private TextView overlay;
 
-    public NotifierImpl(Context context, NotificationSettings settings, Timeout predictionTrigger) {
+    public NotifierImpl(Context context, Settings settings, Timeout predictionTrigger) {
         this.context = Check.notNull(context);
         this.settings = Check.notNull(settings);
         this.predictionTrigger = Check.notNull(predictionTrigger);
@@ -78,7 +78,7 @@ public class NotifierImpl implements Notifier {
 
     private void schedulePrediction(final String nextStation) {
         Check.notNull(nextStation);
-        if (settings.getPredictions()) {
+        if (settings.getPredictionsEnabled()) {
             predictionTrigger.reset(new Runnable() {
                 @Override
                 public void run() {
@@ -93,7 +93,7 @@ public class NotifierImpl implements Notifier {
                             }
                         });
                     } catch (Exception e) {
-                        logger.log(e);
+                        Log.e(LOG_NAME, "Failed to schedule prediction", e);
                     }
                 }
             });
@@ -106,7 +106,7 @@ public class NotifierImpl implements Notifier {
 
     private void toastArrival(String message) {
         Check.notNull(message);
-        if (settings.getToastOnArrival()) {
+        if (settings.getToastOnArrivalEnabled()) {
             if (!message.equals(predictedStation)) { // do not notify again if station was successfully predicted
                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
             } else {
@@ -117,7 +117,7 @@ public class NotifierImpl implements Notifier {
 
     private void toastDeparture(String message) {
         Check.notNull(message);
-        if (settings.getToastOnDeparture()) {
+        if (settings.getToastOnDepartureEnabled()) {
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
         }
     }
@@ -171,7 +171,7 @@ public class NotifierImpl implements Notifier {
         if (settings.getOverlay()) {
             showOverlay(message);
         }
-        if (settings.getTrayNotification()) {
+        if (settings.getTrayNotificationEnabled()) {
             Notification.Builder builder = new Notification.Builder(context)
                     .setSmallIcon(R.drawable.ic_stat_notify)
                     .setContentTitle(Check.notNull(message))
