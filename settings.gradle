@@ -1,8 +1,8 @@
-rootProject.name = "Metro Station Prague"
+rootProject.name = "MetroStation"
 
-include ':Tracking', ':MetroStation', ':Cellar', ':Snake'
+include ':Tracking', ':Application', ':Cellar', ':Snake'
 
 project(':Tracking').buildFileName = 'tracking.gradle'
-project(':MetroStation').buildFileName = 'metrostation.gradle'
+project(':Application').buildFileName = 'application.gradle'
 project(':Cellar').buildFileName = 'cellar.gradle'
 project(':Snake').buildFileName = 'snake.gradle'
