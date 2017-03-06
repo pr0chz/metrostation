@@ -1,20 +1,20 @@
 
 # Metro Station Prague
 
-Metro Station Prague is an simple android app for notifying you on which subway station you are (in Prague). 
+Metro Station Prague is an simple android app for notifying you on which Prague subway station you are. 
 It works completely offline utilizing network cell information.
 
 [Get it on Google Play](https://play.google.com/store/apps/details?id=cz.prochy.metrostation&hl=cs)
 
 ## Motivation
 
-I was spending considerable amount of subway travel time by watching MOOC videos on my phone and 
-having earphones I was being constantly confused where I am. This application solved my problem by 
+I was spending considerable amount of subway travel time by watching MOOC videos on my phone while 
+having earphones. I was being constantly confused where I am. This application solved my problem by 
 showing me where I am on phone display (where I was looking anyway).
 
 ## Features
 
-First proof-of-concept was created by riding through Prague Metro with few phones to 
+First proof-of-concept was created by riding through Prague Metro with few phones in a pocket to 
 capture cell information for all operators. From that time application evolved, features include:
  
  * **Three types of on-display notification** - Notification area, toasts and overlay (most useful for watching 
@@ -35,6 +35,10 @@ Application is not 100% reliable. There are few situations which can prevent app
    cell ids. It is hard or maybe even impossible to assign them to stations, so app may not work perfectly 
    there.
  * As permanent cell signal will spread to more and more stations, there may be some other approach needed.
+
+## License and copying
+
+This source code is released under [GPLv3](LICENSE.txt).
 
 ## Building
 
