@@ -248,15 +248,6 @@ object Snake {
     }
   }
 
-
-  // TODO
-  // analyze which stations are present in data on which operators (and which are not)
-  // analyze which cids are not present in data at all (evalute whether we have enough data for this classification)
-  // find unknown cids - go through a snake and detect unknown cids inside otherwise reasonable metro travel sequence
-  // find strange situations
-  //   - bad prediction
-  //   - missed station(s)
-
   def main(args: Array[String]): Unit = {
     val is = if (!args.isEmpty) new FileInputStream(args(0)) else System.in
     val events = readInput(is)
