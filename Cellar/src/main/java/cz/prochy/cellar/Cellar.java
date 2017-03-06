@@ -25,7 +25,7 @@ public class Cellar implements ErrorController {
     @RequestMapping(value = "/store", method = RequestMethod.POST)
     public ResponseEntity<String> store(@RequestBody String body, HttpServletRequest request) {
 
-        String filename = "blob_" + System.currentTimeMillis() + "_" + request.getRemoteAddr() + "_" + random.nextInt(1000);
+        String filename = "blob_" + System.currentTimeMillis() + "_" + random.nextInt(100000);
         try {
             FileUtils.writeStringToFile(new File(filename), body);
             logger.info("Written blob: " + filename);

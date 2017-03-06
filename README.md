@@ -3,8 +3,8 @@
 
 ## About
 
-MetroStation is an simple app for notifying you on which subway station you are located. It utilizes information
-about connected cells / disconnects and works completely offline.
+Metro Station is an simple android app for notifying you on which subway station you are located. It utilizes 
+information about connected cells / disconnects and works completely offline.
 
 ## Versioning
 

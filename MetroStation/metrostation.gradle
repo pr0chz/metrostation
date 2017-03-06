@@ -17,16 +17,17 @@ android {
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 22
-        versionCode 24
-        versionName "2.9"
+        versionCode 25
+        versionName "2.10"
+        manifestPlaceholders = [uploadUrl:System.getenv("MS_UPLOAD_URL") ?: ""]
     }
     signingConfigs {
         release {
             def emptyEnv = "Missing environment variable"
             storeFile file(System.getenv("MS_KEYSTORE") ?: emptyEnv)
-            storePassword System.getenv("MS_KEYSTORE_PASS" ?: emptyEnv)
-            keyAlias System.getenv("MS_KEY" ?: emptyEnv)
-            keyPassword System.getenv("MS_KEY_PASS" ?: emptyEnv)
+            storePassword System.getenv("MS_KEYSTORE_PASS") ?: emptyEnv
+            keyAlias System.getenv("MS_KEY") ?: emptyEnv
+            keyPassword System.getenv("MS_KEY_PASS") ?: emptyEnv
         }
     }
     buildTypes {

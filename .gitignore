@@ -11,3 +11,5 @@ gradle.tmp
 .project
 *.iml
 .idea
+release.sh
+snakefiles

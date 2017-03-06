@@ -25,7 +25,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".NotificationService" />
+        <service android:name=".NotificationService">
+            <meta-data android:name="uploadUrl" android:value="${uploadUrl}"/>
+        </service>
         <receiver android:name="cz.prochy.metrostation.ServiceRunner">
 	    	<intent-filter>  
 	        	<action android:name="android.intent.action.BOOT_COMPLETED" />  

@@ -27,9 +27,8 @@ public class DataUploader {
         }
     }
 
-    private static void sendRequest(byte [] loggerData) throws IOException{
+    private static void sendRequest(URL url, byte [] loggerData) throws IOException {
         byte [] content = encodeToGzip(loggerData);
-        URL url = new URL("http://46.101.221.156:48989/store");
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestProperty("Content-Type", "text/plain");
         conn.setRequestProperty("Content-Encoding", "gzip");
@@ -56,8 +55,8 @@ public class DataUploader {
         }
     }
 
-    public static void upload(String data) throws Exception {
-        sendRequest(data.getBytes(Charset.forName("utf-8")));
+    public static void upload(String url, String data) throws Exception {
+        sendRequest(new URL(url), data.getBytes(Charset.forName("utf-8")));
     }
 
 }

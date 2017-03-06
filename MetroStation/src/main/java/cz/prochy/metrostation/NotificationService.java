@@ -1,10 +1,13 @@
 package cz.prochy.metrostation;
 
 import android.app.Service;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.telephony.CellLocation;
 import android.telephony.PhoneStateListener;
@@ -28,6 +31,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class NotificationService extends Service {
 
     private final static String LOG_NAME = "MetroStation";
+    private final static String UPLOAD_URL_METADATA = "uploadUrl";
 
     private final static Logger logger = new Logger();
 
@@ -49,9 +53,11 @@ public class NotificationService extends Service {
     private class StateListener extends PhoneStateListener {
 
         private final CellListener listener;
+        private final String uploadUrl;
 
-        private StateListener(CellListener listener) {
+        private StateListener(CellListener listener, String uploadUrl) {
             this.listener = listener;
+            this.uploadUrl = uploadUrl;
         }
 
         @Override
@@ -90,6 +96,37 @@ public class NotificationService extends Service {
                 logger.log(e);
             }
         }
+
+        public void emitCellDataAsync() {
+            final BoundedChainBuffer<String> cellLogger = cellListener.getCellLogger();
+
+            if (notificationSettings.getCellLogging()
+                    && uploadUrl != null && !uploadUrl.isEmpty()
+                    && cellLogger.size() >= 20 && cellLogger.size() % 5 == 0 // try just once in a time
+                    && emitTaskInProgress.compareAndSet(false, true)) {
+
+                scheduledService.submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        final List<String> cells = cellLogger.get();
+                        try {
+                            if (networkAvailable()) {
+                                DataUploader.upload(uploadUrl, joinStrings(cells));
+                            } else {
+                                cellLogger.putBack(cells);
+                            }
+                        } catch (Exception e) {
+                            cellLogger.putBack(cells);
+                            logger.log(e);
+                        } finally {
+                            emitTaskInProgress.set(false);
+                        }
+                    }
+                });
+
+            }
+        }
+
     }
 
 
@@ -129,13 +166,14 @@ public class NotificationService extends Service {
         } else {
             if (stateListener == null) {
                 logger.log("Starting...\n");
+
                 scheduledService = Executors.newScheduledThreadPool(3);
                 notificationSettings = new NotificationSettings(this);
                 notificationSettings.setDefaults();
 
                 int instanceId = new Random().nextInt();
                 cellListener = new LoggingCellListener(instanceId, 100, buildListeners());
-                stateListener = new StateListener(cellListener);
+                stateListener = new StateListener(cellListener, getUploadUrl());
 
                 setListenerStatus(PhoneStateListener.LISTEN_SERVICE_STATE);
             }
@@ -146,16 +184,16 @@ public class NotificationService extends Service {
     private void playbackMockEvents() {
         try {
             cellListener.cellInfo(1, 18807, 34300);
-            emitCellDataAsync();
+            stateListener.emitCellDataAsync();
             Thread.sleep(100);
             cellListener.disconnected(2);
-            emitCellDataAsync();
+            stateListener.emitCellDataAsync();
             Thread.sleep(100);
             cellListener.cellInfo(3, 18806, 34300);
-            emitCellDataAsync();
+            stateListener.emitCellDataAsync();
             Thread.sleep(100);
             cellListener.disconnected(4);
-            emitCellDataAsync();
+            stateListener.emitCellDataAsync();
             Thread.sleep(100);
         } catch (InterruptedException ignored) {
         }
@@ -175,33 +213,16 @@ public class NotificationService extends Service {
         return networkInfo != null && networkInfo.isConnected();
     }
 
-    private void emitCellDataAsync() {
-        final BoundedChainBuffer<String> cellLogger = cellListener.getCellLogger();
-
-        if (notificationSettings.getCellLogging()
-                && cellLogger.size() >= 20 && cellLogger.size() % 5 == 0 // try just once in a time
-                && emitTaskInProgress.compareAndSet(false, true)) {
-
-            scheduledService.submit(new Runnable() {
-                @Override
-                public void run() {
-                    final List<String> cells = cellLogger.get();
-                    try {
-                        if (networkAvailable()) {
-                            DataUploader.upload(joinStrings(cells));
-                        } else {
-                            cellLogger.putBack(cells);
-                        }
-                    } catch (Exception e) {
-                        cellLogger.putBack(cells);
-                        logger.log(e);
-                    } finally {
-                        emitTaskInProgress.set(false);
-                    }
-                }
-            });
-
+    private String getUploadUrl() {
+        String url = null;
+        try {
+            ComponentName myService = new ComponentName(this, this.getClass());
+            Bundle data = getPackageManager().getServiceInfo(myService, PackageManager.GET_META_DATA).metaData;
+            url = data.getString(UPLOAD_URL_METADATA);
+        } catch (Exception e) {
+            Log.e(LOG_NAME, "Failed to retrieve URL", e);
         }
+        return url;
     }
 
     @Override

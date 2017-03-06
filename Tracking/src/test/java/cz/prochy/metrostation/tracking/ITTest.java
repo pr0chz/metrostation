@@ -333,6 +333,8 @@ public class ITTest {
 
         // line C
         notifier.startExpect();
+        notifier.onStation(VYSEHRAD);
+        notifier.onUnknownStation();
         notifier.onStation(IP_PAVLOVA);
         notifier.onStation(VYSEHRAD);
         notifier.onStation(PRAZSKEHO_POVSTANI);
